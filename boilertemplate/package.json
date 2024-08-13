@@ -1,0 +1,84 @@
+{
+  "name": "huddle-api",
+  "version": "1.0.0",
+  "description": "Back-end for Huddle",
+  "main": "src/index.js",
+  "repository": "https://github.com/cissa-unimelb/huddle-api",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --check **/*.js",
+    "prettier:fix": "prettier --write **/*.js",
+    "prepare": "husky install && commitizen init cz-conventional-changelog --save-dev --save-exact",
+    "commit": "cz"
+  },
+  "keywords": [
+    "node",
+    "node.js",
+    "generator",
+    "express",
+    "rest",
+    "api",
+    "mongodb",
+    "mongoose",
+    "es6",
+    "es7",
+    "es8",
+    "es9",
+    "passport",
+    "joi",
+    "eslint",
+    "prettier"
+  ],
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.17.1",
+    "express-mongo-sanitize": "^2.0.0",
+    "express-rate-limit": "^7.3.1",
+    "firebase": "^10.12.2",
+    "firebase-admin": "^12.2.0",
+    "helmet": "^7.1.0",
+    "http-status": "^1.4.0",
+    "joi": "^17.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.24.0",
+    "mongoose": "^8.4.4",
+    "morgan": "^1.9.1",
+    "nodemailer": "^6.3.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.0",
+    "validator": "^13.0.0",
+    "winston": "^3.2.1",
+    "xss-clean": "^0.1.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "commitizen": "^4.3.0",
+    "eslint": "^8.0.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "5.0.0",
+    "eslint-plugin-security": "^1.4.0",
+    "faker": "^5.5.3",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "node-mocks-http": "^1.8.0",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
+}
