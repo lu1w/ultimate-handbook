@@ -2,3 +2,8 @@
 . "$(dirname "$0")/_/husky.sh"
 
 yarn commitlint --edit $1 || npx commitlint --edit $1
+
+//q: whats this file for?
+//a: This file is used to run the commitlint command before the commit message is created. This is to ensure that the commit message follows the conventional commit format.
+//q :what i need to follow in commit message?
+//a: The commit message should follow the conventional commit format. The format is as follows: type(scope): message. The type can be feat, fix, docs, style, refactor, test, chore, or perf. The scope is optional and can be used to specify the part of the codebase that the commit affects. The message should be a short description of the changes made in the commit.
