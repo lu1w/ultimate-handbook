@@ -7,7 +7,7 @@ const defaultRoutes = [
   {
     path: '/course',
     route: authRoute,
-  }
+  },
 ];
 
 defaultRoutes.forEach((route) => {

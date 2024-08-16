@@ -19,7 +19,7 @@ const ApiError = require('./utils/ApiError');
 const app = express();
 
 if (config.env !== 'test') {
-  app.use(morgan.successHandler);//q: what is this for?
+  app.use(morgan.successHandler); // q: what is this for?
   app.use(morgan.errorHandler);
 }
 
@@ -49,7 +49,9 @@ if (config.env === 'production') {
 }
 
 app.get('/', (req, res) => {
-  res.status(httpStatus.OK).send({ ok: true, message: 'I am up for a huddle!' });
+  res
+    .status(httpStatus.OK)
+    .send({ ok: true, message: 'I am up for a huddle!' });
 });
 
 // v1 api routes
