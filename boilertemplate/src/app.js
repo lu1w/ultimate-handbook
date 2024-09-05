@@ -13,6 +13,7 @@ const config = require('./config/config');
 const morgan = require('./config/morgan');
 const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
+const searchRouter = require('./routes/search')
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 
@@ -51,11 +52,12 @@ if (config.env === 'production') {
 app.get('/', (req, res) => {
   res
     .status(httpStatus.OK)
-    .send({ ok: true, message: 'I am up for a huddle!' });
+    .send({ ok: true, message: 'connected!' });
 });
 
 // v1 api routes
 app.use('/v1', routes);
+app.use('/search', searchRouter); 
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
