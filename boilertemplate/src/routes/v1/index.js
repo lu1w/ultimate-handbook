@@ -6,6 +6,7 @@ const { path } = require('../../app');
 const router = express.Router();
 
 const defaultRoutes = [
+  
   {
     path: '/course',
     route: authRoute,
@@ -14,6 +15,7 @@ const defaultRoutes = [
     path: '/search',
     route: searchRoute,
   }
+
 ];
 
 defaultRoutes.forEach((route) => {
