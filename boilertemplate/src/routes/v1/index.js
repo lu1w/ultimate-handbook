@@ -14,6 +14,7 @@ const defaultRoutes = [
     path: '/search',
     route: searchRoute,
   }
+
 ];
 
 defaultRoutes.forEach((route) => {
