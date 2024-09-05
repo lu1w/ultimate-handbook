@@ -49,7 +49,7 @@ if (config.env === 'production') {
 }
 
 app.get('/', (req, res) => {
-  res.status(httpStatus.OK).send({ ok: true, message: 'I am up for a huddle!' });
+  res.status(httpStatus.OK).send({ ok: true, message: 'I am ok!' });
 });
 
 // v1 api routes
@@ -60,7 +60,7 @@ app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 
-// convert error to ApiError, if needed
+// convert error to ApiError or catch ApiError
 app.use(errorConverter);
 
 // handle error

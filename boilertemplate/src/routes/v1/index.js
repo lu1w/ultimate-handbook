@@ -1,13 +1,15 @@
 const express = require('express');
-const authRoute = require('./course.route');
-
+const courseRoute = require('./course.route');
+const mongoClient = require('../../config/mongoClient');
 const router = express.Router();
 
 const defaultRoutes = [
+  
   {
     path: '/course',
-    route: authRoute,
+    route: courseRoute,
   }
+
 ];
 
 defaultRoutes.forEach((route) => {
