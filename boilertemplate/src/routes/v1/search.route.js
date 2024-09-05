@@ -1,55 +1,58 @@
 const express = require('express');
 const mongoose = require('mongoose'); 
 const router = express.Router();
-
-const subjectSchema = require('../models/subjectModel'); 
-const Subject = mongoose.model('Subject', subjectSchema);
+const mongoClient = require('../../config/mongoClient');
+const subjectSchema = require('../../models/subjectModel'); 
+// const { collection } = require('../../models/course.model');
+//const Subject = mongoose.model('Subject', subjectSchema);
 
 router.use(express.json()); 
 
 router.get("/", async (req, res) => {
     console.log("INFO enter GET search/"); 
-    //console.log(req); 
+    //console.log(req); no
 
     const { query } = req.query;
     if (query) {
         try {
             console.log("INFO try getting all subjects"); 
-
+            const collection = await mongoClient.getCollection('Subjects');
             // Query all subjects 
-            const subjects = await Subject.find({});
-            res.json(subjects); 
-
+            const subjects = await collection.find({}).toArray();  // 查询所有数据
+            res.json(subjects);  // 返回数据
             console.log("INFO finished searching all subjects"); 
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: 'Database query failed: query all subjects' });
         }
     } else {
+        res.json({ error: 'Search query is required' });
         // query is an empty string, do not do anything 
     }
     //res.send(req); 
 });
 
-router.get("/subject", async (req, res) => {
+router.get("/getSubject", async (req, res) => {
     console.log(req); 
     console.log("INFO enter GET search/subject/"); 
-    await console.log(`INFO req.query is ${req.query}`); 
+    console.log(`INFO req.query is ${req.query}`); 
     
 
-    const { query } = req.query;
+    const {query}  = req.query;
     console.log(`INFO query is ${query}`); 
     if (query) {
         try {
-            console.log(`INFO start searching for query ${query}`); 
 
+            console.log(`INFO start searching for query ${query}`); 
+            const collection = await mongoClient.getCollection('Subjects');
+            const subjects = await collection.find({subjectCode: query}).toArray();
             // Query the database for subjects matching the search query
-            const subjects = await Subject.find({
-                $or: [
-                    { subjectName: new RegExp(pattern, 'i') }, // Case-insensitive search by name
-                    { subjectCode: new RegExp(pattern, 'i') }, // Case-insensitive search by code
-                ],
-            });
+            // const subjects = await collection.find({
+            //     $or: [
+            //         { subjectName: new RegExp(pattern, 'i') }, // Case-insensitive search by name
+            //         { subjectCode: new RegExp(pattern, 'i') }, // Case-insensitive search by code
+            //     ],
+            // });
 
             console.log(`INFO done searching for ${query}`); 
             res.json(subjects); // Return the matching subjects
@@ -58,6 +61,7 @@ router.get("/subject", async (req, res) => {
             res.status(500).json({ error: `Database query failed: query ${query}` });
         }
     } else {
+        res.json({ error: 'Search query is required2' });
         // query is an empty string, do not do anything 
     }
     //res.send(req); 
