@@ -43,3 +43,15 @@ process.on('SIGTERM', () => {
     server.close();
   }
 });
+
+//connect to MongoDB
+process.on('SIGTERM', async () => {
+  logger.info('SIGTERM received');
+  if (server) {
+    server.close();
+  }
+  const client = await connectMongoClient();
+  await client.close();
+  logger.info('MongoClient closed');
+  process.exit(0);
+});
