@@ -3,34 +3,33 @@ import axios from 'axios';
 
 function SearchBar() {
   const [input, setInput] = React.useState("");
-  const [query, setQuery] = React.useState("");
   const [result, setResult] = React.useState(""); 
 
   function handleChange(event) {
-    console.log(`INFO event value when change: ${event.target.value}`);
+    console.log(`INFO handleChange(): event.target.value: ${event.target.value}`);
     setInput(event.target.value);
-    console.log(`INFO input after change: ${input}`);
   }
 
-  function handleSubmit(event) {
-    setQuery(input);
-    console.log(`INFO query after change: ${query}`);
+  async function handleSubmit(event) {
+    console.log(`INFO handleSubmit()`);
+    event.preventDefault(); // prevent the default refresh behavior of the event from the <form> element
+    // console.log(`INFO query after change: ${query}`);
     // Sending request to the backend 
-    handleSearch(); 
-    event.preventDefault(); // prevent the default refresh behavior of the event from the <form>
-  }
+    console.log("INFO handleSearch()"); 
 
-  // Function to handle the search request
-  async function handleSearch() {
-    console.log("INFO enter handleSearch()"); 
-
+    // Send the input query to the backend for database access 
     try {
-      console.log(`INFO try sending query ${query} to the backend`); 
-      const res = await axios.get('http://localhost:3000/search/subject', { query }); 
-      console.log(`INFO response: ${res}`); 
-      setResult(res.data); 
-      console.log(`INFO result after getting response: ${result}`); 
+      console.log(`INFO try sending query ${input} to the backend`); 
+      const res = await axios.get('http://localhost:4000/v1/search/subject/' + input); 
+      console.log(`INFO response:`);
+      console.log(res); 
+      console.log(`INFO response.data:`);
+      console.log(res.data); 
+      console.log(`INFO response.data.subjects:`);
+      console.log(res.data.subjects); 
 
+      setResult(res.data.subjects); 
+      
       // const response = await axios.get('http://localhost:3000/search', {
       //     params: { query }, // Pass the query as a parameter
       // });
@@ -40,11 +39,11 @@ function SearchBar() {
         console.error('Error fetching subjects:', err);
         // setError('Failed to fetch subjects. Please try again later.');
     }
-  }; 
+  }
 
   return (
-    <div onSubmit={handleSubmit}>
-      <h1>Searching: {query}</h1>
+    <div>
+      <h1>Search for subject</h1>
       <form onSubmit={handleSubmit}>
         <input
           onChange={handleChange}
@@ -54,7 +53,7 @@ function SearchBar() {
         /> 
         <button type="Submit">Submit</button> 
       </form>
-      <p>{result}</p>
+      <p>{JSON.stringify(result)}</p>
     </div>
   );
 }
