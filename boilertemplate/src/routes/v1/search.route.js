@@ -2,9 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose'); 
 const router = express.Router();
 const mongoClient = require('../../config/mongoClient');
-// const subjectSchema = require('../../models/subjectModel'); 
-// const { collection } = require('../../models/course.model');
-//const Subject = mongoose.model('Subject', subjectSchema);
 
 const subjectDB = 'Subjects' // TO-DEPLOY: change to "Subject" for production 
 
@@ -63,28 +60,5 @@ router.get("/subject/:query", async (req, res) => {
     }
     //res.send(req); 
 })
-
-// app.get('/api/subjects', async (req, res) => {
-//     const { query } = req.query;
-
-//     if (!query) {
-//         return res.status(400).json({ error: 'Search query is required' });
-//     }
-
-//     try {
-//         // Query the database for subjects matching the search query
-//         const subjects = await Subject.find({
-//             $or: [
-//                 { name: { $regex: query, $options: 'i' } }, // Case-insensitive search by name
-//                 { code: { $regex: query, $options: 'i' } }, // Case-insensitive search by code
-//             ],
-//         });
-
-//         res.json(subjects); // Return the matching subjects
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ error: 'Database query failed' });
-//     }
-// });
 
 module.exports = router; 
