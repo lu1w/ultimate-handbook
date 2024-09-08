@@ -55,5 +55,3 @@ process.on('SIGTERM', async () => {
   logger.info('MongoClient closed');
   process.exit(0);
 });
-
-
