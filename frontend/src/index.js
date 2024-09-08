@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import CourseCard from './components/CourseCard';
-import './index.css';
 import { Container, Row, Col } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/index.css';
 import courseData from './mock-data/courseData'; // Import the dictionary
+import CourseCard from './components/Common/CourseCard';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
