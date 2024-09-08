@@ -1,7 +1,7 @@
 import React from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button'; // Import Button component
-import './CourseCard.css';
+import '../../styles/CourseCard.css';
 
 const typeColors = {
   'COMPULSORY': 'LightPink',
