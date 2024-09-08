@@ -1,4 +1,9 @@
 import React from "react";
+import { Container, Row, Col } from 'react-bootstrap'; // TODO: make the contianer into another component? 
+
+/* Import components */
+import courseData from './mock-data/courseData'; // Import the dictionary
+import CourseCard from './components/Common/CourseCard';
 import SearchBar from "./components/Search/SearchBar";
 
 function App() {
@@ -13,6 +18,7 @@ function App() {
         ))}
       </Row>
     </Container>
+    
     <SearchBar /> 
     </div>
 }
