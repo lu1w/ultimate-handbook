@@ -11,7 +11,7 @@ import CourseCard from './components/Common/CourseCard';
 
 function App() {
   return <div>
-    <Container>
+    {/* <Container>
       <Row>
         {courseData.map((course, index) => (
           <Col md={4} key={index}>
@@ -20,7 +20,7 @@ function App() {
           </Col>
         ))}
       </Row>
-    </Container>
+    </Container> */}
 
     <Routes>
       {/* NOTE: the home path '/' can be the loading page, or the page where we ask user questions about their enrollment */}

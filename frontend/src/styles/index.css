@@ -1,3 +1,16 @@
+/* NOTE-TO-DEVELOPER: 
+  You need to add the @tailwind directives to your main CSS file so that Tailwind's styles are properly 
+  loaded into your project. 
+  
+  Tailwind organizes its styles into three layers:
+  - Base: Resets and normalizes browser styling (similar to a CSS reset).
+  - Components: Tailwind’s pre-designed component styles (e.g., forms, buttons).
+  - Utilities: The core utilities that Tailwind is famous for, like margins, padding, text alignment, etc.
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
     background-color: #f0f0f0;
 }
