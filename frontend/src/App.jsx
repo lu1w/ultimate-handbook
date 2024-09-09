@@ -5,6 +5,7 @@ import { Container, Row, Col } from 'react-bootstrap'; // TODO: make the contian
 import courseData from './mock-data/courseData'; // Import the dictionary
 import CourseCard from './components/Common/CourseCard';
 import SearchBar from "./components/Search/SearchBar";
+import EmptyCourseCard from "./components/Common/EmptyCourseCard";
 
 function App() {
   return <div>
@@ -17,6 +18,7 @@ function App() {
           </Col>
         ))}
       </Row>
+      <EmptyCourseCard />
     </Container>
     
     <SearchBar /> 
