@@ -2,19 +2,33 @@ const express = require('express');
 const router = express.Router();
 const mongoClient = require('../../config/mongoClient');
 const ApiError = require('../../utils/ApiError');
-
 router.get('/', (req, res) => {
-
     res.json({ 
         message: 'Welcome to the U handbook!!!.' 
     });
 });
+// Access the MongoDB collection to get all the courses
+router.post('/save-courses', async(req, res, next) => {
+    const courseData = req.body; // Get course data from the frontend
+    if (!courseData) {
+      return res.status(400).json({ message: 'No course data provided.' });
+    }
+    const coursePlanner = await mongoClient.getCollection("CoursePlanner");
+    // Assume the frontend sends a JSON object or array, and we insert it into the database
+    await coursePlanner.insertOne(courseData);
+    const courseDataArray = await coursePlanner.find({}).toArray();
+    res.json({ 
+      courseDataArray,
+      message: 'Course data saved successfully.' 
+    });
+});
+  
 
 router.get('/subjects', async (req, res) => {
     try {
       const collection = await mongoClient.getCollection('Subjects');
-      const subjects = await collection.find({}).toArray();  // 查询所有数据
-      res.json(subjects);  // 返回数据
+      const subjects = await collection.find({}).toArray();  // Get all subjects
+      res.json(subjects);  
     } catch (err) {
       console.error('Error retrieving data:', err);
       res.status(500).json({ message: 'Server error' });
@@ -62,5 +76,6 @@ router.get('/prerequisites', async (req, res, next) => {
     next(new ApiError(500, 'Server error!', true, err.stack));
   }
 });    
+
 
 module.exports = router;

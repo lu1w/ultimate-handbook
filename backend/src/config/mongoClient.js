@@ -15,7 +15,7 @@ async function connectMongoClient() {
 
 async function getCollection(collectionName) {
   const client = await connectMongoClient();
-  const database = client.db('Test_Database');  // TO-DEPLOY: the database name should be "Unimelb_Handbook"
+  const database = client.db('CoursePlannerStructure');  // TO-DEPLOY: the database name should be "Unimelb_Handbook"
   return database.collection(collectionName);
 }
 
