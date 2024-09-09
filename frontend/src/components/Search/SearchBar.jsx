@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function SearchBar() {
   const [input, setInput] = React.useState("");
-  const [result, setResult] = React.useState([]); 
+  const [result, setResult] = React.useState(["INFO: please enter your search prompt"]); 
 
   function handleChange(event) {
     console.log(`INFO handleChange(): event.target.value: ${event.target.value}`);
@@ -46,7 +46,7 @@ function SearchBar() {
         /> 
         <button type="Submit">Submit</button> 
       </form>
-      <p>{result.length !== 0 && JSON.stringify(result)}</p>
+      <p>{JSON.stringify(result)}</p>
     </div>
   );
 }
