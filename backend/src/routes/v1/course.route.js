@@ -2,42 +2,104 @@ const express = require('express');
 const router = express.Router();
 const mongoClient = require('../../config/mongoClient');
 const ApiError = require('../../utils/ApiError');
+const coursePlannerArray = {};
+
+// Get all subjects
+router.get('/allSubjects', async (req, res) => {
+  try {
+    const collection = await mongoClient.getCollection('Subjects');
+    const subjects = await collection.find({}).toArray();  // Get all subjects
+    res.json(subjects);  
+  } catch (err) {
+    console.error('Error retrieving data:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 router.get('/', (req, res) => {
     res.json({ 
         message: 'Welcome to the U handbook!!!.' 
     });
 });
-// Access the MongoDB collection to get all the courses
-router.post('/save-courses', async(req, res, next) => {
-    const courseData = req.body; // Get course data from the frontend
-    if (!courseData) {
-      return res.status(400).json({ message: 'No course data provided.' });
-    }
-    const coursePlanner = await mongoClient.getCollection("CoursePlanner");
-    // Assume the frontend sends a JSON object or array, and we insert it into the database
-    await coursePlanner.insertOne(courseData);
-    const courseDataArray = await coursePlanner.find({}).toArray();
-    res.json({ 
-      courseDataArray,
-      message: 'Course data saved successfully.' 
-    });
-});
-  
+// Remove one course from one slot
+router.delete('/remove/:query', async(req, res, next) => {
+  const { query } = req.params;
+  if (!query) {
+      return next(new ApiError(400, 'No course data provided.'));
+  }
 
-router.get('/subjects', async (req, res) => {
-    try {
-      const collection = await mongoClient.getCollection('Subjects');
-      const subjects = await collection.find({}).toArray();  // Get all subjects
-      res.json(subjects);  
-    } catch (err) {
-      console.error('Error retrieving data:', err);
-      res.status(500).json({ message: 'Server error' });
-    }
+  const semesterKey = query.substring(0, 6); // '2024s2'
+  const position = query.substring(6, 8); // 'p1'
+
+  // check if course exists
+  if (!coursePlannerArray[semesterKey] || !coursePlannerArray[semesterKey][position]) {
+      return res.status(404).json({ message: 'No course found!' });
+  }
+
+  delete coursePlannerArray[semesterKey][position];
+
+  res.json({ 
+      message: 'Successfully removed course!',
+      coursePlannerArray: coursePlannerArray
   });
+});
+// Drag one course to one slot
+router.post('/add', async(req, res, next) => {
+  const courseData = req.body; // e.g. { "2024s21": { course } }
+  if (!courseData || Object.keys(courseData).length === 0) {
+      return res.status(400).json({ message: 'No course data provided.' });
+  }
+
+  const param = Object.keys(courseData)[0]; //e.g.'2024s21'
+  const course = courseData[param]; // get the course object
+
+  const time = param.substring(0, 6); // '2024s2'
+  const position = param.substring(6, 8); // 'p1'
+
+  // intialize the semester if it doesn't exist
+  if (!coursePlannerArray[time]) {
+      coursePlannerArray[time] = {};
+  }
+
+  // add course to the planner
+  if (coursePlannerArray[time][position]) {
+      return res.status(400).json({ message: 'can not add course to this slot!' });
+  }
+  coursePlannerArray[time][position] = course;
+
+  res.json({ 
+      message: 'successfully added course!',
+      coursePlannerArray: coursePlannerArray
+  });
+});
+
+// Get all prerequisites for a given subject
+router.get("/subject/prerequisite/:query", async (req, res) => {
+    console.log("INFO enter GET /subject/prerequisite/");
+    const { query } = req.params;
+    console.log(`INFO query is ${query}`);
+
+    if (query) {
+        try {
+            const collection = await mongoClient.getCollection('Subject');
+            const course = await collection.findOne({ subjectCode: query });
+            if (!course) {
+                return next(new ApiError(404, 'Course not found.'));
+            }
+            return res.json(course.prerequisites);
+        } catch (err) {
+            console.error('Error:', err);
+            return next(new ApiError(500, 'Server error'));
+        }
+    } else {
+        return next(new ApiError(400, 'Search query is required'));
+    }
+});
 
 
-// 新增获取专业先修课程的路由
-router.get('/prerequisites', async (req, res, next) => {
+// Get all complusory courses for a given subject (THIS IS NOT WORKING NOW ! CUZ I NEED DATA!!)
+router.get('/majorCompulsory', async (req, res, next) => {
   const major = req.query.major; // e.g. prerequisites?major=ComputerScience
 
   if (!major) {
