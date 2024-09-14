@@ -2,11 +2,15 @@ import React from 'react';
 import axios from 'axios';
 
 function SearchBar() {
-  const [input, setInput] = React.useState("");
-  const [result, setResult] = React.useState(["INFO: please enter your search prompt"]); 
+  const [input, setInput] = React.useState('');
+  const [result, setResult] = React.useState([
+    'INFO: please enter your search prompt',
+  ]);
 
   function handleChange(event) {
-    console.log(`INFO handleChange(): event.target.value: ${event.target.value}`);
+    console.log(
+      `INFO handleChange(): event.target.value: ${event.target.value}`,
+    );
     setInput(event.target.value);
   }
 
@@ -14,21 +18,23 @@ function SearchBar() {
     console.log(`INFO handleSubmit()`);
     event.preventDefault(); // prevent the default refresh behavior of the event from the <form> element
     // console.log(`INFO query after change: ${query}`);
-    console.log("INFO handleSearch()"); 
+    console.log('INFO handleSearch()');
 
-    // Send the input query to the backend for database access 
+    // Send the input query to the backend for database access
     try {
-      console.log(`INFO try sending query ${input} to the backend`); 
-      const res = await axios.get('http://localhost:4000/v1/search/subject/' + input); 
+      console.log(`INFO try sending query ${input} to the backend`);
+      const res = await axios.get(
+        'http://localhost:4000/v1/search/subject/' + input,
+      );
 
       console.log(`INFO response:`);
-      console.log(res); 
+      console.log(res);
       console.log(`INFO response.data:`);
-      console.log(res.data); 
+      console.log(res.data);
       console.log(`INFO response.data.subjects:`);
-      console.log(res.data.subjects); 
+      console.log(res.data.subjects);
 
-      setResult(res.data.subjects); 
+      setResult(res.data.subjects);
     } catch (err) {
       console.error('Error fetching subjects:', err);
     }
@@ -43,8 +49,8 @@ function SearchBar() {
           type="text"
           placeholder="Enter your subject"
           value={input}
-        /> 
-        <button type="Submit">Submit</button> 
+        />
+        <button type="Submit">Submit</button>
       </form>
       <p>{JSON.stringify(result)}</p>
     </div>
