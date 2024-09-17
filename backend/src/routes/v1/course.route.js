@@ -29,7 +29,7 @@ router.delete('/remove/:query', async(req, res, next) => {
       return next(new ApiError(400, 'No course data provided.'));
   }
 
-  const semesterKey = query.substring(0, 6); // '2024s2'
+  const semesterKey = query.substring(0, 6); // '2024s2 '
   const position = query.substring(6, 8); // 'p1'
 
   // check if course exists
