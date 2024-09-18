@@ -1,9 +1,19 @@
+/** This file is based on the Button component in shadcn;
+ *  See more details: https://ui.shadcn.com/docs/components/button
+ */
+
 import * as React from 'react';
 import PropTypes from 'prop-types';
 // import { Slot } from '@radix-ui/react-slot';
 import { cva } from 'class-variance-authority';
 
 import { cn } from '../../lib/utils';
+
+// export interface ButtonProps
+//   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+//     VariantProps<typeof buttonVariants> {
+//   asChild?: boolean
+// }
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
@@ -56,12 +66,34 @@ const Button = React.forwardRef(
     );
   },
 );
-// Add prop-types validation for the props
+
+// Used ChatGPT to conver the typescript interface to Javascript
+// Button.propTypes = {
+//   className: PropTypes.string,
+//   variant: PropTypes.string,
+//   size: PropTypes.string,
+// };
+
 Button.propTypes = {
+  disabled: PropTypes.bool,
+  form: PropTypes.string,
+  formAction: PropTypes.string,
+  formEncType: PropTypes.string,
+  formMethod: PropTypes.string,
+  formNoValidate: PropTypes.bool,
+  formTarget: PropTypes.string,
+  name: PropTypes.string,
+  type: PropTypes.oneOf(['submit', 'reset', 'button']),
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+    PropTypes.number,
+  ]),
   className: PropTypes.string,
   variant: PropTypes.string,
   size: PropTypes.string,
 };
+
 Button.displayName = 'Button';
 
 export { Button, buttonVariants };
