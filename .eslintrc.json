@@ -1,3 +1,4 @@
+// this type of configuration is outdated, see https://eslint.org/docs/latest/use/configure/configuration-files-deprecated
 {
   "env": {
     "node": true
