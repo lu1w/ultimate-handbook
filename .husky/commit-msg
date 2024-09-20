@@ -1,5 +1,5 @@
-#!/usr/bin/env sh
+#!/bin/sh
 . "$(dirname "$0")/_/h"
 
 npx commitlint --edit $1
-# npx --no -- commitlint --edit $1
+# npx --no-install commitlint --edit $1
