@@ -56,6 +56,21 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+
+        /* Self-defined colours */
+        white: {
+          DEFAULT: 'var(--col-link-100)',
+          op: 'rgb(var(--base-white))',
+        },
+        black: {
+          DEFAULT: 'rgb(var(--base-black))',
+          op: 'rgb(var(--base-black))',
+        },
+        link: 'var(--col-link-100)',
+        search: {
+          header: 'var(--col-heritage-100)',
+          muted: 'var(--col-heritage-50)',
+        },
       },
       borderRadius: {
         lg: `var(--radius)`,

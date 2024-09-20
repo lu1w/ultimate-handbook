@@ -46,6 +46,35 @@
     --ring: 215 20.2% 65.1%;
 
     --radius: 0.5rem;
+
+    /* From uom.css for https://designsystem.web.unimelb.edu.au/style-guide/colour-palette/ */
+    --base-white: 255 255 255;
+    --col-white-100: rgb(var(--base-white));
+    --col-white-100-o-50: rgb(var(--base-white) / 50%);
+
+    --base-black: 0 0 0;
+    --col-black-100: rgb(var(--base-black));
+    --col-black-100-o-50: rgb(var(--base-black) / 50%);
+
+    --col-link-100: rgb(8 57 115);
+
+    --base-heritage: 0 15 70;
+    --col-heritage-100: rgb(var(--base-heritage));
+    --col-heritage-75: rgb(64 75 116);
+    --col-heritage-50: rgb(128 135 162);
+    --col-heritage-25: rgb(191 195 209);
+    --col-heritage-100-o-90: rgb(var(--base-heritage) / 90%);
+    --col-heritage-100-o-80: rgb(var(--base-heritage) / 80%);
+    --col-heritage-100-o-70: rgb(var(--base-heritage) / 70%);
+    --col-heritage-100-o-60: rgb(var(--base-heritage) / 60%);
+    --col-heritage-100-o-50: rgb(var(--base-heritage) / 50%);
+    --col-heritage-100-o-40: rgb(var(--base-heritage) / 40%);
+    --col-heritage-100-o-30: rgb(var(--base-heritage) / 30%);
+    --col-heritage-100-o-20: rgb(var(--base-heritage) / 20%);
+    --col-heritage-100-o-10: rgb(var(--base-heritage) / 10%);
+    --col-heritage-100-o-5: rgb(var(--base-heritage) / 5%);
+
+    --base-heritage-dark: 0 11 52;
   }
 
   .dark {

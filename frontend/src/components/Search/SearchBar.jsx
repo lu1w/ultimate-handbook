@@ -5,20 +5,20 @@ import PropTypes from 'prop-types';
 
 import { Button } from '../Common/Button';
 import { Input } from '../Common/Input';
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+// import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 
 function SearchBar({ handleSubmit, handleChange, input }) {
   return (
-    <div id="search-bar">
+    <div id="search-bar" className="p-4 bg-search-header text-white">
       <form onSubmit={handleSubmit}>
-        <MagnifyingGlassIcon className="inline z-50 ml-20 h-8 w-4 icon" />
+        {/* <MagnifyingGlassIcon className="inline z-50 ml-10 h-8 w-4 icon" /> */}
         <Input
           onChange={handleChange}
           type="text"
           placeholder="Search subjects"
           value={input}
         />
-        <Button classname="button" variant="search" type="Submit">
+        <Button variant="search" size="search" type="Submit">
           Search
         </Button>
       </form>

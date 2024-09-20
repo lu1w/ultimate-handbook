@@ -42,9 +42,9 @@ function SearchPage() {
         handleSubmit={handleSubmit}
         input={input}
       />
-      <p>{JSON.stringify(result)}</p>
       <SearchFilters />
       <SearchResults />
+      <p>{JSON.stringify(result)}</p>
     </div>
   );
 }
