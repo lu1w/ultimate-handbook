@@ -7,9 +7,7 @@ import axios from 'axios';
 
 function SearchPage() {
   const [input, setInput] = React.useState('');
-  const [result, setResult] = React.useState([
-    'INFO: please enter your search prompt',
-  ]);
+  const [result, setResult] = React.useState([]);
 
   function handleChange(event) {
     console.log(
@@ -43,8 +41,7 @@ function SearchPage() {
         input={input}
       />
       <SearchFilters />
-      <SearchResults />
-      <p>{JSON.stringify(result)}</p>
+      <SearchResults searchResults={result} />
     </div>
   );
 }

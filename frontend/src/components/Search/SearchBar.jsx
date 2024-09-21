@@ -1,5 +1,3 @@
-import '../../styles/SearchBar.css';
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -10,7 +8,7 @@ import { Input } from '../Common/Input';
 function SearchBar({ handleSubmit, handleChange, input }) {
   return (
     <div id="search-bar" className="p-4 bg-search-header text-white">
-      <form onSubmit={handleSubmit}>
+      <form className="flex gap-4" onSubmit={handleSubmit}>
         {/* <MagnifyingGlassIcon className="inline z-50 ml-10 h-8 w-4 icon" /> */}
         <Input
           onChange={handleChange}
