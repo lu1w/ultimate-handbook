@@ -1,0 +1,128 @@
+/* NOTE-TO-DEVELOPER: 
+  You need to add the @tailwind directives to your main CSS file so that Tailwind's styles are properly 
+  loaded into your project. 
+  
+  Tailwind organizes its styles into three layers:
+  - Base: Resets and normalizes browser styling (similar to a CSS reset).
+  - Components: Tailwind’s pre-designed component styles (e.g., forms, buttons).
+  - Utilities: The core utilities that Tailwind is famous for, like margins, padding, text alignment, etc.
+
+  CSS code after @layer are from installation of shadcn Step 6: https://ui.shadcn.com/docs/installation/manual 
+  Documentation for shadcn theming: https://ui.shadcn.com/docs/theming 
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* background colour */
+    --foreground: 222.2 47.4% 11.2%; /* text colour */
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 215 20.2% 65.1%;
+
+    --radius: 0.5rem;
+
+    /* From uom.css for https://designsystem.web.unimelb.edu.au/style-guide/colour-palette/ */
+    --base-white: 255 255 255;
+    --col-white-100: rgb(var(--base-white));
+    --col-white-100-o-50: rgb(var(--base-white) / 50%);
+
+    --base-black: 0 0 0;
+    --col-black-100: rgb(var(--base-black));
+    --col-black-100-o-50: rgb(var(--base-black) / 50%);
+
+    --col-link-100: rgb(8 57 115);
+
+    --base-heritage: 0 15 70;
+    --col-heritage-100: rgb(var(--base-heritage));
+    --col-heritage-75: rgb(64 75 116);
+    --col-heritage-50: rgb(128 135 162);
+    --col-heritage-25: rgb(191 195 209);
+    --col-heritage-100-o-90: rgb(var(--base-heritage) / 90%);
+    --col-heritage-100-o-80: rgb(var(--base-heritage) / 80%);
+    --col-heritage-100-o-70: rgb(var(--base-heritage) / 70%);
+    --col-heritage-100-o-60: rgb(var(--base-heritage) / 60%);
+    --col-heritage-100-o-50: rgb(var(--base-heritage) / 50%);
+    --col-heritage-100-o-40: rgb(var(--base-heritage) / 40%);
+    --col-heritage-100-o-30: rgb(var(--base-heritage) / 30%);
+    --col-heritage-100-o-20: rgb(var(--base-heritage) / 20%);
+    --col-heritage-100-o-10: rgb(var(--base-heritage) / 10%);
+    --col-heritage-100-o-5: rgb(var(--base-heritage) / 5%);
+
+    --base-heritage-dark: 0 11 52;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
+
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+
+    --card: 224 71% 4%;
+    --card-foreground: 213 31% 91%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+
+    --secondary: 222.2 47.4% 11.2%;
+    --secondary-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 216 34% 17%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+}
+
+body {
+  background-color: #f0f0f0;
+}
