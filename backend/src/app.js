@@ -11,6 +11,7 @@ const cors = require('cors');
 const httpStatus = require('http-status');
 const config = require('./config/config');
 const morgan = require('./config/morgan');
+const swagger = require('./config/swagger');
 const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 // const searchRouter = require('./routes/v1/search')
@@ -44,10 +45,12 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
+
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
+
 
 app.get('/', (req, res) => {
   res
@@ -58,6 +61,8 @@ app.get('/', (req, res) => {
 // v1 api routes
 app.use('/v1', routes);
 // app.use('/search', searchRouter); 
+app.use('/api-docs', swagger.swaggerUi.serve, swagger.swaggerUi.setup(swagger.swaggerDocs));// swagger test route
+
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
