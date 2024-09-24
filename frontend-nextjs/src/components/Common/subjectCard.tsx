@@ -1,18 +1,22 @@
-import React from 'react';
+import * as React from "react";
+import { Button } from "@/components/ui/button"; 
 import {
   Card,
-  CardContent,
   CardHeader,
   CardTitle,
-} from '@components/common/card';
-import { Button } from '@components/common/button';
-// import PropTypes from 'prop-types';
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"; 
+import { cn } from "@/lib/utils";
 
+// Type to color mapping
 const typeColors: Record<string, string> = {
-  COMPULSORY: 'bg-subject-compulsory',
-  MAJOR_CORE: 'bg-subject-core',
-  DISCIPLINE: 'bg-subject-discipline',
-  BREADTH: 'bg-subject-breadth',
+  'COMPULSORY': 'bg-[#FFB6C1]', // LightPink
+  'DISCIPLINE': 'bg-[#FFE4B5]', // Bisque
+  'MAJOR CORE': 'bg-[#ADD8E6]', // LightBlue
+  'BREADTH': 'bg-[#ACE1AF]', // LightGreen
+  'NONE': 'bg-[#D3D3D3]', // Default: LightGrey
 };
 
 interface SubjectCardProps {
@@ -22,6 +26,7 @@ interface SubjectCardProps {
   points: string;
   name: string;
   term: string[];
+  onClose: () => void;
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({
@@ -30,48 +35,42 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   level,
   points,
   name,
-  term = [],
+  term,
+  onClose
 }) => {
-  const headerBackgroundColor = typeColors[type] || 'bg-subject';
+
+  const typeColor = typeColors[type];
 
   return (
-    <Card className="max-w-xs h-full text-center">
-      <CardHeader className={`${headerBackgroundColor} flex`}>
-        <CardTitle className="text-l text-left">{type}</CardTitle>
-        <Button className="text-right">×</Button>
+    <Card className="w-full h-full border border-black">
+      <CardHeader className={cn("relative", typeColor, "p-3", "rounded-t-lg")}>
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-semibold">{type}</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="absolute text-lg font-bold right-2 top-1"
+          >
+            ✕
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="p-4">
-        <p className="text-sm">
-          {code} | Level {level} | {points} points
-        </p>
-        <h3 className="font-bold text-lg mb-4">{name}</h3>
-
-        {/* Render terms in a flex grid */}
-        <div className="term-buttons flex flex-wrap gap-2">
-          {term.filter(Boolean).map((termName, index) => (
-            <Button
-              key={index}
-              variant="secondary"
-              size="sm"
-              className="term-button"
-            >
-              {termName}
+        <CardDescription>{`${code} | Level ${level} | ${points} points`}</CardDescription>
+        <CardTitle className="mt-2 text-lg font-bold font-serif">{name}</CardTitle>
+      </CardContent>
+      <CardFooter className="p-4 pt-0 space-x-2">
+        <div className="grid grid-cols-2 gap-2">
+          {term.map((t) => (
+            <Button key={t} variant="outline" size="sm" className="rounded-full">
+              {t}
             </Button>
           ))}
         </div>
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 };
-
-// Add prop-types validation for the props
-// SubjectCard.propTypes = {
-//   type: PropTypes.string.isRequired,
-//   code: PropTypes.string.isRequired,
-//   level: PropTypes.string.isRequired,
-//   points: PropTypes.string.isRequired,
-//   name: PropTypes.string.isRequired,
-//   term: PropTypes.arrayOf(PropTypes.string).isRequired,
-// };
 
 export default SubjectCard;

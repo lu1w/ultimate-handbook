@@ -16,7 +16,7 @@ const courseData = [
     term: ['Summer term', 'Semester 1', 'Semester 2'],
   },
   {
-    type: 'MAJOR_CORE',
+    type: 'MAJOR CORE',
     code: 'COMP30022',
     level: '3',
     name: 'IT Project',
