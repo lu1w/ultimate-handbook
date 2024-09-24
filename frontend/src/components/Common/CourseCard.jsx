@@ -33,7 +33,6 @@ const CourseCard = ({ type, code, level, points, name, term = [] }) => {
         </Card.Text>
         <Card.Title>{name}</Card.Title>
 
-        {/* Render terms in a 2-column flex grid */}
         <div className="term-buttons">
           {term.map((termName, index) => (
             <Button variant="secondary" key={index} className="term-button">
