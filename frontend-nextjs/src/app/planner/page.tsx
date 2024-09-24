@@ -1,6 +1,6 @@
 import React from 'react';
-import courseData from '../../mock-data/courseData';
-import SubjectCard from './components/subject-card';
+import courseData from '@/mock-data/courseData';
+import SubjectCard from '@components/common/subjectCard';
 
 const PlannerPage = () => {
   return (

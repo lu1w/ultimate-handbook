@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button } from '../Common/Button';
-import { Input } from '../Common/Input';
+import { Button } from '@/components/common/button';
+import { Input } from '@components/ui/input';
 // import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 
 function SearchBar({ handleSubmit, handleChange, input }) {
   return (
-    <div id="search-bar" className="p-4 bg-search-header text-white">
+    <div id="search-bar" className="p-5 bg-search-header text-white">
       <form className="flex gap-4" onSubmit={handleSubmit}>
         {/* <MagnifyingGlassIcon className="inline z-50 ml-10 h-8 w-4 icon" /> */}
         <Input

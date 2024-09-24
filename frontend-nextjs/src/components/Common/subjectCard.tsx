@@ -4,9 +4,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/Common/card";
-import { Button } from '@/components/Common/button'; 
-import PropTypes from 'prop-types';
+} from '@components/common/card';
+import { Button } from '@/components/common/button';
+// import PropTypes from 'prop-types';
 
 const typeColors: Record<string, string> = {
   COMPULSORY: 'bg-[#FFB6C1]', // LightPink
@@ -23,16 +23,21 @@ interface SubjectCardProps {
   term: string[];
 }
 
-const SubjectCard: React.FC<SubjectCardProps> = ({ type, code, level, points, name, term = [] }) => {
+const SubjectCard: React.FC<SubjectCardProps> = ({
+  type,
+  code,
+  level,
+  points,
+  name,
+  term = [],
+}) => {
   const headerBackgroundColor = typeColors[type] || 'bg-defaultColor';
 
   return (
     <Card className="max-w-xs h-full text-center">
       <CardHeader className={`${headerBackgroundColor} flex`}>
         <CardTitle className="text-l text-left">{type}</CardTitle>
-        <Button className = "text-right">
-          ×
-        </Button>
+        <Button className="text-right">×</Button>
       </CardHeader>
       <CardContent className="p-4">
         <p className="text-sm">
@@ -43,7 +48,12 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ type, code, level, points, na
         {/* Render terms in a flex grid */}
         <div className="term-buttons flex flex-wrap gap-2">
           {term.filter(Boolean).map((termName, index) => (
-            <Button key={index} variant="secondary" size="sm" className="term-button">
+            <Button
+              key={index}
+              variant="secondary"
+              size="sm"
+              className="term-button"
+            >
               {termName}
             </Button>
           ))}
@@ -54,13 +64,13 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ type, code, level, points, na
 };
 
 // Add prop-types validation for the props
-SubjectCard.propTypes = {
-  type: PropTypes.string.isRequired,
-  code: PropTypes.string.isRequired,
-  level: PropTypes.string.isRequired,
-  points: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  term: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
+// SubjectCard.propTypes = {
+//   type: PropTypes.string.isRequired,
+//   code: PropTypes.string.isRequired,
+//   level: PropTypes.string.isRequired,
+//   points: PropTypes.string.isRequired,
+//   name: PropTypes.string.isRequired,
+//   term: PropTypes.arrayOf(PropTypes.string).isRequired,
+// };
 
 export default SubjectCard;

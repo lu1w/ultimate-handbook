@@ -9,10 +9,10 @@ export default function Home() {
       <nav>
         <ul>
           <li>
-            <Link href="/PlannerPage">Go to Planner</Link>
+            <Link href="/planner">Go to Planner</Link>
           </li>
           <li>
-            <Link href="/SearchPage">Go to Search</Link>
+            <Link href="/search">Go to Search</Link>
           </li>
         </ul>
       </nav>
