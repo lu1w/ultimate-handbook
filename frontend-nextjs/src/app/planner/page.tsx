@@ -1,6 +1,7 @@
 import React from 'react';
 import courseData from '@/mock-data/courseData';
 import SubjectCard from '@components/common/subjectCard';
+import EmptySubjectCard from '@/components/planner/emptySubjectCard';
 
 const PlannerPage = () => {
   return (
@@ -18,8 +19,10 @@ const PlannerPage = () => {
             />
           </div>
         ))}
+        <EmptySubjectCard></EmptySubjectCard>
       </div>
     </div>
+    
   );
 };
 

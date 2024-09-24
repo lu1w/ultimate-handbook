@@ -12,11 +12,10 @@ import { cn } from "@/lib/utils";
 
 // Type to color mapping
 const typeColors: Record<string, string> = {
-  'COMPULSORY': 'bg-[#FFB6C1]', // LightPink
-  'DISCIPLINE': 'bg-[#FFE4B5]', // Bisque
-  'MAJOR CORE': 'bg-[#ADD8E6]', // LightBlue
-  'BREADTH': 'bg-[#ACE1AF]', // LightGreen
-  'NONE': 'bg-[#D3D3D3]', // Default: LightGrey
+  'COMPULSORY': 'bg-subject-compulsory',
+  'MAJOR CORE': 'bg-subject-core',
+  'DISCIPLINE': 'bg-subject-discipline',
+  'BREADTH': 'bg-subject-breadth',
 };
 
 interface SubjectCardProps {
@@ -39,7 +38,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   onClose
 }) => {
 
-  const typeColor = typeColors[type];
+  const typeColor = typeColors[type] || 'bg-subject';
 
   return (
     <Card className="w-full h-full border border-black">
