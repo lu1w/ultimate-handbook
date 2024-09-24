@@ -84,18 +84,41 @@ body {
     --col-heritage-75: rgb(64 75 116);
     --col-heritage-50: rgb(128 135 162);
     --col-heritage-25: rgb(191 195 209);
-    --col-heritage-100-o-90: rgb(var(--base-heritage) / 90%);
     --col-heritage-100-o-80: rgb(var(--base-heritage) / 80%);
-    --col-heritage-100-o-70: rgb(var(--base-heritage) / 70%);
     --col-heritage-100-o-60: rgb(var(--base-heritage) / 60%);
-    --col-heritage-100-o-50: rgb(var(--base-heritage) / 50%);
     --col-heritage-100-o-40: rgb(var(--base-heritage) / 40%);
-    --col-heritage-100-o-30: rgb(var(--base-heritage) / 30%);
     --col-heritage-100-o-20: rgb(var(--base-heritage) / 20%);
-    --col-heritage-100-o-10: rgb(var(--base-heritage) / 10%);
-    --col-heritage-100-o-5: rgb(var(--base-heritage) / 5%);
 
     --base-heritage-dark: 0 11 52;
+    --col-heritage-dark-100: rgb(var(--base-heritage-dark));
+
+    /* Colours for subejct cards */
+    --col-pink-100: rgb(235 123 190);
+    --col-pink-75: rgb(240 156 206);
+    --col-pink-50: rgb(245 189 223);
+    --col-pink-25: rgb(250 222 239);
+    --col-blue-dark-100: rgb(0 60 85);
+    --col-blue-dark-75: rgb(64 109 128);
+    --col-blue-dark-50: rgb(128 157 170);
+    --col-blue-dark-25: rgb(191 206 213);
+    --col-blue-light-100: rgb(70 200 240);
+    --col-blue-light-75: rgb(116 214 244);
+    --col-blue-light-50: rgb(163 228 247);
+    --col-blue-light-25: rgb(209 241 251);
+    --col-yellow-100: rgb(255 214 41);
+    --col-yellow-75: rgb(255 224 94);
+    --col-yellow-50: rgb(255 234 148);
+    --col-yellow-25: rgb(255 245 201);
+
+    /* Colours for cross (error) and tick (correct) */
+    --col-red-light-100: rgb(255 45 60);
+    --col-red-light-75: rgb(255 97 109);
+    --col-red-light-50: rgb(255 150 157);
+    --col-red-light-25: rgb(255 202 206);
+    --col-green-light-100: rgb(159 184 37);
+    --col-green-light-75: rgb(183 202 91);
+    --col-green-light-50: rgb(207 220 146);
+    --col-green-light-25: rgb(231 237 200);
   }
   .dark {
     --background: 240 10% 3.9%;

@@ -24,6 +24,14 @@ const courseData = [
     term: ['Semester 1', 'Semester 2'],
   },
   {
+    type: 'BREADTH',
+    code: 'FNCE10002',
+    level: '1',
+    name: 'Principle of Finance',
+    points: '12.5',
+    term: ['Semester 1', 'Semester 2'],
+  },
+  {
     type: 'NONE',
     code: 'randomCode',
     level: '0',

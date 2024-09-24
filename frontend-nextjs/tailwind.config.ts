@@ -61,6 +61,13 @@ const config: Config = {
           op: 'rgb(var(--base-black))', // for specify opcacity
         },
         link: 'var(--col-link-100)',
+        subject: {
+          DEFAULT: 'var(--col-heritage-25)',
+          core: 'var(--col-blue-dark-50)',
+          discipline: 'var(--col-blue-light-50)',
+          compulsory: 'var(--col-pink-50)',
+          breadth: 'var(--col-yellow-50)',
+        },
         search: {
           header: 'var(--col-heritage-100)',
           muted: 'var(--col-heritage-50)',

@@ -5,13 +5,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@components/common/card';
-import { Button } from '@/components/common/button';
+import { Button } from '@components/common/button';
 // import PropTypes from 'prop-types';
 
 const typeColors: Record<string, string> = {
-  COMPULSORY: 'bg-[#FFB6C1]', // LightPink
-  DISCIPLINE: 'bg-[#FFE4B5]', // Bisque
-  MAJOR_CORE: 'bg-[#ADD8E6]', // LightBlue
+  COMPULSORY: 'bg-subject-compulsory',
+  MAJOR_CORE: 'bg-subject-core',
+  DISCIPLINE: 'bg-subject-discipline',
+  BREADTH: 'bg-subject-breadth',
 };
 
 interface SubjectCardProps {
@@ -31,7 +32,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   name,
   term = [],
 }) => {
-  const headerBackgroundColor = typeColors[type] || 'bg-defaultColor';
+  const headerBackgroundColor = typeColors[type] || 'bg-subject';
 
   return (
     <Card className="max-w-xs h-full text-center">
