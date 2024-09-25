@@ -1,54 +1,33 @@
 import React from 'react';
-import axios from 'axios';
+import PropTypes from 'prop-types';
 
-function SearchBar() {
-  const [input, setInput] = React.useState("");
-  const [result, setResult] = React.useState([]); 
+import { Button } from '../Common/Button';
+import { Input } from '../Common/Input';
+// import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 
-  function handleChange(event) {
-    console.log(`INFO handleChange(): event.target.value: ${event.target.value}`);
-    setInput(event.target.value);
-  }
-
-  async function handleSubmit(event) {
-    console.log(`INFO handleSubmit()`);
-    event.preventDefault(); // prevent the default refresh behavior of the event from the <form> element
-    // console.log(`INFO query after change: ${query}`);
-    console.log("INFO handleSearch()"); 
-
-    // Send the input query to the backend for database access 
-    try {
-      console.log(`INFO try sending query ${input} to the backend`); 
-      const res = await axios.get('http://localhost:4000/v1/search/subject/' + input); 
-
-      console.log(`INFO response:`);
-      console.log(res); 
-      console.log(`INFO response.data:`);
-      console.log(res.data); 
-      console.log(`INFO response.data.subjects:`);
-      console.log(res.data.subjects); 
-
-      setResult(res.data.subjects); 
-    } catch (err) {
-      console.error('Error fetching subjects:', err);
-    }
-  }
-
+function SearchBar({ handleSubmit, handleChange, input }) {
   return (
-    <div>
-      <h1>Search for subject</h1>
-      <form onSubmit={handleSubmit}>
-        <input
+    <div id="search-bar" className="p-4 bg-search-header text-white">
+      <form className="flex gap-4" onSubmit={handleSubmit}>
+        {/* <MagnifyingGlassIcon className="inline z-50 ml-10 h-8 w-4 icon" /> */}
+        <Input
           onChange={handleChange}
           type="text"
-          placeholder="Enter your subject"
+          placeholder="Search subjects"
           value={input}
-        /> 
-        <button type="Submit">Submit</button> 
+        />
+        <Button variant="search" size="search" type="Submit">
+          Search
+        </Button>
       </form>
-      <p>{result.length !== 0 && JSON.stringify(result)}</p>
     </div>
   );
 }
+
+SearchBar.propTypes = {
+  handleSubmit: PropTypes.func.isRequired, // Must be a function and is required
+  handleChange: PropTypes.func.isRequired, // Must be a function and is required
+  input: PropTypes.string.isRequired, // Must be a string and is required
+};
 
 export default SearchBar;
