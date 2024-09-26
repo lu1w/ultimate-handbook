@@ -11,15 +11,14 @@ import { cn } from "@/lib/utils";
 const EmptySubjectCard: React.FC<{ onAdd: () => void }> = ({ onAdd }) => {
   return (
     <Card className="w-full h-full border border-black flex items-center justify-center">
-      <img src="/plus.svg" alt="+" className="h-6 w-6" />
       <CardContent className="flex items-center justify-center h-full">
         <Button
           variant="outline"
-          size="lg"
-          className="rounded-full h-12 w-12 flex items-center justify-center relative"
+          size="icon"
+          className="rounded-full h-14 w-14 flex items-center justify-center relative"
           onClick={onAdd}
         >
-          <img src="/plus.svg" alt="+" className="h-6 w-6" />
+          <img src="/plus.svg" alt="+" className="h-7 w-7" />
         </Button>
       </CardContent>
     </Card>

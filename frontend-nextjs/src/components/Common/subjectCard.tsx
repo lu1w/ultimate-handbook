@@ -62,7 +62,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       <CardFooter className="p-4 pt-0 space-x-2">
         <div className="grid grid-cols-2 gap-2">
           {term.map((t) => (
-            <Button key={t} variant="outline" size="sm" className="rounded-full">
+            <Button key={t} variant="secondary" size="sm" className="rounded-full">
               {t}
             </Button>
           ))}
