@@ -1,4 +1,5 @@
 {
+
   "dependencies": {
     "react": "^18.3.1"
   },
@@ -6,5 +7,43 @@
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
     "husky": "^9.1.6"
+
+  "name": "unimelb-course-planner",
+  "version": "1.0.0",
+  "description": "Unimelb Course Planner redesign",
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@eslint/js": "^9.10.0",
+    "commitizen": "^4.3.0",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-prettier": "5.0.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-security": "^1.4.0",
+    "globals": "^15.9.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.7",
+    "prettier": "^3.3.2"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --check **/*.js",
+    "prettier:fix": "prettier --write **/*.js",
+    "prepare": "husky",
+    "commit": "cz",
+    "check-eslint": "eslint --print-config file.js > eslint-config.json"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+
   }
 }

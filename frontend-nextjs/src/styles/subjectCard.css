@@ -1,0 +1,46 @@
+.subject-card {
+  width: 18rem;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid black;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.close-button {
+  background-color: lightgray;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.term-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.term-button {
+  background-color: #dfdddd;
+  border: none;
+  border-radius: 20px;
+  padding: 0.25rem;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  flex-basis: 37%;
+  text-align: center;
+  color: black;
+}

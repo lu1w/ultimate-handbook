@@ -1,0 +1,158 @@
+/* NOTE-TO-DEVELOPER: 
+  You need to add the @tailwind directives to your main CSS file so that Tailwind's styles are properly 
+  loaded into your project. 
+  
+  Tailwind organizes its styles into three layers:
+  - Base: Resets and normalizes browser styling (similar to a CSS reset).
+  - Components: Tailwind’s pre-designed component styles (e.g., forms, buttons).
+  - Utilities: The core utilities that Tailwind is famous for, like margins, padding, text alignment, etc.
+
+  CSS code after @layer are from installation of shadcn Step 6: https://ui.shadcn.com/docs/installation/manual 
+  Documentation for shadcn theming: https://ui.shadcn.com/docs/theming 
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* The following is commented out since it is for dark mode */
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+} */
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+
+    /* From uom.css for https://designsystem.web.unimelb.edu.au/style-guide/colour-palette/ */
+    --base-white: 255 255 255;
+    --col-white-100: rgb(var(--base-white));
+    --col-white-100-o-50: rgb(var(--base-white) / 50%);
+
+    --base-black: 0 0 0;
+    --col-black-100: rgb(var(--base-black));
+    --col-black-100-o-50: rgb(var(--base-black) / 50%);
+
+    --col-link-100: rgb(8 57 115);
+
+    --base-heritage: 0 15 70;
+    --col-heritage-100: rgb(var(--base-heritage));
+    --col-heritage-75: rgb(64 75 116);
+    --col-heritage-50: rgb(128 135 162);
+    --col-heritage-25: rgb(191 195 209);
+    --col-heritage-100-o-80: rgb(var(--base-heritage) / 80%);
+    --col-heritage-100-o-60: rgb(var(--base-heritage) / 60%);
+    --col-heritage-100-o-40: rgb(var(--base-heritage) / 40%);
+    --col-heritage-100-o-20: rgb(var(--base-heritage) / 20%);
+
+    --base-heritage-dark: 0 11 52;
+    --col-heritage-dark-100: rgb(var(--base-heritage-dark));
+
+    /* Colours for subejct cards */
+    --col-pink-100: rgb(235 123 190);
+    --col-pink-75: rgb(240 156 206);
+    --col-pink-50: rgb(245 189 223);
+    --col-pink-25: rgb(250 222 239);
+    --col-blue-dark-100: rgb(0 60 85);
+    --col-blue-dark-75: rgb(64 109 128);
+    --col-blue-dark-50: rgb(128 157 170);
+    --col-blue-dark-25: rgb(191 206 213);
+    --col-blue-light-100: rgb(70 200 240);
+    --col-blue-light-75: rgb(116 214 244);
+    --col-blue-light-50: rgb(163 228 247);
+    --col-blue-light-25: rgb(209 241 251);
+    --col-yellow-100: rgb(255 214 41);
+    --col-yellow-75: rgb(255 224 94);
+    --col-yellow-50: rgb(255 234 148);
+    --col-yellow-25: rgb(255 245 201);
+
+    /* Colours for cross (error) and tick (correct) */
+    --col-red-light-100: rgb(255 45 60);
+    --col-red-light-75: rgb(255 97 109);
+    --col-red-light-50: rgb(255 150 157);
+    --col-red-light-25: rgb(255 202 206);
+    --col-green-light-100: rgb(159 184 37);
+    --col-green-light-75: rgb(183 202 91);
+    --col-green-light-50: rgb(207 220 146);
+    --col-green-light-25: rgb(231 237 200);
+  }
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

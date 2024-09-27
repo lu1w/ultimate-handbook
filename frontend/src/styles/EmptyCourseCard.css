@@ -1,0 +1,26 @@
+.empty-course-card {
+    width: 18rem; 
+    min-height: 250px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f7f8fa;
+}
+
+.add-button {
+    color: rgb(158, 158, 158);
+    border: 3px solid rgb(158, 158, 158);
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: transparent; 
+}
+
+.add-button:hover {
+    background-color: rgb(222, 220, 220);
+}
+
