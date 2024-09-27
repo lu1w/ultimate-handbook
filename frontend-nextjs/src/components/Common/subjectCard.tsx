@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Button } from "@/components/ui/button"; 
+import * as React from 'react';
+import { Button } from '@components/ui/button';
 import {
   Card,
   CardHeader,
@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@/components/ui/card"; 
-import { cn } from "@/lib/utils";
+} from '@components/ui/card';
+import { cn } from '@/lib/utils';
 
-// Type to color mapping
+// Mapping subject types to colours
 const typeColors: Record<string, string> = {
   'COMPULSORY': 'bg-subject-compulsory',
   'MAJOR CORE': 'bg-subject-core',
@@ -35,14 +35,13 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   points,
   name,
   term,
-  onClose
+  onClose,
 }) => {
-
   const typeColor = typeColors[type] || 'bg-subject';
 
   return (
     <Card className="w-full h-full border border-black">
-      <CardHeader className={cn("relative", typeColor, "p-3", "rounded-t-lg")}>
+      <CardHeader className={cn('relative', typeColor, 'p-3', 'rounded-t-lg')}>
         <div className="flex justify-between items-center">
           <span className="text-sm font-semibold">{type}</span>
           <Button
@@ -57,12 +56,19 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       </CardHeader>
       <CardContent className="p-4">
         <CardDescription>{`${code} | Level ${level} | ${points} points`}</CardDescription>
-        <CardTitle className="mt-2 text-lg font-bold font-serif">{name}</CardTitle>
+        <CardTitle className="mt-2 text-lg font-bold font-serif">
+          {name}
+        </CardTitle>
       </CardContent>
       <CardFooter className="p-4 pt-0 space-x-2">
         <div className="grid grid-cols-2 gap-2">
           {term.map((t) => (
-            <Button key={t} variant="secondary" size="sm" className="rounded-full">
+            <Button
+              key={t}
+              variant="secondary"
+              size="sm"
+              className="rounded-full"
+            >
               {t}
             </Button>
           ))}

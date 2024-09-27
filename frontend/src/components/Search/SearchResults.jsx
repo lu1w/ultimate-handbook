@@ -12,7 +12,7 @@ function SearchResults({ searchResults }) {
       {/* <h1>Subjects:{JSON.stringify(searchResults)}</h1> */}
       {searchResults.map((subject) => (
         <CourseCard
-          // key={subject._id}
+          key={subject._id}
           type="DISCIPLINE" // TODO: dynamically set the type of the subject
           code={subject.subjectCode}
           level={subject.level}
