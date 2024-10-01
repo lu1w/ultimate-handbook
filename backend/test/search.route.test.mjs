@@ -1,6 +1,7 @@
 import request from "supertest";
 import { expect } from "chai";
 import app from "../src/app.js";
+
 describe("Search Routes", () => {
   it("should search for a subject by query", (done) => {
     const query = "COMP10002";
