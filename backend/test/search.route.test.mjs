@@ -6,7 +6,6 @@ import app from '../src/app.js';
 describe("Search Routes", () => {
   
   it("should search for a subject by query", function (done)  {
-    this.timeout(5000); // set timeout to 5 seconds
     const query = "COMP10002"; // search for COMP10002
     request(app)
       .get(`/v1/search/subject/${query}`) // GET request
