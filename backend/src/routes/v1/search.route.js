@@ -141,9 +141,10 @@ router.get("/:query", async (req, res) => {
 
   const { query } = req.params;
   console.log(`INFO query is ${query}, parse to bool: ${Boolean(query)}`);
-  try {
-    console.log(`INFO start searching for query ${query}`);
-    const collection = await mongoClient.getCollection(subjectDB);
+  if (query) {
+    try {
+      console.log(`INFO start searching for query ${query}`);
+      const collection = await mongoClient.getCollection(subjectDB);
 
     // Query the database for subjects matching the search query
     const subjects = await collection
