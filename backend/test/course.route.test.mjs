@@ -1,9 +1,10 @@
-const chai = require("chai");
-const chaiHttp = require("chai-http");
-const app = require("../src/app"); // 引入你的 Express 应用
+import * as chai from 'chai'; // Import everything from chai as a namespace
+import chaiHttp from 'chai-http';
+import app from '../src/app.js'; // Ensure the path to your app is correct
 
 chai.use(chaiHttp);
 const { expect } = chai;
+
 describe("Course Routes", () => {
   it("should return a welcome message", (done) => {
     chai
@@ -16,6 +17,7 @@ describe("Course Routes", () => {
         done();
       });
   });
+
   it("should add a subject to the planner", (done) => {
     const subjectData = {
       "2024s21": { SubjectsCode: "COMP10002", SubjectsName: "COMPUTER!" }
@@ -31,6 +33,7 @@ describe("Course Routes", () => {
         done();
       });
   });
+
   it("should remove a subject from the planner", (done) => {
     const query = "2024s21";
     chai

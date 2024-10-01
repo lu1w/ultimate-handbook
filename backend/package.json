@@ -1,7 +1,7 @@
 {
-  "name": "huddle-api",
+  "name": "Course Planner",
   "version": "1.0.0",
-  "description": "Back-end for Huddle",
+  "description": "Back-end for Unimelb Course Planner",
   "main": "src/index.js",
   "repository": "https://github.com/cissa-unimelb/huddle-api",
   "engines": {
@@ -13,8 +13,10 @@
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check **/*.js",
     "prettier:fix": "prettier --write **/*.js",
-    "prepare": "husky install && commitizen init cz-conventional-changelog --save-dev --save-exact",
-    "commit": "cz"
+    "prepare": "husky install",
+    "commit": "cz",
+    "check-eslint": "eslint --print-config file.js > eslint-config.json",
+    "test": "cross-env NODE_ENV=test mocha --recursive test/**/*.test.mjs --exit"
   },
   "keywords": [
     "node",
@@ -58,24 +60,25 @@
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
+    "@eslint/js": "^9.10.0",
     "chai": "^5.1.1",
+    "chai-http": "^5.0.0",
     "commitizen": "^4.3.0",
     "cross-env": "^7.0.3",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.9.0",
     "eslint-plugin-prettier": "5.0.0",
-    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react": "^7.37.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-security": "^1.4.0",
-    "faker": "^5.5.3",
+    "globals": "^15.9.0",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.7",
     "mocha": "^10.7.3",
-    "node-mocks-http": "^1.8.0",
-    "nodemon": "^3.1.4",
+    "nodemon": "^3.0.1",
     "prettier": "^3.3.2"
   },
   "config": {
