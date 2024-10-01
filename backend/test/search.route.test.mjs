@@ -1,38 +1,31 @@
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import app from '../src/app.js'; // 确保路径正确
-
-chai.use(chaiHttp);
-const { expect } = chai;
-
-// const chai = require('chai');
-// const chaiHttp = require('chai-http');
-// const app = require('../src/app'); // 引入你的 Express 应用
-// chai.use(chaiHttp);
-// const { expect } = chai;
-
+import request from 'supertest'; 
+import { expect } from 'chai'; 
+import app from '../src/app.js'; 
 
 describe("Search Routes", () => {
-  it("should get all subjects", (done) => {
-    chai
-      .request(app)
-      .get("/v1/search")
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an("array");
-        done();
-      });
-  });
+  
   it("should search for a subject by query", (done) => {
-    const query = "COMP10002";
-    chai
-      .request(app)
-      .get(`/v1/search/subject/${query}`)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
+    const query = "COMP10002"; // search for COMP10002
+    request(app)
+      .get(`/v1/search/subject/${query}`) // GET request
+      .end((err, res) => { // then pass values to the end/callback function
+        // make sure there is no error
+        if (err) return done(err);
+
+        expect(res.status).to.equal(200);
+
         expect(res.body).to.be.an("object");
-        expect(res.body.subjects).to.be.an("array");
-        done();
+
+        // assert the subjects property is an array
+        expect(res.body).to.have.property("subjects").that.is.an("array");
+
+        // make sure the subejct structure is correct
+        if (res.body.subjects.length > 0) {
+          expect(res.body.subjects[0]).to.have.property("subjectName");
+          expect(res.body.subjects[0]).to.have.property("subjectCode");
+        }
+
+        done(); 
       });
   });
 });
