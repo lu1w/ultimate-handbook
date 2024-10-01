@@ -19,10 +19,24 @@ export default [
       'no-underscore-dangle': 'off',
       'consistent-return': 'off',
       'security/detect-object-injection': 'off',
+      'react/prop-types': 'error', // open for React
     },
   },
-  { files: ['backend/**/*.js'], languageOptions: { sourceType: 'commonjs' } },
-  { files: ['frontend/**/*.jsx'], languageOptions: { sourceType: 'module' } },
+
+  { files: ['backend/**/*.js'], 
+    languageOptions: { sourceType: 'commonjs' } 
+  },
+
+  { files: ['frontend/**/*.jsx'], 
+    languageOptions: { sourceType: 'module' } 
+  },
+
+  {
+    files: ['backend/test/**/*.js'],
+    languageOptions: {
+      globals: globals.mocha, // mocha is a global variable
+    },
+  },
   // {files: ["**/*.jsx"], languageOptions: {sourceType: "module"}},
   {
     languageOptions: {

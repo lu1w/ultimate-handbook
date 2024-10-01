@@ -58,6 +58,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
+    "chai": "^5.1.1",
     "commitizen": "^4.3.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
@@ -72,6 +73,7 @@
     "faker": "^5.5.3",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.7",
+    "mocha": "^10.7.3",
     "node-mocks-http": "^1.8.0",
     "nodemon": "^3.1.4",
     "prettier": "^3.3.2"

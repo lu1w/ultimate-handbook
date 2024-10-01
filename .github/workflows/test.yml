@@ -1,0 +1,43 @@
+name: Run Tests
+
+# 触发条件
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'  
+
+      # Step 3: cache node_modules to speed up build
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Step 4: install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 5: run ESLint to check code quality
+      - name: Run ESLint
+        run: npm run lint
+
+      # Step 6: run tests
+      - name: Run tests
+        run: npm test
