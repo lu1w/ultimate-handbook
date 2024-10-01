@@ -16,7 +16,8 @@ router.get("/", async (req, res) => {
     const collection = await mongoClient.getCollection(subjectDB);
     // Query all subjects
     const subjects = await collection.find({}).toArray();
-    res.json(subjects);
+
+    res.status(200).send({ subjects });
     console.log("INFO finished searching all subjects");
   } catch (err) {
     console.error(err);
@@ -28,14 +29,20 @@ router.get("/", async (req, res) => {
   //res.send(req);
 });
 
-router.get("/subject/:query", async (req, res) => {
+// router.get("/subject", (req, res) => {
+//   console.log("INFO: search query not specified");
+//   // TODO: return every
+//   res.status(200).send({ subjects: [] });
+// });
+
+router.get("/:query", async (req, res) => {
   console.log(`INFO req is: `);
   console.log(req);
   console.log("INFO enter GET search/subject/");
   console.log(`INFO req.query is ${req.query}`);
 
   const { query } = req.params;
-  console.log(`INFO query is ${query}`);
+  console.log(`INFO query is ${query}, parse to bool: ${Boolean(query)}`);
   if (query) {
     try {
       console.log(`INFO start searching for query ${query}`);

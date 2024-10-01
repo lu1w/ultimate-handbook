@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button } from '@/components/common/button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@components/ui/input';
 // import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 
