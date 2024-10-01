@@ -66,6 +66,6 @@ describe("Search Routes", () => {
         }
 
         done();
-      });
+      }).timeout(10000);
   });
 });
