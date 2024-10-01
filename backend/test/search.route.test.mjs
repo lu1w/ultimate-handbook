@@ -39,7 +39,7 @@ import app from '../src/app.js'; // 直接引用 Express app 实例
 
 describe("Search Routes", () => {
   
-  it("should search for a subject by query", function (done) {
+  it("should search for a subject by query", (done) =>{
     const query = "COMP10002";
     request(app)
       .get(`/v1/search/subject/${query}`)
@@ -66,6 +66,6 @@ describe("Search Routes", () => {
         }
 
         done();
-      }).timeout(100000);
+      });
   });
 });
