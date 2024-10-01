@@ -19,7 +19,7 @@ export default [
       'no-underscore-dangle': 'off',
       'consistent-return': 'off',
       'security/detect-object-injection': 'off',
-      'react/prop-types': 'error', // React prop-types 规则
+      'react/prop-types': 'error', // open for React
     },
   },
 
