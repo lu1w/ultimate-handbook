@@ -141,34 +141,29 @@ router.get("/:query", async (req, res) => {
 
   const { query } = req.params;
   console.log(`INFO query is ${query}, parse to bool: ${Boolean(query)}`);
-  if (query) {
-    // TODO: remove condition checking, since query has to be present if entering this API
-    try {
-      console.log(`INFO start searching for query ${query}`);
-      const collection = await mongoClient.getCollection(subjectDB);
+  try {
+    console.log(`INFO start searching for query ${query}`);
+    const collection = await mongoClient.getCollection(subjectDB);
 
-      // Query the database for subjects matching the search query
-      const subjects = await collection
-        .find({
-          $or: [
-            { subjectName: new RegExp(query, "i") }, // Case-insensitive search by name
-            { subjectCode: new RegExp(query, "i") } // Case-insensitive search by code
-          ]
-        })
-        .toArray();
+    // Query the database for subjects matching the search query
+    const subjects = await collection
+      .find({
+        $or: [
+          { subjectName: new RegExp(query, "i") }, // Case-insensitive search by name
+          { subjectCode: new RegExp(query, "i") } // Case-insensitive search by code
+        ]
+      })
+      .toArray();
 
-      console.log(`INFO done searching for ${query}`);
-      res.status(200).send({ subjects }); // Return the matching subjects
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        error: `Internal server error, failure in retrieve subjects from database`
-      });
-    }
-  } else {
-    // query is an empty string, do not do anything
-    res.json({ error: "Search query is required" });
+    console.log(`INFO done searching for ${query}`);
+    res.status(200).send({ subjects }); // Return the matching subjects
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: `Internal server error, failure in retrieve subjects from database`
+    });
   }
+
   //res.send(req);
 });
 
