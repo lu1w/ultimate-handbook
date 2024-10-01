@@ -1,3 +1,18 @@
+# .idea folder
+.idea/
+
+# Dependencies
 node_modules/
-eslint-config.json
-uom.css
+
+# yarn error logs
+yarn-error.log
+
+# Environment varibales
+.env*
+!./.env.example
+
+# Code coverage
+coverage
+
+# testing output
+.out*
