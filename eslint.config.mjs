@@ -22,6 +22,23 @@ export default [
       'react/prop-types': 'error', // open for React
     },
   },
+  {
+    rules: {
+      'no-console': 'off', 
+    },
+  },
+
+  {
+    files: ['backend/**/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs', 
+      globals: {
+        ...globals.node, // node is a global variable
+        process: true,
+        __dirname: true,
+      },
+    },
+  },
 
   { files: ['backend/**/*.js'], 
     languageOptions: { sourceType: 'commonjs' } 
