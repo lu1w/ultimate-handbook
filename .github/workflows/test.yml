@@ -41,5 +41,5 @@ jobs:
       # Step 6: run tests
       - name: Run tests
         env:
-          MONGODB_URL: "mongodb+srv://073:UltimateHandbook073@comp30022-073.v76xfnt.mongodb.net/?retryWrites=true&w=majority&appName=COMP30022-073" 
+          MONGODB_URL:  ${{secrets.MONGO_URL}} 
         run: npm test
