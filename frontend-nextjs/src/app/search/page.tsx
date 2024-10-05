@@ -7,6 +7,8 @@ import SearchResults from '@components/search/SearchResults';
 
 import axios from 'axios';
 
+import { Level, Availability } from '@/lib/constants';
+
 // TODO: remove this mock data after the display is correctly set up
 // this is for local testing only, for testing the display of the result grid
 // let mockData = [
@@ -61,9 +63,20 @@ import axios from 'axios';
 // ];
 
 function SearchPage() {
+  /* Searching box */
   const [input, setInput] = React.useState('');
   const [query, setQuery] = React.useState('');
   const [result, setResult] = React.useState([]);
+
+  /* Filter */
+  const [levels, setLevels] = React.useState<Array<Level>>([1]);
+  const [availabilities, setAvailabilities] = React.useState<
+    Array<Availability>
+  >(['Semester_1']);
+  const [studyAreas, setStudyAreas] = React.useState<Array<String>>([
+    'MAST',
+    'COMP',
+  ]);
 
   // Fetch data when the component mounts
   React.useEffect(() => {
@@ -79,28 +92,33 @@ function SearchPage() {
     fetchData(); // Call the function to fetch data
   }, []); // Empty dependency array - this effect runs once when the component mounts
 
-  function handleChange(event) {
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     console.log(
       `INFO handleChange(): event.target.value: ${event.target.value}`,
     );
     setInput(event.target.value);
   }
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event: React.ChangeEvent<HTMLFormElement>) {
     console.log(`INFO handleSubmit()`);
     event.preventDefault(); // prevent the default refresh behavior of the event from the <form> element
     console.log('INFO handleSearch()');
 
     // Send the input query to the backend for database access
     try {
-      console.log(`INFO try sending query ${input} to the backend`);
-      const res = await axios.get('http://localhost:4000/v1/search/' + input);
+      const url =
+        `http://localhost:4000/v1/search/conditions?` + // URL on two lines since it's too long
+        `input=${input}&levels=${levels}&availabilities=${availabilities}&studyAreas=${studyAreas}`;
+      console.log(`INFO try sending query ${url} to the backend`);
+      const res = await axios.get(url);
       setResult(res.data.subjects);
       setQuery(input);
     } catch (err) {
       console.error('Error fetching subjects:', err);
     }
   }
+
+  async function handleCheck() {}
 
   return (
     <div>
@@ -109,7 +127,7 @@ function SearchPage() {
         handleSubmit={handleSubmit}
         input={input}
       />
-      <SearchFilters />
+      <SearchFilters handleCheck={handleCheck} />
       <SearchResults subjects={result} query={query} />
       {/* <SearchResults searchResults={mockData} /> */}
     </div>
