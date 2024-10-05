@@ -133,39 +133,78 @@ router.get("/", async (req, res) => {
  *                   type: string
  *                   example: "Internal server error, failure in retrieve subjects from database"
  */
-router.get("/:query", async (req, res) => {
+router.get("/conditions", async (req, res) => {
   console.log(`INFO req is: `);
   console.log(req);
   console.log("INFO enter GET search/subject/");
-  console.log(`INFO req.query is ${req.query}`);
+  console.log(`INFO req.query is ${req.query.input}`);
 
-  const { query } = req.params;
-  console.log(`INFO query is ${query}, parse to bool: ${Boolean(query)}`);
-  if (query) {
-    try {
-      console.log(`INFO start searching for query ${query}`);
-      const collection = await mongoClient.getCollection(subjectDB);
+  const input = req.query.input;
+  const levels = req.query.levels
+    ? req.query.levels.split(",").map((level) => parseInt(level))
+    : [];
+  const availabilities = req.query.availabilities
+    ? req.query.availabilities
+        .split(",")
+        .map((availability) => availability.split("_").join(" "))
+    : [];
+  const studyAreas = req.query.studyAreas
+    ? req.query.studyAreas.split(",")
+    : [];
+
+  console.log(
+    `INFO input=${input}, levels=${levels}, availabilities=${availabilities}, studyAreas=${studyAreas}; 
+    studyArea is array: ${Array.isArray(studyAreas)}
+    input parse to bool: ${Boolean(input)}`
+  );
+
+  const filtersQuery = [
+    { level: { $in: levels } },
+    { availability: { $elemMatch: { $in: availabilities } } },
+    {
+      subjectCode: {
+        $in: studyAreas.map((codePrefix) => new RegExp("^" + codePrefix))
+      }
+    }
+  ];
+
+  try {
+    const collection = await mongoClient.getCollection(subjectDB);
+    if (input) {
+      console.log(`INFO start searching for query ${input}`);
 
       // Query the database for subjects matching the search query
       const subjects = await collection
         .find({
-          $or: [
-            { subjectName: new RegExp(query, "i") }, // Case-insensitive search by name
-            { subjectCode: new RegExp(query, "i") } // Case-insensitive search by code
-          ]
+          $and: [
+            {
+              $or: [
+                { subjectName: new RegExp(input, "i") }, // Case-insensitive search by name
+                { subjectCode: new RegExp(input, "i") } // Case-insensitive search by code
+              ]
+            }
+          ].concat(filtersQuery)
         })
         .toArray();
 
-      console.log(`INFO done searching for ${query}`);
+      console.log(`INFO done searching for ${input}`);
       res.status(200).send({ subjects }); // Return the matching subjects
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        error: `Internal server error, failure in retrieve subjects from database`
-      });
-    }
-  }
+    } else {
+      const subjects = await collection
+        .find({
+          $and: filtersQuery
+        })
+        .toArray();
 
+      console.log(`INFO done searching for ${input}`);
+      res.status(200).send({ subjects }); // Return the matching subjects
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: `Internal server error, failure in retrieve subjects from database`
+    });
+  }
   //res.send(req);
 });
 
