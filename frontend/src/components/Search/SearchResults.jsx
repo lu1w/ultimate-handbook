@@ -13,7 +13,7 @@ function SearchResults({ searchResults }) {
       {searchResults.map((subject) => (
         <CourseCard
           key={subject._id}
-          type="DISCIPLINE" // TODO: dynamically set the type of the subject
+          type="" // TODO: dynamically set the type of the subject
           code={subject.subjectCode}
           level={subject.level}
           name={subject.subjectName}

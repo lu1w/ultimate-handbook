@@ -40,7 +40,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   const typeColor = typeColors[type] || 'bg-subject';
 
   return (
-    <Card className="w-full h-full border border-black">
+    <Card className="w-full h-full min-w-40 border border-black">
       <CardHeader className={cn('relative', typeColor, 'p-3', 'rounded-t-lg')}>
         <div className="flex justify-between items-center">
           <span className="text-sm font-semibold">{type}</span>

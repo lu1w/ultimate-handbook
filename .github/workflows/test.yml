@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'  
+          node-version: '20'
 
       # Step 3: cache node_modules to speed up build
       - name: Cache node_modules
@@ -41,5 +41,5 @@ jobs:
       # Step 6: run tests
       - name: Run tests
         env:
-          MONGODB_URL:  ${{secrets.MONGO_URL}} 
+          MONGODB_URL: ${{secrets.MONGO_URL}}
         run: npm test
