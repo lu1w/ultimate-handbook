@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Filter from '@components/Search/filter';
+import Filter from '@/components/search/filter';
 
 import { Checkbox } from '@components/ui/checkbox';
 
@@ -22,8 +22,8 @@ function SearchFilters({ handleCheck }) {
       <Filter id="sem2" text="Semester 2" handleCheck={handleCheck} />
 
       <h3>Study Area</h3>
-      <label htmlFor="level1" className="text-sm font-medium leading-10 p-2">
-        <Checkbox id="level1" onClick={handleCheck} defaultChecked />
+      <label htmlFor="COMP" className="text-sm font-medium leading-10 p-2">
+        <Checkbox id="COMP" onClick={handleCheck} defaultChecked />
         Computer Science
       </label>
     </div>

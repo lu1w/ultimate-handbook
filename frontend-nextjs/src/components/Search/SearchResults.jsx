@@ -3,9 +3,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SubjectCard from '@components/common/subjectCard';
+import SubjectCard from '@/components/common/subjectCard';
 
-function SearchResults({ subjects, query }) {
+function SearchResults({ subjects }) {
   // let subject = searchResults[0];
   console.log(
     `INFO: searchResults passed into SearchResuitls<> is ${JSON.stringify(subjects)}`,
@@ -13,9 +13,10 @@ function SearchResults({ subjects, query }) {
   return (
     <div>
       <p className="w-full text-center bg-search-muted text-white p-2">
-        {query
+        {subjects.length} results found
+        {/* {query
           ? `${subjects.length} results found`
-          : 'please enter your subject'}
+          : 'please enter your subject'} */}
       </p>
       <div className="p-10 grid grid-cols-4 gap-5">
         {/* <h1>Subjects:{JSON.stringify(subjects)}</h1> */}

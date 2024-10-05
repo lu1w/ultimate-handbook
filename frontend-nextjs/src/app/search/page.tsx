@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import SearchBar from '@components/search/SearchBar';
-import SearchFilters from '@components/search/SearchFilters';
-import SearchResults from '@components/search/SearchResults';
+import SearchBar from '@/components/search/SearchBar';
+import SearchFilters from '@/components/search/SearchFilters';
+import SearchResults from '@/components/search/SearchResults';
 
 import axios from 'axios';
 
@@ -128,7 +128,7 @@ function SearchPage() {
         input={input}
       />
       <SearchFilters handleCheck={handleCheck} />
-      <SearchResults subjects={result} query={query} />
+      <SearchResults subjects={result} />
       {/* <SearchResults searchResults={mockData} /> */}
     </div>
   );

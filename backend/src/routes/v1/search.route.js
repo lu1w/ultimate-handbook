@@ -41,12 +41,6 @@ router.get("/", async (req, res) => {
   //res.send(req);
 });
 
-// router.get("/subject", (req, res) => {
-//   console.log("INFO: search query not specified");
-//   // TODO: return every
-//   res.status(200).send({ subjects: [] });
-// });
-
 /**
  * @swagger
  * /search/{query}:

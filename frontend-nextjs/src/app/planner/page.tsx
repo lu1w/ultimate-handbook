@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import SubjectCard from '@/components/Common/subjectCard';
+import SubjectCard from '@/components/common/subjectCard';
 import EmptySubjectCard from '@/components/planner/emptySubjectCard';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
