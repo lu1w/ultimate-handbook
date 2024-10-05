@@ -6,6 +6,7 @@ const courseData = [
     name: "Today's Science, Tomorrow's World",
     points: '12.5',
     term: ['Summer term', 'Semester 1', 'Semester 2'],
+    coordinatorName: 'Chris Ewin'
   },
   {
     type: 'DISCIPLINE',
@@ -14,6 +15,7 @@ const courseData = [
     name: 'Calculus 2',
     points: '12.5',
     term: ['Summer term', 'Semester 1', 'Semester 2'],
+    coordinatorName: 'Renata Borovica-Gajic'
   },
   {
     type: 'MAJOR CORE',
@@ -22,6 +24,7 @@ const courseData = [
     name: 'IT Project',
     points: '12.5',
     term: ['Semester 1', 'Semester 2'],
+    coordinatorName: 'Shaanan Cohney'
   },
   {
     type: 'BREADTH',
@@ -30,6 +33,7 @@ const courseData = [
     name: 'Principle of Finance',
     points: '12.5',
     term: ['Semester 1', 'Semester 2'],
+    coordinatorName: 'Ekaterina Vylomova'
   },
   {
     type: 'NONE',
@@ -38,6 +42,7 @@ const courseData = [
     name: 'Not valid subject',
     points: '12.5',
     term: ['Summer term', 'Semester 1', 'Semester 2'],
+    coordinatorName: 'Alistair Moffat'
   },
 ];
 
