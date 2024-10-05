@@ -72,6 +72,9 @@ const config: Config = {
           header: 'var(--col-heritage-100)',
           muted: 'var(--col-heritage-50)',
         },
+        planner: {
+          header: 'var(--col-heritage-100)',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
