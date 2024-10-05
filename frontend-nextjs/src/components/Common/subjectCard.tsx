@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Button } from '@/components/ui/button';
+import * as React from 'react'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardHeader,
@@ -7,8 +7,8 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+} from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
 // Mapping subject types to colours
 const typeColors: Record<string, string> = {
@@ -16,17 +16,17 @@ const typeColors: Record<string, string> = {
   'MAJOR CORE': 'bg-subject-core',
   'DISCIPLINE': 'bg-subject-discipline',
   'BREADTH': 'bg-subject-breadth',
-};
+}
 
 interface SubjectCardProps {
-  type: string;
-  code: string;
-  level: string;
-  points: string;
-  name: string;
-  term: string[];
-  coordinatorName: string;
-  onClose: () => void;
+  type: string
+  code: string
+  level: string
+  points: string
+  name: string
+  term: string[]
+  coordinatorName: string
+  onClose: () => void
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({
@@ -39,7 +39,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   coordinatorName,
   onClose,
 }) => {
-  const typeColor = typeColors[type] || 'bg-subject';
+  const typeColor = typeColors[type] || 'bg-subject'
 
   return (
     <Card className="w-full h-full min-w-40 border border-black">
@@ -76,12 +76,12 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
           ))}
         </div>
       </CardFooter>
-      <div className="pt-0 pb-2 px-3">
+      <div className = "pt-0 pb-2 px-3">
         <span className="font-bold text-xs">Subject Coordinator:</span>
         <span className="text-xs"> {coordinatorName} </span>
       </div>
     </Card>
-  );
-};
+  )
+}
 
-export default SubjectCard;
+export default SubjectCard
