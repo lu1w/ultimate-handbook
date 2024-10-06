@@ -1,31 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import FilterHeader from '@/components/search/filterHeader';
 import Filter from '@/components/search/filter';
-
-import { Checkbox } from '@components/ui/checkbox';
 
 function SearchFilters({ handleCheck }) {
   return (
-    <div>
-      <h1>Filters</h1>
+    <div className="bg-gray-100 px-4 rounded-lg">
+      <FilterHeader header="Levels" />
+      <Filter text="Level 1" handleCheck={handleCheck} />
+      <Filter text="Level 2" handleCheck={handleCheck} />
+      <Filter text="Level 3" handleCheck={handleCheck} />
 
-      <h2>Levels</h2>
-      <Filter id="lv1" text="Level 1" handleCheck={handleCheck} />
-      <Filter id="lv2" text="Level 2" handleCheck={handleCheck} />
-      <Filter id="lv3" text="Level 3" handleCheck={handleCheck} />
+      <FilterHeader header="Available Semester/Term" />
+      <Filter text="Summer Term" handleCheck={handleCheck} />
+      <Filter text="Semester 1" handleCheck={handleCheck} />
+      <Filter text="Winter Term" handleCheck={handleCheck} />
+      <Filter text="Semester 2" handleCheck={handleCheck} />
 
-      <h2>Available Semester/Term</h2>
-      <Filter id="summer" text="Summer Term" handleCheck={handleCheck} />
-      <Filter id="sem1" text="Semester 1" handleCheck={handleCheck} />
-      <Filter id="winter" text="Winter Term" handleCheck={handleCheck} />
-      <Filter id="sem2" text="Semester 2" handleCheck={handleCheck} />
-
-      <h3>Study Area</h3>
-      <label htmlFor="COMP" className="text-sm font-medium leading-10 p-2">
-        <Checkbox id="COMP" onClick={handleCheck} defaultChecked />
-        Computer Science
-      </label>
+      <FilterHeader header="Study Area" />
+      <Filter text="BIOL" handleCheck={handleCheck} />
+      <Filter text="CHEM" handleCheck={handleCheck} />
+      <Filter text="COMP" handleCheck={handleCheck} />
+      <Filter text="MAST" handleCheck={handleCheck} />
     </div>
   );
 }

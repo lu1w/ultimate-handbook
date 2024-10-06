@@ -139,8 +139,10 @@ function SearchPage() {
         handleSubmit={handleSubmit}
         input={input}
       />
-      <SearchFilters handleCheck={handleCheck} />
-      <SearchResults subjects={result} />
+      <div className="grid grid-cols-[5fr_1fr] gap-8 pl-12 pr-8 mt-6">
+        <SearchResults subjects={result} />
+        <SearchFilters handleCheck={handleCheck} />
+      </div>
       {/* <SearchResults searchResults={mockData} /> */}
     </div>
   );

@@ -12,18 +12,21 @@ function SearchResults({ subjects }) {
   );
   return (
     <div>
-      <p className="w-full text-center bg-search-muted text-white p-2">
+      {/* Text message - number of results */}
+      <p className="w-full text-center bg-search-muted text-white p-2 rounded-xl">
         {subjects.length} results found
         {/* {query
           ? `${subjects.length} results found`
           : 'please enter your subject'} */}
       </p>
-      <div className="p-10 grid grid-cols-4 gap-5">
+
+      {/* Subject results  */}
+      <div className="py-4 grid grid-cols-4 gap-4">
         {/* <h1>Subjects:{JSON.stringify(subjects)}</h1> */}
         {subjects.map((subject) => (
           <SubjectCard
             key={subject._id}
-            // TODO: dynamically set the type of the subject, potentially mapping code to study areaø
+            // TODO-future: mapping code to study area
             type={subject.subjectCode.substring(0, 4)}
             code={subject.subjectCode}
             level={subject.level}
