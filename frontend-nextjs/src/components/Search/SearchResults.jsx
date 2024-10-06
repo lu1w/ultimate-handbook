@@ -8,7 +8,7 @@ import SubjectCard from '@/components/common/subjectCard';
 function SearchResults({ subjects }) {
   // let subject = searchResults[0];
   console.log(
-    `INFO: searchResults passed into SearchResuitls<> is ${JSON.stringify(subjects)}`,
+    `INFO: searchResults passed into SearchResults<> is has length ${subjects.length} ${JSON.stringify(subjects)}`,
   );
   return (
     <div>

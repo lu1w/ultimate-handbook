@@ -3,7 +3,8 @@ const express = require("express");
 const router = express.Router();
 const mongoClient = require("../../config/mongoClient");
 
-const subjectDB = "Subject"; // TO-DEPLOY: change to "Subject" for production, "Subjects" for testing
+const SUBJECT_COLLECTION = "Subject"; // TO-DEPLOY: change to "Subject" for production, "Subjects" for testing
+const STUDY_AREA_COLLECTION = "StudyAreaToCourse";
 
 router.use(express.json());
 
@@ -25,7 +26,7 @@ router.get("/", async (req, res) => {
 
   try {
     console.log("INFO try getting all subjects");
-    const collection = await mongoClient.getCollection(subjectDB);
+    const collection = await mongoClient.getCollection(SUBJECT_COLLECTION);
     // Query all subjects
     const subjects = await collection.find({}).toArray();
 
@@ -163,7 +164,7 @@ router.get("/conditions", async (req, res) => {
   ];
 
   try {
-    const collection = await mongoClient.getCollection(subjectDB);
+    const collection = await mongoClient.getCollection(SUBJECT_COLLECTION);
     if (input) {
       console.log(`INFO start searching for query ${input}`);
 
@@ -200,6 +201,28 @@ router.get("/conditions", async (req, res) => {
     });
   }
   //res.send(req);
+});
+
+router.get("/studyarea", async (req, res) => {
+  try {
+    const collection = await mongoClient.getCollection(STUDY_AREA_COLLECTION);
+    const studyAreas = Object.keys(await collection.findOne());
+
+    // Remove the field "_id" from the collection of studay areas
+    const index = studyAreas.findIndex((field) => field === "_id");
+    if (index !== -1) {
+      studyAreas.splice(index, 1);
+    }
+    console.log(`INFO studyAreas = ${studyAreas}`);
+
+    // Send back all study areas
+    res.status(200).send({ studyAreas });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: `Internal server error, failure in retrieve subjects from database`
+    });
+  }
 });
 
 module.exports = router;

@@ -30,7 +30,7 @@ function SearchFilters({ handleCheck }) {
   );
 }
 SearchFilters.propTypes = {
-  handleCheck: PropTypes.func.isRequired, // Must be a function and is required
+  handleCheck: PropTypes.func.isRequired,
 };
 
 export default SearchFilters;
