@@ -21,7 +21,7 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
 
         /** Search button */
-        search: 'border-white hover:bg-white-op/90 hover:text-search-header',
+        search: 'text-white hover:bg-white-op/90 hover:text-search-header',
       },
       size: {
         default: 'h-9 px-4 py-2',

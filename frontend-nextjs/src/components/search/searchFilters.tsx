@@ -11,7 +11,7 @@ interface SearchFiltersProps {
   handleStudyArea: (text: string) => void;
 }
 
-function SearchFilters({
+export default function SearchFilters({
   className,
   allStudyAreas,
   handleLevel,
@@ -19,7 +19,7 @@ function SearchFilters({
   handleStudyArea,
 }: SearchFiltersProps) {
   return (
-    <div className={'bg-gray-100 px-4 rounded-lg' + className}>
+    <div className={'bg-gray-100 px-4 rounded-lg pb-4 ' + className}>
       <FilterHeader header="Levels" />
       <Filter text="Level 1" handleCheck={handleLevel} />
       <Filter text="Level 2" handleCheck={handleLevel} />
@@ -42,5 +42,3 @@ function SearchFilters({
     </div>
   );
 }
-
-export default SearchFilters;

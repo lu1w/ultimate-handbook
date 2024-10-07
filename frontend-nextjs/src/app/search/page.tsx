@@ -6,9 +6,9 @@ import axios from 'axios';
 import { SERVER_URL } from '@/lib/utils';
 import { Level, Availability } from '@/lib/constants';
 
-import SearchBar from '@/components/search/SearchBar';
-import SearchFilters from '@/components/search/SearchFilters';
-import SearchResults from '@/components/search/SearchResults';
+import SearchBar from '@/components/search/searchBar';
+import SearchFilters from '@/components/search/searchFilters';
+import SearchResults from '@/components/search/searchResults';
 
 // TODO: remove this mock data after the display is correctly set up
 // this is for local testing only, for testing the display of the result grid
@@ -139,22 +139,27 @@ export default function SearchPage() {
   async function handleStudyArea() {}
 
   return (
-    <div className="flex flex-col h-screen">
-      <SearchBar
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        input={input}
-      />
-      <div className="grid grid-cols-[5fr_1fr] gap-8 pl-12 pr-8 my-6 overflow-scroll h-full">
-        <SearchResults subjects={result} />
+    // <div className="flex flex-col h-screen">
+    <div className="h-lvh">
+      <div className="grid grid-rows-[1fr_10fr] grid-cols-[5fr_1fr] gap-4 pb-6 overflow-hidden h-full">
+        <SearchBar
+          className="col-span-2 col-start-1 -col-end-1"
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          input={input}
+        />
+        {/* <div className="grid grid-cols-[5fr_1fr] gap-8 pl-12 pr-8 my-6 overflow-scroll h-full"> */}
+        <SearchResults className="ml-8 overflow-hidden" subjects={result} />
         <SearchFilters
+          className="mr-8 overflow-y-scroll"
           allStudyAreas={allStudyAreas}
           handleLevel={handleLevel}
           handleTerms={handleTerms}
           handleStudyArea={handleStudyArea}
         />
+        {/* </div> */}
+        {/* <SearchResults searchResults={mockData} /> */}
       </div>
-      {/* <SearchResults searchResults={mockData} /> */}
     </div>
   );
 }

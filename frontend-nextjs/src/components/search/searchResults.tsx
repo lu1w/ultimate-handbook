@@ -1,7 +1,6 @@
 // import '@styles/SearchResults.css';
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import SubjectCard from '@/components/common/subjectCard';
 import { SubjectFields } from '@/lib/dbSchema';
@@ -11,13 +10,16 @@ interface SearchResultsProps {
   subjects: Array<SubjectFields>;
 }
 
-function SearchResults({ className, subjects }: SearchResultsProps) {
+export default function SearchResults({
+  className,
+  subjects,
+}: SearchResultsProps) {
   // let subject = searchResults[0];
   console.log(
     `INFO: searchResults passed into SearchResults<> is has length ${subjects.length} ${JSON.stringify(subjects)}`,
   );
   return (
-    <div>
+    <div className={className}>
       {/* Text message - number of results */}
       <p className="w-full text-center bg-search-muted text-white p-2 rounded-xl">
         {subjects.length} results found
@@ -27,7 +29,7 @@ function SearchResults({ className, subjects }: SearchResultsProps) {
       </p>
 
       {/* Subject results  */}
-      <div className="py-4 grid grid-cols-4 gap-4">
+      <div className="py-4 grid grid-cols-4 gap-4 h-lvh overflow-x-hidden">
         {/* <h1>Subjects:{JSON.stringify(subjects)}</h1> */}
         {subjects.map((subject) => (
           <SubjectCard
@@ -52,10 +54,3 @@ function SearchResults({ className, subjects }: SearchResultsProps) {
     </div>
   );
 }
-
-SearchResults.propTypes = {
-  subjects: PropTypes.arrayOf(PropTypes.element),
-  query: PropTypes.string,
-};
-
-export default SearchResults;
