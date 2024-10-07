@@ -5,7 +5,7 @@ const courseData = [
     level: '1',
     name: "Today's Science, Tomorrow's World",
     points: '12.5',
-    term: ['Summer term', 'Semester 1', 'Semester 2'],
+    availability: ['Summer term', 'Semester 1', 'Semester 2'],
     coordinatorName: 'Chris Ewin',
   },
   {
@@ -14,7 +14,7 @@ const courseData = [
     level: '1',
     name: 'Calculus 2',
     points: '12.5',
-    term: ['Summer term', 'Semester 1', 'Semester 2'],
+    availability: ['Summer term', 'Semester 1', 'Semester 2'],
     coordinatorName: 'Renata Borovica-Gajic',
   },
   {
@@ -23,7 +23,7 @@ const courseData = [
     level: '3',
     name: 'IT Project',
     points: '12.5',
-    term: ['Semester 1', 'Semester 2'],
+    availability: ['Semester 1', 'Semester 2'],
     coordinatorName: 'Shaanan Cohney',
   },
   {
@@ -32,7 +32,7 @@ const courseData = [
     level: '1',
     name: 'Principle of Finance',
     points: '12.5',
-    term: ['Semester 1', 'Semester 2'],
+    availability: ['Semester 1', 'Semester 2'],
     coordinatorName: 'Ekaterina Vylomova',
   },
   {
@@ -41,7 +41,7 @@ const courseData = [
     level: '0',
     name: 'Not valid subject',
     points: '12.5',
-    term: ['Summer term', 'Semester 1', 'Semester 2'],
+    availability: ['Summer term', 'Semester 1', 'Semester 2'],
     coordinatorName: 'Alistair Moffat',
   },
 ];

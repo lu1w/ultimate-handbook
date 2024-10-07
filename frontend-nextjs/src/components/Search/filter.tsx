@@ -2,7 +2,6 @@ import React from 'react';
 import { Checkbox } from '../ui/checkbox';
 
 interface FilterProps {
-  id: string;
   text: string;
   handleCheck: (text: string) => void;
 }

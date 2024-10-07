@@ -63,7 +63,9 @@ import SearchResults from '@/components/search/SearchResults';
 //   },
 // ];
 
-function SearchPage() {
+let allStudyAreas: Array<string> = [];
+
+export default function SearchPage() {
   /* Input query */
   const [input, setInput] = React.useState('');
   // const [query, setQuery] = React.useState('');
@@ -78,8 +80,7 @@ function SearchPage() {
 
   /* Fetch subject data when the component mounts */
   React.useEffect(() => {
-    // Create an async function to fetch data
-    const fetchData = async () => {
+    const fetchSubjects = async () => {
       try {
         const response = await axios.get(`${SERVER_URL}/v1/search/`);
         setResult(response.data.subjects);
@@ -87,22 +88,23 @@ function SearchPage() {
         // TODO: Handle error
       }
     };
-    fetchData();
+    fetchSubjects();
   }, []); // Empty dependency array - this effect only runs once when the component mounts
 
   /* Fetch study areas data when component mounts */
   React.useEffect(() => {
-    // Create an async function to fetch data
-    const fetchData = async () => {
+    const fetchStudyAreas = async () => {
       try {
         const response = await axios.get(`${SERVER_URL}/v1/search/studyarea`);
         console.log(`INFO -- study areas ${response.data.studyAreas}`);
-        setStudyAreas(response.data.studyAreas);
+        allStudyAreas = response.data.studyAreas; // initialization
+        allStudyAreas.sort();
+        setStudyAreas(allStudyAreas);
       } catch (err) {
         // TODO: Handle error
       }
     };
-    fetchData();
+    fetchStudyAreas();
   }, []); // Empty dependency array - this effect runs once when the component mounts
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -130,22 +132,29 @@ function SearchPage() {
     }
   }
 
-  async function handleCheck() {}
+  async function handleLevel() {}
+
+  async function handleTerms() {}
+
+  async function handleStudyArea() {}
 
   return (
-    <div>
+    <div className="flex flex-col h-screen">
       <SearchBar
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         input={input}
       />
-      <div className="grid grid-cols-[5fr_1fr] gap-8 pl-12 pr-8 mt-6">
+      <div className="grid grid-cols-[5fr_1fr] gap-8 pl-12 pr-8 my-6 overflow-scroll h-full">
         <SearchResults subjects={result} />
-        <SearchFilters handleCheck={handleCheck} />
+        <SearchFilters
+          allStudyAreas={allStudyAreas}
+          handleLevel={handleLevel}
+          handleTerms={handleTerms}
+          handleStudyArea={handleStudyArea}
+        />
       </div>
       {/* <SearchResults searchResults={mockData} /> */}
     </div>
   );
 }
-
-export default SearchPage;

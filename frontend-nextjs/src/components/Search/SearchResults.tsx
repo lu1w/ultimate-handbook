@@ -4,8 +4,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import SubjectCard from '@/components/common/subjectCard';
+import { SubjectFields } from '@/lib/dbSchema';
 
-function SearchResults({ subjects }) {
+interface SearchResultsProps {
+  className?: string | undefined;
+  subjects: Array<SubjectFields>;
+}
+
+function SearchResults({ className, subjects }: SearchResultsProps) {
   // let subject = searchResults[0];
   console.log(
     `INFO: searchResults passed into SearchResults<> is has length ${subjects.length} ${JSON.stringify(subjects)}`,
@@ -28,14 +34,17 @@ function SearchResults({ subjects }) {
             key={subject._id}
             // TODO-future: mapping code to study area
             type={subject.subjectCode.substring(0, 4)}
+            name={subject.subjectName}
             code={subject.subjectCode}
             level={subject.level}
-            name={subject.subjectName}
             points={subject.points}
-            term={
+            availability={
               subject.availability // TODO: ask Weihan why are some subject availability empty
                 ? subject.availability.map((t) => t.toString())
                 : []
+            }
+            coordinatorName={
+              subject.coordinator ? Object.values(subject.coordinator)[0] : null
             }
           />
         ))}

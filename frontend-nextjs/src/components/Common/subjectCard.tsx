@@ -19,14 +19,14 @@ const typeColors: Record<string, string> = {
 };
 
 interface SubjectCardProps {
-  type: string;
+  type?: string;
   code: string;
   level: string;
   points: string;
   name: string;
-  term: string[];
+  availability: string[];
   coordinatorName: string;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({
@@ -35,25 +35,27 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   level,
   points,
   name,
-  term,
+  availability,
   coordinatorName,
   onClose,
 }) => {
-  const typeColor = typeColors[type] || 'bg-subject';
+  const typeColor = type ? typeColors[type] : 'bg-subject';
 
   return (
     <Card className="w-full h-full min-w-40 border border-black">
       <CardHeader className={cn('relative', typeColor, 'p-3', 'rounded-t-lg')}>
         <div className="flex justify-between items-center">
           <span className="text-xs font-semibold">{type}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="absolute text-base font-bold right-2 top-2 h-6 w-6"
-          >
-            ✕
-          </Button>
+          {onClose ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="absolute text-base font-bold right-2 top-2 h-6 w-6"
+            >
+              ✕
+            </Button>
+          ) : null}
         </div>
       </CardHeader>
       <CardContent className="p-3">
@@ -64,7 +66,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       </CardContent>
       <CardFooter className="p-3 pt-0 space-x-1">
         <div className="grid grid-cols-2 gap-2">
-          {term.map((t) => (
+          {availability.map((t) => (
             <Button
               key={t}
               variant="secondary"

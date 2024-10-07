@@ -15,7 +15,7 @@ interface SubjectCard {
   level: string;
   points: string;
   name: string;
-  term: string[];
+  availability: string[];
   coordinatorName: string;
 }
 
@@ -41,7 +41,7 @@ const PlannerPage: React.FC = () => {
       level: '1',
       points: '12.5',
       name: 'New Subject',
-      term: ['Semester 1'],
+      availability: ['Semester 1'],
       coordinatorName: 'John Doe',
     };
     const updatedSubjects = [...subjects];
