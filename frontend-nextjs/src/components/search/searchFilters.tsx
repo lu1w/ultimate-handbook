@@ -31,12 +31,26 @@ export default function SearchFilters({
   return (
     <div className={`bg-gray-100 px-4 rounded-xl ${className}`}>
       <FilterHeader header="Level" />
-      <Filter text="Level 1" handleCheck={(e) => handleLevel(e, 1)} />
+      {Object.values(Level).map((level) => (
+        <Filter
+          key={level}
+          text={`Level ${level}`}
+          handleCheck={(e) => handleLevel(e, level)}
+        />
+      ))}
+      {/* <Filter text="Level 1" handleCheck={(e) => handleLevel(e, 1)} />
       <Filter text="Level 2" handleCheck={(e) => handleLevel(e, 2)} />
-      <Filter text="Level 3" handleCheck={(e) => handleLevel(e, 3)} />
+      <Filter text="Level 3" handleCheck={(e) => handleLevel(e, 3)} /> */}
 
       <FilterHeader header="Study Period" />
-      <Filter
+      {Object.values(StudyPeriod).map((studyPeriod) => (
+        <Filter
+          key={studyPeriod}
+          text={studyPeriod}
+          handleCheck={(e) => handleStudyPeriod(e, studyPeriod)}
+        />
+      ))}
+      {/* <Filter
         text="Summer Term"
         handleCheck={(e) => handleStudyPeriod(e, 'Summer_Term')}
       />
@@ -51,13 +65,9 @@ export default function SearchFilters({
       <Filter
         text="Semester 2"
         handleCheck={(e) => handleStudyPeriod(e, 'Semester_2')}
-      />
+      /> */}
 
       <FilterHeader header="Study Area" />
-      {/* <Filter text="BIOL" handleCheck={handleStudyArea} />
-      <Filter text="CHEM" handleCheck={handleStudyArea} />
-      <Filter text="COMP" handleCheck={handleStudyArea} />
-      <Filter text="MAST" handleCheck={handleStudyArea} /> */}
       {Array.from(allStudyAreas)
         .toSorted()
         .map((area) => (

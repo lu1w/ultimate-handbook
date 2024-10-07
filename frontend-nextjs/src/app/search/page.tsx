@@ -62,14 +62,10 @@ import SearchResults from '@/components/search/searchResults';
 //     availability: ['Semester 2'],
 //   },
 // ];
-
-const allLevels: Set<Level> = new Set<Level>([1, 2, 3]);
-const allStudyPeriod: Set<StudyPeriod> = new Set<StudyPeriod>([
-  'Summer_Term',
-  'Semester_1',
-  'Winter_Term',
-  'Semester_2',
-]);
+const allLevels: Set<Level> = new Set<Level>(Object.values(Level));
+const allStudyPeriod: Set<StudyPeriod> = new Set<StudyPeriod>(
+  Object.values(StudyPeriod),
+);
 const allStudyAreas: Set<string> = new Set<string>([]);
 
 export default function SearchPage() {
@@ -138,7 +134,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="flex flex-col h-dvh">
+    <div className="flex flex-col h-lvh">
       {/* <div className="h-lvh pb-10"> */}
       {/* <div className="grid grid-rows-[1fr_10fr] grid-cols-[5fr_1fr] pd-10 gap-4 overflow-hidden h-lvh"> */}
       <SearchBar
@@ -147,10 +143,10 @@ export default function SearchPage() {
         handleSubmit={handleSubmit}
         input={input}
       />
-      <div className="grid grid-cols-[5fr_1fr] gap-8 pl-8 pr-6 my-6 overflow-scroll h-full">
-        <SearchResults className="" subjects={result} />
+      <div className="grid grid-cols-[5fr_1fr] gap-8 pl-8 pr-6 my-6 overflow-hidden h-full">
+        <SearchResults className="h-3/4" subjects={result} />
         <SearchFilters
-          className="overflow-y-scroll"
+          className="overflow-y-scroll mb-48"
           allStudyAreas={allStudyAreas}
           handleLevel={(event, level) =>
             event.target.checked ? levels.add(level) : levels.delete(level)

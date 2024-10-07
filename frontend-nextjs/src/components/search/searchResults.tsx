@@ -29,27 +29,31 @@ export default function SearchResults({
       </p>
 
       {/* Subject results  */}
-      <div className="py-4 grid grid-cols-4 gap-4 h-lvh overflow-y-scroll overflow-x-hidden">
-        {/* <h1>Subjects:{JSON.stringify(subjects)}</h1> */}
-        {subjects.map((subject) => (
-          <SubjectCard
-            key={subject._id}
-            // TODO-future: mapping code to study area
-            header={subject.subjectCode.substring(0, 4)}
-            name={subject.subjectName}
-            code={subject.subjectCode}
-            level={subject.level}
-            points={subject.points}
-            availability={
-              subject.availability // TODO: ask Weihan why are some subject availability empty
-                ? subject.availability.map((t) => t.toString())
-                : []
-            }
-            coordinatorName={
-              subject.coordinator ? Object.values(subject.coordinator)[0] : null
-            }
-          />
-        ))}
+      <div className="h-lvh overflow-y-scroll overflow-x-hidden p-6 pb-56">
+        <div className="py-4 grid grid-cols-4 gap-4">
+          {/* <h1>Subjects:{JSON.stringify(subjects)}</h1> */}
+          {subjects.map((subject) => (
+            <SubjectCard
+              key={subject._id}
+              // TODO-future: mapping code to study area
+              header={subject.subjectCode.substring(0, 4)}
+              name={subject.subjectName}
+              code={subject.subjectCode}
+              level={subject.level}
+              points={subject.points}
+              availability={
+                subject.availability // TODO: ask Weihan why are some subject availability empty
+                  ? subject.availability.map((t) => t.toString())
+                  : []
+              }
+              coordinatorName={
+                subject.coordinator
+                  ? Object.values(subject.coordinator)[0]
+                  : null
+              }
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

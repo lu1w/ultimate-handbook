@@ -19,6 +19,7 @@ const typeColors: Record<string, string> = {
 };
 
 interface SubjectCardProps {
+  className?: string;
   header: string;
   code: string;
   level: string;
@@ -30,6 +31,7 @@ interface SubjectCardProps {
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({
+  className,
   header,
   code,
   level,
@@ -42,7 +44,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   const typeColor = typeColors[header] || 'bg-subject';
 
   return (
-    <Card className="w-full h-full min-w-40 border border-black">
+    <Card className={`w-full h-full min-w-40 border border-black ${className}`}>
       <CardHeader className={cn('relative', typeColor, 'p-3', 'rounded-t-lg')}>
         <div className="flex justify-between items-center">
           <span className="text-xs font-semibold">{header}</span>
@@ -71,7 +73,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
               key={t}
               variant="secondary"
               size="sm"
-              className="rounded-full text-xs px-2 py-0.5 h-auto"
+              className="rounded-full text-xs px-2 py-0.5 h-auto w-fit"
             >
               {t}
             </Button>
@@ -79,8 +81,8 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
         </div>
       </CardFooter>
       <div className="pt-0 pb-2 px-3">
-        <span className="font-bold text-xs">Subject Coordinator:</span>
-        <span className="text-xs"> {coordinatorName} </span>
+        {/* <span className="font-bold text-xs">Subject Coordinator:</span>
+        <span className="text-xs"> {coordinatorName} </span> */}
       </div>
     </Card>
   );
