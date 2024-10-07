@@ -3,7 +3,7 @@ import { Checkbox } from '../ui/checkbox';
 
 interface FilterProps {
   text: string;
-  handleCheck: (text: string) => void;
+  handleCheck: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function Filter({ text, handleCheck }: FilterProps) {
@@ -14,7 +14,7 @@ export default function Filter({ text, handleCheck }: FilterProps) {
         <input
           type="checkbox"
           className="m-2 accent-search-header "
-          onClick={() => handleCheck(text)}
+          onChange={handleCheck}
           defaultChecked
         ></input>
         {text}

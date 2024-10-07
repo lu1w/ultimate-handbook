@@ -138,10 +138,11 @@ router.get("/conditions", async (req, res) => {
   const levels = req.query.levels
     ? req.query.levels.split(",").map((level) => parseInt(level))
     : [];
-  const availabilities = req.query.availabilities
-    ? req.query.availabilities
+  // TODO-future: the database uses "availability", and frontend uses "studyPeriod"; maybe unify this
+  const availabilities = req.query.studyPeriods
+    ? req.query.studyPeriods
         .split(",")
-        .map((availability) => availability.split("_").join(" "))
+        .map((studyPeriod) => studyPeriod.split("_").join(" "))
     : [];
   const studyAreas = req.query.studyAreas
     ? req.query.studyAreas.split(",")

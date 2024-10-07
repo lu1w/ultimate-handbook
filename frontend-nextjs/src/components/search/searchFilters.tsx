@@ -2,43 +2,71 @@ import React from 'react';
 
 import FilterHeader from '@/components/search/filterHeader';
 import Filter from '@/components/search/filter';
+import { Level, StudyPeriod } from '@/lib/constants';
 
 interface SearchFiltersProps {
   className?: string | undefined;
-  allStudyAreas: Array<string>;
-  handleLevel: (text: string) => void;
-  handleTerms: (text: string) => void;
-  handleStudyArea: (text: string) => void;
+  allStudyAreas: Set<string>;
+  handleLevel: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    level: Level,
+  ) => void;
+  handleStudyPeriod: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    studyPeriod: StudyPeriod,
+  ) => void;
+  handleStudyArea: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    area: string,
+  ) => void;
 }
 
 export default function SearchFilters({
   className,
   allStudyAreas,
   handleLevel,
-  handleTerms,
+  handleStudyPeriod,
   handleStudyArea,
 }: SearchFiltersProps) {
   return (
-    <div className={'bg-gray-100 px-4 rounded-lg pb-4 ' + className}>
-      <FilterHeader header="Levels" />
-      <Filter text="Level 1" handleCheck={handleLevel} />
-      <Filter text="Level 2" handleCheck={handleLevel} />
-      <Filter text="Level 3" handleCheck={handleLevel} />
+    <div className={`bg-gray-100 px-4 rounded-xl ${className}`}>
+      <FilterHeader header="Level" />
+      <Filter text="Level 1" handleCheck={(e) => handleLevel(e, 1)} />
+      <Filter text="Level 2" handleCheck={(e) => handleLevel(e, 2)} />
+      <Filter text="Level 3" handleCheck={(e) => handleLevel(e, 3)} />
 
-      <FilterHeader header="Semester/Term" />
-      <Filter text="Summer Term" handleCheck={handleTerms} />
-      <Filter text="Semester 1" handleCheck={handleTerms} />
-      <Filter text="Winter Term" handleCheck={handleTerms} />
-      <Filter text="Semester 2" handleCheck={handleTerms} />
+      <FilterHeader header="Study Period" />
+      <Filter
+        text="Summer Term"
+        handleCheck={(e) => handleStudyPeriod(e, 'Summer_Term')}
+      />
+      <Filter
+        text="Semester 1"
+        handleCheck={(e) => handleStudyPeriod(e, 'Semester_1')}
+      />
+      <Filter
+        text="Winter Term"
+        handleCheck={(e) => handleStudyPeriod(e, 'Winter_Term')}
+      />
+      <Filter
+        text="Semester 2"
+        handleCheck={(e) => handleStudyPeriod(e, 'Semester_2')}
+      />
 
       <FilterHeader header="Study Area" />
       {/* <Filter text="BIOL" handleCheck={handleStudyArea} />
       <Filter text="CHEM" handleCheck={handleStudyArea} />
       <Filter text="COMP" handleCheck={handleStudyArea} />
       <Filter text="MAST" handleCheck={handleStudyArea} /> */}
-      {allStudyAreas.map((area, index) => (
-        <Filter key={index} text={area} handleCheck={handleStudyArea} />
-      ))}
+      {Array.from(allStudyAreas)
+        .toSorted()
+        .map((area) => (
+          <Filter
+            key={area}
+            text={area}
+            handleCheck={(e) => handleStudyArea(e, area)}
+          />
+        ))}
     </div>
   );
 }

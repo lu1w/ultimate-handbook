@@ -4,7 +4,7 @@ import React from 'react';
 import axios from 'axios';
 
 import { SERVER_URL } from '@/lib/utils';
-import { Level, Availability } from '@/lib/constants';
+import { Level, StudyPeriod } from '@/lib/constants';
 
 import SearchBar from '@/components/search/searchBar';
 import SearchFilters from '@/components/search/searchFilters';
@@ -63,20 +63,26 @@ import SearchResults from '@/components/search/searchResults';
 //   },
 // ];
 
-let allStudyAreas: Array<string> = [];
+const allLevels: Set<Level> = new Set<Level>([1, 2, 3]);
+const allStudyPeriod: Set<StudyPeriod> = new Set<StudyPeriod>([
+  'Summer_Term',
+  'Semester_1',
+  'Winter_Term',
+  'Semester_2',
+]);
+const allStudyAreas: Set<string> = new Set<string>([]);
 
 export default function SearchPage() {
   /* Input query */
   const [input, setInput] = React.useState('');
-  // const [query, setQuery] = React.useState('');
   const [result, setResult] = React.useState([]);
 
   /* Filter */
-  const [levels, setLevels] = React.useState<Array<Level>>([1]);
-  const [availabilities, setAvailabilities] = React.useState<
-    Array<Availability>
-  >(['Summer_Term', 'Semester_1', 'Winter_Term', 'Semester_2']);
-  const [studyAreas, setStudyAreas] = React.useState<Array<String>>([]);
+  const [levels, setLevels] = React.useState<Set<Level>>(allLevels);
+  const [studyPeriods, setStudyPeriods] =
+    React.useState<Set<StudyPeriod>>(allStudyPeriod);
+  const [studyAreas, setStudyAreas] =
+    React.useState<Set<String>>(allStudyAreas);
 
   /* Fetch subject data when the component mounts */
   React.useEffect(() => {
@@ -89,7 +95,7 @@ export default function SearchPage() {
       }
     };
     fetchSubjects();
-  }, []); // Empty dependency array - this effect only runs once when the component mounts
+  }, []);
 
   /* Fetch study areas data when component mounts */
   React.useEffect(() => {
@@ -97,15 +103,14 @@ export default function SearchPage() {
       try {
         const response = await axios.get(`${SERVER_URL}/v1/search/studyarea`);
         console.log(`INFO -- study areas ${response.data.studyAreas}`);
-        allStudyAreas = response.data.studyAreas; // initialization
-        allStudyAreas.sort();
+        response.data.studyAreas.map((area: string) => allStudyAreas.add(area)); // initialization
         setStudyAreas(allStudyAreas);
       } catch (err) {
         // TODO: Handle error
       }
     };
     fetchStudyAreas();
-  }, []); // Empty dependency array - this effect runs once when the component mounts
+  }, []);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     console.log(
@@ -122,7 +127,7 @@ export default function SearchPage() {
     try {
       const url =
         `${SERVER_URL}/v1/search/conditions?` + // URL on two lines since it's too long
-        `input=${input}&levels=${levels}&availabilities=${availabilities}&studyAreas=${studyAreas}`;
+        `input=${input}&levels=${Array.from(levels)}&studyPeriods=${Array.from(studyPeriods)}&studyAreas=${Array.from(studyAreas)}`;
       console.log(`INFO try sending query ${url} to the backend`);
       const res = await axios.get(url);
       setResult(res.data.subjects);
@@ -132,34 +137,38 @@ export default function SearchPage() {
     }
   }
 
-  async function handleLevel() {}
-
-  async function handleTerms() {}
-
-  async function handleStudyArea() {}
-
   return (
-    // <div className="flex flex-col h-screen">
-    <div className="h-lvh">
-      <div className="grid grid-rows-[1fr_10fr] grid-cols-[5fr_1fr] gap-4 pb-6 overflow-hidden h-full">
-        <SearchBar
-          className="col-span-2 col-start-1 -col-end-1"
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          input={input}
-        />
-        {/* <div className="grid grid-cols-[5fr_1fr] gap-8 pl-12 pr-8 my-6 overflow-scroll h-full"> */}
-        <SearchResults className="ml-8 overflow-hidden" subjects={result} />
+    <div className="flex flex-col h-dvh">
+      {/* <div className="h-lvh pb-10"> */}
+      {/* <div className="grid grid-rows-[1fr_10fr] grid-cols-[5fr_1fr] pd-10 gap-4 overflow-hidden h-lvh"> */}
+      <SearchBar
+        // className="col-span-2 col-start-1 -col-end-1"
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+        input={input}
+      />
+      <div className="grid grid-cols-[5fr_1fr] gap-8 pl-8 pr-6 my-6 overflow-scroll h-full">
+        <SearchResults className="" subjects={result} />
         <SearchFilters
-          className="mr-8 overflow-y-scroll"
+          className="overflow-y-scroll"
           allStudyAreas={allStudyAreas}
-          handleLevel={handleLevel}
-          handleTerms={handleTerms}
-          handleStudyArea={handleStudyArea}
+          handleLevel={(event, level) =>
+            event.target.checked ? levels.add(level) : levels.delete(level)
+          }
+          handleStudyPeriod={(event, studyPeriod) =>
+            event.target.checked
+              ? studyPeriods.add(studyPeriod)
+              : studyPeriods.delete(studyPeriod)
+          }
+          handleStudyArea={(event, studyArea) =>
+            event.target.checked
+              ? studyAreas.add(studyArea)
+              : studyAreas.delete(studyArea)
+          }
         />
-        {/* </div> */}
-        {/* <SearchResults searchResults={mockData} /> */}
       </div>
+      {/* <SearchResults searchResults={mockData} /> */}
     </div>
+    // </div>
   );
 }
