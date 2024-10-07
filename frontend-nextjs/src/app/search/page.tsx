@@ -62,11 +62,9 @@ import SearchResults from '@/components/search/searchResults';
 //     availability: ['Semester 2'],
 //   },
 // ];
-const allLevels: Set<Level> = new Set<Level>(Object.values(Level));
-const allStudyPeriod: Set<StudyPeriod> = new Set<StudyPeriod>(
-  Object.values(StudyPeriod),
-);
-const allStudyAreas: Set<string> = new Set<string>([]);
+const allLevels: Array<Level> = Object.values(Level);
+const allStudyPeriod: Array<StudyPeriod> = Object.values(StudyPeriod);
+const allStudyAreas: Array<string> = [];
 
 export default function SearchPage() {
   /* Input query */
@@ -74,11 +72,15 @@ export default function SearchPage() {
   const [result, setResult] = React.useState([]);
 
   /* Filter */
-  const [levels, setLevels] = React.useState<Set<Level>>(allLevels);
-  const [studyPeriods, setStudyPeriods] =
-    React.useState<Set<StudyPeriod>>(allStudyPeriod);
-  const [studyAreas, setStudyAreas] =
-    React.useState<Set<String>>(allStudyAreas);
+  const [levels, setLevels] = React.useState<Set<Level>>(
+    new Set<Level>(allLevels),
+  );
+  const [studyPeriods, setStudyPeriods] = React.useState<Set<StudyPeriod>>(
+    new Set<StudyPeriod>(allStudyPeriod),
+  );
+  const [studyAreas, setStudyAreas] = React.useState<Set<string>>(
+    new Set<string>(),
+  );
 
   /* Fetch subject data when the component mounts */
   React.useEffect(() => {
@@ -99,8 +101,11 @@ export default function SearchPage() {
       try {
         const response = await axios.get(`${SERVER_URL}/v1/search/studyarea`);
         console.log(`INFO -- study areas ${response.data.studyAreas}`);
-        response.data.studyAreas.map((area: string) => allStudyAreas.add(area)); // initialization
-        setStudyAreas(allStudyAreas);
+        response.data.studyAreas.map((area: string) =>
+          allStudyAreas.push(area),
+        ); // initialization
+        setStudyAreas(new Set<string>(allStudyAreas));
+        allStudyAreas.sort();
       } catch (err) {
         // TODO: Handle error
       }
@@ -123,7 +128,8 @@ export default function SearchPage() {
     try {
       const url =
         `${SERVER_URL}/v1/search/conditions?` + // URL on two lines since it's too long
-        `input=${input}&levels=${Array.from(levels)}&studyPeriods=${Array.from(studyPeriods)}&studyAreas=${Array.from(studyAreas)}`;
+        // TODO-fix: maybe i dont neex the mapping from ' ' to '_'?
+        `input=${input}&levels=${Array.from(levels)}&studyPeriods=${Array.from(studyPeriods).map((sp) => sp.split(' ').join('_'))}&studyAreas=${Array.from(studyAreas)}`;
       console.log(`INFO try sending query ${url} to the backend`);
       const res = await axios.get(url);
       setResult(res.data.subjects);
@@ -161,6 +167,9 @@ export default function SearchPage() {
               ? studyAreas.add(studyArea)
               : studyAreas.delete(studyArea)
           }
+          clearLevels={() => levels.clear()}
+          clearStudyPeriods={() => studyPeriods.clear()}
+          clearStudyAreas={() => studyAreas.clear()}
         />
       </div>
       {/* <SearchResults searchResults={mockData} /> */}

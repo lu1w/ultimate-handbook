@@ -2,11 +2,12 @@ import React from 'react';
 import { Checkbox } from '../ui/checkbox';
 
 interface FilterProps {
+  checked: boolean | null;
   text: string;
   handleCheck: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function Filter({ text, handleCheck }: FilterProps) {
+export default function Filter({ checked, text, handleCheck }: FilterProps) {
   return (
     <div>
       <label className="text-sm font-thin p-4">
@@ -15,7 +16,7 @@ export default function Filter({ text, handleCheck }: FilterProps) {
           type="checkbox"
           className="m-2 accent-search-header "
           onChange={handleCheck}
-          defaultChecked
+          checked={checked === null ? undefined : checked}
         ></input>
         {text}
       </label>

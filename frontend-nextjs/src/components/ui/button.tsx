@@ -22,10 +22,13 @@ const buttonVariants = cva(
 
         /** Search button */
         search: 'text-white hover:bg-white-op/90 hover:text-search-header',
+
+        /** Clear filter button */
+        helper: 'text-search-muted hover:text-search-header hover:underline',
       },
       size: {
         default: 'h-9 px-4 py-2',
-        sm: 'h-8 rounded-md px-3 text-xs',
+        sm: 'h-8 rounded-md px-2 text-xs',
         lg: 'h-10 rounded-md px-8',
         icon: 'h-9 w-9',
 

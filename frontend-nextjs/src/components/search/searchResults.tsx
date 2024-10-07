@@ -29,7 +29,7 @@ export default function SearchResults({
       </p>
 
       {/* Subject results  */}
-      <div className="h-lvh overflow-y-scroll overflow-x-hidden p-6 pb-56">
+      <div className="h-lvh overflow-y-scroll overflow-x-hidden px-4 pb-56">
         <div className="py-4 grid grid-cols-4 gap-4">
           {/* <h1>Subjects:{JSON.stringify(subjects)}</h1> */}
           {subjects.map((subject) => (
