@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import courseData from '@/mock-data/courseData';
 
 interface SubjectCard {
-  type: string;
+  header: string;
   code: string;
   level: string;
   points: string;
@@ -36,7 +36,7 @@ const PlannerPage: React.FC = () => {
 
   const handleAddSubject = (index: number) => {
     const newSubject: SubjectCard = {
-      type: 'DISCIPLINE',
+      header: 'DISCIPLINE',
       code: 'NEW10001',
       level: '1',
       points: '12.5',

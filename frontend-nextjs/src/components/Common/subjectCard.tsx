@@ -19,7 +19,7 @@ const typeColors: Record<string, string> = {
 };
 
 interface SubjectCardProps {
-  type?: string;
+  header: string;
   code: string;
   level: string;
   points: string;
@@ -30,7 +30,7 @@ interface SubjectCardProps {
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({
-  type,
+  header,
   code,
   level,
   points,
@@ -39,13 +39,13 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   coordinatorName,
   onClose,
 }) => {
-  const typeColor = type ? typeColors[type] : 'bg-subject';
+  const typeColor = typeColors[header] || 'bg-subject';
 
   return (
     <Card className="w-full h-full min-w-40 border border-black">
       <CardHeader className={cn('relative', typeColor, 'p-3', 'rounded-t-lg')}>
         <div className="flex justify-between items-center">
-          <span className="text-xs font-semibold">{type}</span>
+          <span className="text-xs font-semibold">{header}</span>
           {onClose ? (
             <Button
               variant="ghost"

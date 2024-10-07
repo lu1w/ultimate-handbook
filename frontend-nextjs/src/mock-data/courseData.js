@@ -1,6 +1,6 @@
 const courseData = [
   {
-    type: 'COMPULSORY',
+    header: 'COMPULSORY',
     code: 'SCIE10005',
     level: '1',
     name: "Today's Science, Tomorrow's World",
@@ -9,7 +9,7 @@ const courseData = [
     coordinatorName: 'Chris Ewin',
   },
   {
-    type: 'DISCIPLINE',
+    header: 'DISCIPLINE',
     code: 'MAST10006',
     level: '1',
     name: 'Calculus 2',
@@ -18,7 +18,7 @@ const courseData = [
     coordinatorName: 'Renata Borovica-Gajic',
   },
   {
-    type: 'MAJOR CORE',
+    header: 'MAJOR CORE',
     code: 'COMP30022',
     level: '3',
     name: 'IT Project',
@@ -27,7 +27,7 @@ const courseData = [
     coordinatorName: 'Shaanan Cohney',
   },
   {
-    type: 'BREADTH',
+    header: 'BREADTH',
     code: 'FNCE10002',
     level: '1',
     name: 'Principle of Finance',
@@ -36,7 +36,7 @@ const courseData = [
     coordinatorName: 'Ekaterina Vylomova',
   },
   {
-    type: 'NONE',
+    header: 'NONE',
     code: 'randomCode',
     level: '0',
     name: 'Not valid subject',

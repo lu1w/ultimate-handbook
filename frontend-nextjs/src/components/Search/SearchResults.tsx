@@ -33,7 +33,7 @@ function SearchResults({ className, subjects }: SearchResultsProps) {
           <SubjectCard
             key={subject._id}
             // TODO-future: mapping code to study area
-            type={subject.subjectCode.substring(0, 4)}
+            header={subject.subjectCode.substring(0, 4)}
             name={subject.subjectName}
             code={subject.subjectCode}
             level={subject.level}
