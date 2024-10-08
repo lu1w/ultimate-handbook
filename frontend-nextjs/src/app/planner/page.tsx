@@ -3,19 +3,19 @@
 import * as React from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import SubjectCard from '@/components/Common/subjectCard';
+import SubjectCard from '@/components/common/subjectCard';
 import EmptySubjectCard from '@/components/planner/emptySubjectCard';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import courseData from '@/mock-data/courseData';
 
 interface SubjectCard {
-  type: string;
+  header: string;
   code: string;
   level: string;
   points: string;
   name: string;
-  term: string[];
+  studyPeriods: string[];
   coordinatorName: string;
 }
 
@@ -36,12 +36,12 @@ const PlannerPage: React.FC = () => {
 
   const handleAddSubject = (index: number) => {
     const newSubject: SubjectCard = {
-      type: 'DISCIPLINE',
+      header: 'DISCIPLINE',
       code: 'NEW10001',
       level: '1',
       points: '12.5',
       name: 'New Subject',
-      term: ['Semester 1'],
+      studyPeriods: ['Semester 1'],
       coordinatorName: 'John Doe',
     };
     const updatedSubjects = [...subjects];

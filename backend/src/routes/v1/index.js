@@ -5,14 +5,13 @@ const searchRoute = require('./search.route');
 const router = express.Router();
 
 const defaultRoutes = [
-  
   {
     path: '/course',
-    route: courseRoute,
+    route: courseRoute
   },
   {
     path: '/search',
-    route: searchRoute,
+    route: searchRoute
   }
 ];
 

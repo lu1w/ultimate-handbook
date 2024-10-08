@@ -14,6 +14,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           `inline-flex 
           h-10 w-full
           text-sm 
+          text-white
           shadow-sm 
           rounded-md border border-white
           px-3 py-1 

@@ -19,41 +19,45 @@ const typeColors: Record<string, string> = {
 };
 
 interface SubjectCardProps {
-  type: string;
+  className?: string;
+  header: string;
   code: string;
   level: string;
   points: string;
   name: string;
-  term: string[];
+  studyPeriods: string[];
   coordinatorName: string;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({
-  type,
+  className,
+  header,
   code,
   level,
   points,
   name,
-  term,
+  studyPeriods,
   coordinatorName,
   onClose,
 }) => {
-  const typeColor = typeColors[type] || 'bg-subject';
+  const typeColor = typeColors[header] || 'bg-subject';
 
   return (
-    <Card className="w-full h-full min-w-40 border border-black">
+    <Card className={`w-full h-full min-w-40 border border-black ${className}`}>
       <CardHeader className={cn('relative', typeColor, 'p-3', 'rounded-t-lg')}>
         <div className="flex justify-between items-center">
-          <span className="text-xs font-semibold">{type}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="absolute text-base font-bold right-2 top-2 h-6 w-6"
-          >
-            ✕
-          </Button>
+          <span className="text-xs font-semibold">{header}</span>
+          {onClose ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="absolute text-base font-bold right-2 top-2 h-6 w-6"
+            >
+              ✕
+            </Button>
+          ) : null}
         </div>
       </CardHeader>
       <CardContent className="p-3">
@@ -64,12 +68,12 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       </CardContent>
       <CardFooter className="p-3 pt-0 space-x-1">
         <div className="grid grid-cols-2 gap-2">
-          {term.map((t) => (
+          {studyPeriods.map((t) => (
             <Button
               key={t}
               variant="secondary"
               size="sm"
-              className="rounded-full text-xs px-2 py-0.5 h-auto"
+              className="rounded-full text-xs px-2 py-0.5 h-auto w-fit"
             >
               {t}
             </Button>
@@ -77,8 +81,8 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
         </div>
       </CardFooter>
       <div className="pt-0 pb-2 px-3">
-        <span className="font-bold text-xs">Subject Coordinator:</span>
-        <span className="text-xs"> {coordinatorName} </span>
+        {/* <span className="font-bold text-xs">Subject Coordinator:</span>
+        <span className="text-xs"> {coordinatorName} </span> */}
       </div>
     </Card>
   );
