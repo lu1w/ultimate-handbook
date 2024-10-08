@@ -34,17 +34,15 @@ const urlWithQuery = (
   studyPeriods = allStudyPeriods,
   studyAreas = defaultStudyAreas
 ) => {
-  return `/v1/search/conditions?
-    input=${input}
-    &levels=${levels.toString()}
-    &studyPeriods=${studyPeriods.toString()}}
-    &studyAreas=${studyAreas.toString()}`;
+  const url = `/v1/search/conditions?input=${input}&levels=${levels.toString()}&studyPeriods=${studyPeriods.toString()}}&studyAreas=${studyAreas.toString()}`;
+  console.log('testing!!' + url);
+  return url;
 };
 
 describe('Search Routes: search query', () => {
   it('search for a subject by subject code', (done) => {
     request(app)
-      .get(urlWithQuery('COMP10002'))
+      .get(urlWithQuery({ input: 'COMP10002' }))
       .expect(200)
       .end((err, res) => {
         if (err) return done(err); // if error, fail with err
@@ -68,7 +66,7 @@ describe('Search Routes: search query', () => {
 
   it('search for a subject by subject name', (done) => {
     request(app)
-      .get(urlWithQuery('linear algebra'))
+      .get(urlWithQuery({ input: 'linear algebra' }))
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
