@@ -35,7 +35,7 @@ const urlWithQuery = (
   studyAreas = defaultStudyAreas
 ) => {
   const url = `/v1/search/conditions?input=${input}&levels=${levels.toString()}&studyPeriods=${studyPeriods.toString()}}&studyAreas=${studyAreas.toString()}`;
-  console.log('testing!!' + url);
+  console.log('testing!! ' + url);
   return url;
 };
 
