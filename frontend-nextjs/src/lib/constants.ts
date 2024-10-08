@@ -10,5 +10,3 @@ export enum StudyPeriod {
   winter = 'Winter Term',
   sem2 = 'Semester 2',
 }
-
-export const STUDY_PERIODS = Object.values(StudyPeriod);
