@@ -35,18 +35,13 @@ const urlWithQuery = ({
   studyAreas = defaultStudyAreas
 }) => {
   const url =
-    `/v1/search/conditions?input=` +
-    input +
-    `&levels=${levels.toString()}&studyPeriods=${studyPeriods.toString()}&studyAreas=${studyAreas.toString()}`;
-  console.log('Testing!! ----- ');
-  console.log('input: ' + input);
-  console.log('input.toString(): ' + input.toString());
-  console.log(`empty string: ${''}`);
+    `/v1/search/conditions?` +
+    `input=${input}&levels=${levels.toString()}&studyPeriods=${studyPeriods.toString()}&studyAreas=${studyAreas.toString()}`;
   return url;
 };
 
 describe('Search Routes: search page', () => {
-  it('load all subject when entering the search page', (done) => {
+  it('load all 2293 subjects when entering the search page', (done) => {
     request(app)
       .get('/v1/search/')
       .expect(200)
@@ -54,16 +49,7 @@ describe('Search Routes: search page', () => {
         if (err) return done(err); // if error, fail with err
 
         validateResponseFields(res);
-        expect(res.body.subjects).to.be.not.empty;
-
-        // const subject = res.body.subjects[0];
-        // validateSubjectField(subject);
-
-        // TODO: remove the following if once the database has been fixed
-        // if (res.body.subjects.length > 0) {
-        //   const subject = res.body.subjects[0];
-        //   validateSubjectField(subject);
-        // }
+        expect(res.body.subjects).to.have.lengthOf(2293);
 
         return done();
       })
@@ -72,26 +58,6 @@ describe('Search Routes: search page', () => {
 });
 
 describe('Search Routes: search query', () => {
-  it('search for a subject by subject code (hard coded url)', (done) => {
-    request(app)
-      .get(
-        '/v1/search/conditions?input=comp&levels=2&studyPeriods=Summer_Term,Semester_1,Winter_Term,Semester_2&studyAreas=BMEN,ANSC'
-      )
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err); // if error, fail with err
-
-        validateResponseFields(res);
-        expect(res.body.subjects).to.have.lengthOf(3);
-
-        const subject = res.body.subjects[0];
-        validateSubjectField(subject);
-
-        return done();
-      })
-      .timeout(5000);
-  });
-
   it('search for a subject by subject code', (done) => {
     request(app)
       .get(urlWithQuery({ input: 'COMP10002' }))
@@ -136,6 +102,26 @@ describe('Search Routes: search query', () => {
 });
 
 describe('Search Routes: search filter', () => {
+  it('search for a subject by filters and input query (hard coded url)', (done) => {
+    request(app)
+      .get(
+        '/v1/search/conditions?input=comp&levels=2&studyPeriods=Summer_Term,Semester_1,Winter_Term,Semester_2&studyAreas=BMEN,ANSC'
+      )
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err); // if error, fail with err
+
+        validateResponseFields(res);
+        expect(res.body.subjects).to.have.lengthOf(3);
+
+        const subject = res.body.subjects[0];
+        validateSubjectField(subject);
+
+        return done();
+      })
+      .timeout(5000);
+  });
+
   it('search for a subejct based on filter constraints with an input query', (done) => {
     request(app)
       .get(
@@ -168,7 +154,7 @@ describe('Search Routes: search filter', () => {
         urlWithQuery({
           levels: [1, 2],
           studyPeriods: [StudyPeriod.summer],
-          studyAreas: ['MATH']
+          studyAreas: ['MAST']
         })
       )
       .expect(200)
@@ -181,7 +167,7 @@ describe('Search Routes: search filter', () => {
         for (let subject of res.body.subjects) {
           validateSubjectField(subject);
           expect(subject.level in [1, 2]);
-          expect(subject.subjectCode.substring(0, 4) == 'MATH');
+          expect(subject.subjectCode.substring(0, 4) == 'MAST');
         }
         return done();
       })
