@@ -16,7 +16,8 @@
     "prepare": "husky install",
     "commit": "cz",
     "check-eslint": "eslint --print-config file.js > eslint-config.json",
-    "test": "cross-env NODE_ENV=test mocha --timeout 100000 --recursive test/**/*.test.mjs --exit"
+    "test": "cross-env NODE_ENV=test mocha --timeout 100000 --recursive test/**/*.test.mjs --exit",
+    "mocha": "mocha"
   },
   "keywords": [
     "node",
@@ -36,6 +37,7 @@
   ],
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "chai-http": "^5.0.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -55,10 +57,7 @@
     "swagger-ui-express": "^5.0.1",
     "validator": "^13.0.0",
     "winston": "^3.2.1",
-    "xss-clean": "^0.1.1",
-    "chai": "^5.1.1",
-    "chai-http": "^5.0.0",
-    "mocha": "^10.0.0"
+    "xss-clean": "^0.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
