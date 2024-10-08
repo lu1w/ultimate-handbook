@@ -5,6 +5,6 @@ export interface SubjectFields {
   subjectCode: string;
   level: string;
   points: string;
-  availability: string[];
+  studyPeriod: string[];
   coordinator: object;
 }

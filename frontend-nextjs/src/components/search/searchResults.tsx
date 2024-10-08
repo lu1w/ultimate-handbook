@@ -41,9 +41,9 @@ export default function SearchResults({
               code={subject.subjectCode}
               level={subject.level}
               points={subject.points}
-              availability={
-                subject.availability // TODO: ask Weihan why are some subject availability empty
-                  ? subject.availability.map((t) => t.toString())
+              studyPeriods={
+                subject.studyPeriod // TODO: ask Weihan why are some subject availability empty
+                  ? subject.studyPeriod.map((sp) => sp.toString())
                   : []
               }
               coordinatorName={

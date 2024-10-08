@@ -25,7 +25,7 @@ interface SubjectCardProps {
   level: string;
   points: string;
   name: string;
-  availability: string[];
+  studyPeriods: string[];
   coordinatorName: string;
   onClose?: () => void;
 }
@@ -37,7 +37,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   level,
   points,
   name,
-  availability,
+  studyPeriods,
   coordinatorName,
   onClose,
 }) => {
@@ -68,7 +68,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       </CardContent>
       <CardFooter className="p-3 pt-0 space-x-1">
         <div className="grid grid-cols-2 gap-2">
-          {availability.map((t) => (
+          {studyPeriods.map((t) => (
             <Button
               key={t}
               variant="secondary"
