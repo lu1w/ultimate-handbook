@@ -10,65 +10,13 @@ import SearchBar from '@/components/search/searchBar';
 import SearchFilters from '@/components/search/searchFilters';
 import SearchResults from '@/components/search/searchResults';
 
-// TODO: remove this mock data after the display is correctly set up
-// this is for local testing only, for testing the display of the result grid
-// let mockData = [
-//   {
-//     type: '',
-//     subjectCode: 'SCIE10005',
-//     level: '1',
-//     subjectName: "Today's Science, Tomorrow's World",
-//     points: '12.5',
-//     availability: ['Summer term', 'Semester 1', 'Semester 2'],
-//   },
-//   {
-//     type: '',
-//     subjectCode: 'MAST10006',
-//     level: '1',
-//     subjectName: 'Calculus 2',
-//     points: '12.5',
-//     availability: ['Summer term', 'Semester 1', 'Semester 2'],
-//   },
-//   {
-//     type: '',
-//     subjectCode: 'COMP10002',
-//     level: '1',
-//     subjectName: 'Algorithms',
-//     points: '12.5',
-//     availability: ['Semester 2'],
-//   },
-//   {
-//     type: '',
-//     subjectCode: 'COMP10001',
-//     level: '1',
-//     subjectName: 'FOC',
-//     points: '12.5',
-//     availability: ['Summer term', 'Semester 1', 'Semester 2'],
-//   },
-//   {
-//     type: '',
-//     subjectCode: 'SWEN20003',
-//     level: '2',
-//     subjectName: 'Object Oriented',
-//     points: '12.5',
-//     availability: ['Summer term', 'Semester 1', 'Semester 2'],
-//   },
-//   {
-//     type: '',
-//     subjectCode: 'COMP30022',
-//     level: '3',
-//     subjectName: 'IT Project',
-//     points: '12.5',
-//     availability: ['Semester 2'],
-//   },
-// ];
 const allLevels: Array<Level> = Object.values(Level);
 const allStudyPeriod: Array<StudyPeriod> = Object.values(StudyPeriod);
 const allStudyAreas: Array<string> = [];
 
 export default function SearchPage() {
   /* Input query */
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState<string>('');
   const [result, setResult] = useState([]);
 
   /* Filter */
@@ -172,7 +120,6 @@ export default function SearchPage() {
           clearStudyAreas={() => studyAreas.clear()}
         />
       </div>
-      {/* <SearchResults searchResults={mockData} /> */}
     </div>
     // </div>
   );

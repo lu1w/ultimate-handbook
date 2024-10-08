@@ -3,11 +3,11 @@
 import React from 'react';
 
 import SubjectCard from '@/components/common/subjectCard';
-import { SubjectFields } from '@/lib/dbSchema';
+import { Subject } from '@/lib/objectSchema';
 
 interface SearchResultsProps {
   className?: string | undefined;
-  subjects: Array<SubjectFields>;
+  subjects: Array<Subject>;
 }
 
 export default function SearchResults({

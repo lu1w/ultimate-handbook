@@ -1,4 +1,4 @@
-export interface SubjectFields {
+export interface Subject {
   _id: string;
   type?: string;
   subjectName: string;
