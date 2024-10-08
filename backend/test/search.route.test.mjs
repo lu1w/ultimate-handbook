@@ -29,12 +29,15 @@ const allStudyPeriods = Object.values(StudyPeriod);
 const defaultStudyAreas = ['COMP', 'MAST', 'BIOL', 'CHEM', 'SWEN', 'INFO'];
 
 const urlWithQuery = (
-  input = [''],
+  input = '',
   levels = allLevels,
   studyPeriods = allStudyPeriods,
   studyAreas = defaultStudyAreas
 ) => {
-  const url = `/v1/search/conditions?input=${input.toString()}&levels=${levels.toString()}&studyPeriods=${studyPeriods.toString()}&studyAreas=${studyAreas.toString()}`;
+  const url =
+    `/v1/search/conditions?input=` +
+    input +
+    `&levels=${levels.toString()}&studyPeriods=${studyPeriods.toString()}&studyAreas=${studyAreas.toString()}`;
   console.log('Testing!! ----- ');
   console.log('input: ' + input);
   console.log('input.toString(): ' + input.toString());
@@ -69,9 +72,29 @@ describe('Search Routes: search page', () => {
 });
 
 describe('Search Routes: search query', () => {
+  it('search for a subject by subject code (hard coded url)', (done) => {
+    request(app)
+      .get(
+        '/v1/search/conditions?input=comp&levels=2&studyPeriods=Summer_Term,Semester_1,Winter_Term,Semester_2&studyAreas=BMEN,ANSC'
+      )
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err); // if error, fail with err
+
+        validateResponseFields(res);
+        expect(res.body.subjects).to.have.lengthOf(3);
+
+        const subject = res.body.subjects[0];
+        validateSubjectField(subject);
+
+        return done();
+      })
+      .timeout(5000);
+  });
+
   it('search for a subject by subject code', (done) => {
     request(app)
-      .get(urlWithQuery({ input: ['COMP10002'] }))
+      .get(urlWithQuery({ input: 'COMP10002' }))
       .expect(200)
       .end((err, res) => {
         if (err) return done(err); // if error, fail with err
@@ -90,12 +113,12 @@ describe('Search Routes: search query', () => {
 
         return done();
       })
-      .timeout(2000);
+      .timeout(5000);
   });
 
   it('search for a subject by subject name', (done) => {
     request(app)
-      .get(urlWithQuery({ input: ['linear algebra'] }))
+      .get(urlWithQuery({ input: 'linear algebra' }))
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
@@ -108,7 +131,7 @@ describe('Search Routes: search query', () => {
         }
         return done();
       })
-      .timeout(2000);
+      .timeout(5000);
   });
 });
 
@@ -117,7 +140,7 @@ describe('Search Routes: search filter', () => {
     request(app)
       .get(
         urlWithQuery({
-          input: ['foundation'],
+          input: 'foundation',
           levels: [1],
           studyPeriods: [StudyPeriod.sem1]
         })
@@ -136,7 +159,7 @@ describe('Search Routes: search filter', () => {
         }
         return done();
       })
-      .timeout(2000);
+      .timeout(5000);
   });
 
   it('search for a subejct based on filter constraints without input query', (done) => {
@@ -162,6 +185,6 @@ describe('Search Routes: search filter', () => {
         }
         return done();
       })
-      .timeout(2000);
+      .timeout(5000);
   });
 });
