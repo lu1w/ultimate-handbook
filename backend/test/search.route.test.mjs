@@ -28,12 +28,12 @@ const allLevels = [1, 2, 3];
 const allStudyPeriods = Object.values(StudyPeriod);
 const defaultStudyAreas = ['COMP', 'MAST', 'BIOL', 'CHEM', 'SWEN', 'INFO'];
 
-const urlWithQuery = (
+const urlWithQuery = ({
   input = '',
   levels = allLevels,
   studyPeriods = allStudyPeriods,
   studyAreas = defaultStudyAreas
-) => {
+}) => {
   const url =
     `/v1/search/conditions?input=` +
     input +
