@@ -1,7 +1,7 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const mongoClient = require("../../config/mongoClient");
-const ApiError = require("../../utils/ApiError");
+const mongoClient = require('../../config/mongoClient');
+const ApiError = require('../../utils/ApiError');
 const SubjectsPlanner = {};
 //Example of SubjectsPlanner:
 // {
@@ -41,9 +41,9 @@ const SubjectsPlanner = {};
  *                   type: string
  *                   example: "Welcome to the U handbook!!!."
  */
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
   res.json({
-    message: "Welcome to the U handbook!!!."
+    message: 'Welcome to the U handbook!!!.'
   });
 });
 
@@ -69,10 +69,10 @@ router.get("/", (req, res) => {
  *         description: inavlid query!
  */
 // Remove one Subject from one slot
-router.delete("/remove/:query", async (req, res, next) => {
+router.delete('/remove/:query', async (req, res, next) => {
   const { query } = req.params;
   if (!query) {
-    return next(new ApiError(400, "No Subject data provided."));
+    return next(new ApiError(400, 'No Subject data provided.'));
   }
 
   const semesterKey = query.substring(0, 6); // '2024s2 '
@@ -83,13 +83,13 @@ router.delete("/remove/:query", async (req, res, next) => {
     !SubjectsPlanner[semesterKey] ||
     !SubjectsPlanner[semesterKey][position]
   ) {
-    return res.status(404).json({ message: "No Subjects found!" });
+    return res.status(404).json({ message: 'No Subjects found!' });
   }
 
   delete SubjectsPlanner[semesterKey][position];
 
   res.json({
-    message: "Successfully removed Subjects!",
+    message: 'Successfully removed Subjects!',
     SubjectsPlanner: SubjectsPlanner
   });
 });
@@ -115,10 +115,10 @@ router.delete("/remove/:query", async (req, res, next) => {
  *         description: failed to add Subject
  */
 // Drag one Subjects to one slot
-router.post("/add", async (req, res) => {
+router.post('/add', async (req, res) => {
   const SubjectsData = req.body; // e.g. { "2024s21": { Subjects } }
   if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
-    return res.status(400).json({ message: "No Subjects data provided." });
+    return res.status(400).json({ message: 'No Subjects data provided.' });
   }
 
   const param = Object.keys(SubjectsData)[0]; //e.g.'2024s21'
@@ -136,12 +136,12 @@ router.post("/add", async (req, res) => {
   if (SubjectsPlanner[time][position]) {
     return res
       .status(400)
-      .json({ message: "can not add Subjects to this slot!" });
+      .json({ message: 'can not add Subjects to this slot!' });
   }
   SubjectsPlanner[time][position] = Subjects;
 
   res.json({
-    message: "successfully added Subjects!",
+    message: 'successfully added Subjects!',
     SubjectsPlanner: SubjectsPlanner
   });
 });
@@ -175,25 +175,25 @@ router.post("/add", async (req, res) => {
  *         description: server error!
  */
 // Get all prerequisites for a given Subjects
-router.get("/subject/prerequisite/:query", async (req, res, next) => {
-  console.log("INFO enter GET /Subjects/prerequisite/");
+router.get('/subject/prerequisite/:query', async (req, res, next) => {
+  console.log('INFO enter GET /Subjects/prerequisite/');
   const { query } = req.params;
   console.log(`INFO query is ${query}`);
 
   if (query) {
     try {
-      const collection = await mongoClient.getCollection("Subject");
+      const collection = await mongoClient.getCollection('Subject');
       const Subjects = await collection.findOne({ subjectCode: query });
       if (!Subjects) {
-        return next(new ApiError(404, "Subjects not found."));
+        return next(new ApiError(404, 'Subjects not found.'));
       }
       return res.json(Subjects.prerequisites);
     } catch (err) {
-      console.error("Error:", err);
-      return next(new ApiError(500, "Server error"));
+      console.error('Error:', err);
+      return next(new ApiError(500, 'Server error'));
     }
   } else {
-    return next(new ApiError(400, "Search query is required"));
+    return next(new ApiError(400, 'Search query is required'));
   }
 });
 
@@ -241,30 +241,30 @@ router.get("/subject/prerequisite/:query", async (req, res, next) => {
  */
 
 // Get all complusory Subjects for a given Subject
-router.get("/majorCompulsory", async (req, res, next) => {
+router.get('/majorCompulsory', async (req, res, next) => {
   try {
     const major = req.query.major;
 
     if (!major) {
-      return next(new ApiError(400, "Major is required."));
+      return next(new ApiError(400, 'Major is required.'));
     }
 
-    const collection = await mongoClient.getCollection("Major");
+    const collection = await mongoClient.getCollection('Major');
     const majorInfo = await collection.findOne({ majorName: major });
 
     if (!majorInfo) {
-      return next(new ApiError(404, "Major not found."));
+      return next(new ApiError(404, 'Major not found.'));
     }
 
     const { coreSubjects } = majorInfo;
 
     res.json({
-      message: "Core subjects retrieved successfully",
+      message: 'Core subjects retrieved successfully',
       coreSubjects: coreSubjects
     });
   } catch (err) {
-    console.error("Error:", err);
-    return next(new ApiError(500, "Server error"));
+    console.error('Error:', err);
+    return next(new ApiError(500, 'Server error'));
   }
 });
 

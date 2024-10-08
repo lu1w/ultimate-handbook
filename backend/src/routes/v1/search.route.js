@@ -1,10 +1,10 @@
-const express = require("express");
+const express = require('express');
 // const mongoose = require('mongoose');
 const router = express.Router();
-const mongoClient = require("../../config/mongoClient");
+const mongoClient = require('../../config/mongoClient');
 
-const SUBJECT_COLLECTION = "Subject"; // TO-DEPLOY: change to "Subject" for production, "Subjects" for testing
-const STUDY_AREA_COLLECTION = "StudyAreaToCourse";
+const SUBJECT_COLLECTION = 'Subject'; // TO-DEPLOY: change to "Subject" for production, "Subjects" for testing
+const STUDY_AREA_COLLECTION = 'StudyAreaToCourse';
 
 router.use(express.json());
 
@@ -20,23 +20,23 @@ router.use(express.json());
  *       500:
  *         description: database failed to provide subject information
  */
-router.get("/", async (req, res) => {
-  console.log("INFO enter GET search/");
+router.get('/', async (req, res) => {
+  console.log('INFO enter GET search/');
   //console.log(req);
 
   try {
-    console.log("INFO try getting all subjects");
+    console.log('INFO try getting all subjects');
     const collection = await mongoClient.getCollection(SUBJECT_COLLECTION);
     // Query all subjects
     const subjects = await collection.find({}).toArray();
 
     res.status(200).send({ subjects });
-    console.log("INFO finished searching all subjects");
+    console.log('INFO finished searching all subjects');
   } catch (err) {
     console.error(err);
     res
       .status(500)
-      .json({ error: "Database query failed: query all subjects" });
+      .json({ error: 'Database query failed: query all subjects' });
   }
 
   //res.send(req);
@@ -44,17 +44,35 @@ router.get("/", async (req, res) => {
 
 /**
  * @swagger
- * /search/{query}:
+ * /search/conditions?{params}:
  *   get:
  *     summary: Search subjects
  *     description: Retrieve a list of subjects based on subject name or subject code; the query is case-insensitive.
  *     parameters:
- *       - name: query
+ *       - name: input
  *         in: path
- *         required: true
+ *         required: false
  *         schema:
  *           type: string
  *         description: The search query string to match against subject names or subject codes.
+ *       - name: levels
+ *         in: path
+ *         required: false
+ *         schema:
+ *           type: array
+ *         description: The array of levels to match against the subject level.
+ *       - name: studyPeriods
+ *         in: path
+ *         required: false
+ *         schema:
+ *           type: array
+ *         description: The study periods to match against any of the subject study period.
+ *       - name: studyAreas
+ *         in: path
+ *         required: false
+ *         schema:
+ *           type: array
+ *         description: The study areas to match against the subject study area.
  *     responses:
  *       200:
  *         description: A list of subjects that matches the query
@@ -128,38 +146,37 @@ router.get("/", async (req, res) => {
  *                   type: string
  *                   example: "Internal server error, failure in retrieve subjects from database"
  */
-router.get("/conditions", async (req, res) => {
-  console.log(`INFO req is: `);
-  console.log(req);
-  console.log("INFO enter GET search/subject/");
-  console.log(`INFO req.query is ${req.query.input}`);
+router.get('/conditions', async (req, res) => {
+  console.log(`INFO ------------------------------------------ `);
+  console.log(`INFO req url is: `);
+  console.log(req.url);
+  console.log('INFO enter GET search/conditions/');
 
   const input = req.query.input;
   const levels = req.query.levels
-    ? req.query.levels.split(",").map((level) => parseInt(level))
+    ? req.query.levels.split(',').map((level) => parseInt(level))
     : [];
-  // TODO-future: the database uses "availability", and frontend uses "studyPeriod"; maybe unify this
-  const availabilities = req.query.studyPeriods
+  const studyPeriods = req.query.studyPeriods
     ? req.query.studyPeriods
-        .split(",")
-        .map((studyPeriod) => studyPeriod.split("_").join(" "))
+        .split(',')
+        .map((studyPeriod) => studyPeriod.split('_').join(' '))
     : [];
   const studyAreas = req.query.studyAreas
-    ? req.query.studyAreas.split(",")
+    ? req.query.studyAreas.split(',')
     : [];
 
   console.log(
-    `INFO input=${input}, levels=${levels}, availabilities=${availabilities}, studyAreas=${studyAreas}; 
+    `INFO input=${input}, levels=${levels}, studyPeriods=${studyPeriods}, studyAreas=${studyAreas}; 
     studyArea is array: ${Array.isArray(studyAreas)}
     input parse to bool: ${Boolean(input)}`
   );
 
   const filtersQuery = [
     { level: { $in: levels } },
-    { availability: { $elemMatch: { $in: availabilities } } },
+    { studyPeriod: { $elemMatch: { $in: studyPeriods } } },
     {
       subjectCode: {
-        $in: studyAreas.map((codePrefix) => new RegExp("^" + codePrefix))
+        $in: studyAreas.map((codePrefix) => new RegExp('^' + codePrefix))
       }
     }
   ];
@@ -175,8 +192,8 @@ router.get("/conditions", async (req, res) => {
           $and: [
             {
               $or: [
-                { subjectName: new RegExp(input, "i") }, // Case-insensitive search by name
-                { subjectCode: new RegExp(input, "i") } // Case-insensitive search by code
+                { subjectName: new RegExp(input, 'i') }, // Case-insensitive search by name
+                { subjectCode: new RegExp(input, 'i') } // Case-insensitive search by code
               ]
             }
           ].concat(filtersQuery)
@@ -204,13 +221,14 @@ router.get("/conditions", async (req, res) => {
   //res.send(req);
 });
 
-router.get("/studyarea", async (req, res) => {
+/** API for internal usage */
+router.get('/studyarea', async (req, res) => {
   try {
     const collection = await mongoClient.getCollection(STUDY_AREA_COLLECTION);
     const studyAreas = Object.keys(await collection.findOne());
 
     // Remove the field "_id" from the collection of studay areas
-    const index = studyAreas.findIndex((field) => field === "_id");
+    const index = studyAreas.findIndex((field) => field === '_id');
     if (index !== -1) {
       studyAreas.splice(index, 1);
     }
