@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import { SERVER_URL } from '@/lib/utils';
@@ -68,22 +68,18 @@ const allStudyAreas: Array<string> = [];
 
 export default function SearchPage() {
   /* Input query */
-  const [input, setInput] = React.useState('');
-  const [result, setResult] = React.useState([]);
+  const [input, setInput] = useState('');
+  const [result, setResult] = useState([]);
 
   /* Filter */
-  const [levels, setLevels] = React.useState<Set<Level>>(
-    new Set<Level>(allLevels),
-  );
-  const [studyPeriods, setStudyPeriods] = React.useState<Set<StudyPeriod>>(
+  const [levels, setLevels] = useState<Set<Level>>(new Set<Level>(allLevels));
+  const [studyPeriods, setStudyPeriods] = useState<Set<StudyPeriod>>(
     new Set<StudyPeriod>(allStudyPeriod),
   );
-  const [studyAreas, setStudyAreas] = React.useState<Set<string>>(
-    new Set<string>(),
-  );
+  const [studyAreas, setStudyAreas] = useState<Set<string>>(new Set<string>());
 
   /* Fetch subject data when the component mounts */
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchSubjects = async () => {
       try {
         const response = await axios.get(`${SERVER_URL}/v1/search/`);
@@ -96,20 +92,24 @@ export default function SearchPage() {
   }, []);
 
   /* Fetch study areas data when component mounts */
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchStudyAreas = async () => {
       try {
-        const response = await axios.get(`${SERVER_URL}/v1/search/studyarea`);
-        console.log(`INFO -- study areas ${response.data.studyAreas}`);
-        response.data.studyAreas.map((area: string) =>
-          allStudyAreas.push(area),
-        ); // initialization
-        setStudyAreas(new Set<string>(allStudyAreas));
+        /* Get studyareas from database */
+        const res = await axios.get(`${SERVER_URL}/v1/search/studyareas`);
+
+        /* Every component is called twice to check for side effects, thus 
+          we want to make sure the the array is cleared before initialize */
+        allStudyAreas.splice(0, allStudyAreas.length);
+        res.data.studyAreas.map((area: string) => allStudyAreas.push(area));
         allStudyAreas.sort();
+
+        setStudyAreas(new Set<string>(allStudyAreas));
       } catch (err) {
         // TODO: Handle error
       }
     };
+
     fetchStudyAreas();
   }, []);
 

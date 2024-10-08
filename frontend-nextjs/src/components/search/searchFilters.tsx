@@ -47,6 +47,10 @@ export default function SearchFilters({
     boolean | null
   >(true);
 
+  console.log(
+    `DEBUG -- all study areaas passed to search filter ${allStudyAreas} has length ${allStudyAreas.length}`,
+  );
+
   return (
     <div className={`bg-gray-100 px-4 rounded-xl ${className}`}>
       <FilterHeader

@@ -222,7 +222,7 @@ router.get('/conditions', async (req, res) => {
 });
 
 /** API for internal usage */
-router.get('/studyarea', async (req, res) => {
+router.get('/studyareas', async (req, res) => {
   try {
     const collection = await mongoClient.getCollection(STUDY_AREA_COLLECTION);
     const studyAreas = Object.keys(await collection.findOne());
