@@ -29,12 +29,12 @@ const allStudyPeriods = Object.values(StudyPeriod);
 const defaultStudyAreas = ['COMP', 'MAST', 'BIOL', 'CHEM', 'SWEN', 'INFO'];
 
 const urlWithQuery = (
-  input = '',
+  input = '*',
   levels = allLevels,
   studyPeriods = allStudyPeriods,
   studyAreas = defaultStudyAreas
 ) => {
-  const url = `/v1/search/conditions?input=${input ? input : ''}&levels=${levels.toString()}&studyPeriods=${studyPeriods.toString()}}&studyAreas=${studyAreas.toString()}`;
+  const url = `/v1/search/conditions?input=${input}&levels=${levels.toString()}&studyPeriods=${studyPeriods.toString()}&studyAreas=${studyAreas.toString()}`;
   console.log('Testing!! ----- ');
   console.log('input: ' + input);
   console.log('input.toString(): ' + input.toString());
