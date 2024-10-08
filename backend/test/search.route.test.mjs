@@ -38,7 +38,7 @@ const urlWithQuery = (
   console.log('Testing!! ----- ');
   console.log('input: ' + input);
   console.log('input.toString(): ' + input.toString);
-  console.log(`empty string: ${' '}`);
+  console.log(`empty string: ${''}`);
   return url;
 };
 
