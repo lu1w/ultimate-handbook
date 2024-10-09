@@ -57,10 +57,13 @@ const config: Config = {
           op: 'rgb(var(--base-white))', // for specify opcacity, e.g. bg-white-op/90 set background 90% white
         },
         black: {
-          DEFAULT: 'var(--col-black-100))',
+          DEFAULT: 'var(--col-black-100)',
           op: 'rgb(var(--base-black))', // for specify opcacity
         },
         link: 'var(--col-link-100)',
+        home: {
+          background: 'var(--col-heritage-25)',
+        },
         subject: {
           DEFAULT: 'var(--col-heritage-25)',
           core: 'var(--col-blue-dark-50)',
