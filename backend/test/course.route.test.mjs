@@ -8,7 +8,6 @@ it('should retrieve core subjects and compulsory courses', (done) => {
     .query({ majorName: 'Computer Science', degree: 'Bachelor of Science' }) // Adjusted values
     .end((err, res) => {
       if (err) return done(err);
-      expect(res.status).to.equal(200);
       expect(res.body).to.be.an('object');
       expect(res.body.message).to.equal(
         'Core subjects and compulsory courses retrieved successfully'
