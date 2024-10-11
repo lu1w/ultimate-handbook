@@ -144,10 +144,7 @@ const giveTypeOfSubject = async (req, res, next) => {
       } else {
         Subject.type = "breadth";
       }
-      res.json({
-        message: "successfully added Subjects!",
-        subjectPlanner: subjectPlanner
-      });
+      res.status(200).send(subjectPlanner);
     } catch (err) {
       console.error("error:", err);
       return next(new ApiError(500, "server error"));
@@ -179,10 +176,7 @@ const removeSubject = (req, res, next) => {
 
     checkAllSubjectPrequisites(subjectsCodeInPlanner);
 
-    res.json({
-      message: "Successfully removed Subjects!",
-      subjectPlanner: subjectPlanner
-    });
+    res.status(200).send(subjectPlanner);
   } catch (err) {
     console.error("Error:", err);
     return next(new ApiError(500, "Server error"));
