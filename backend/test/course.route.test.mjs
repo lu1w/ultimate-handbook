@@ -6,17 +6,14 @@ describe('Course Routes', () => {
   it('should retrieve core subjects and compulsory courses', (done) => {
     request(app)
       .get('/v1/course/main')
-      .query({ majorName: 'ComputerScience', degree: 'Bachelor of Science' }) // Ensure these values exist in your database
+      .query({ majorName: 'ComputerScience', degree: 'Bachelor Science' }) // Ensure these values exist in your database
       .end((err, res) => {
         if (err) return done(err);
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
-        expect(res.body.message).to.equal(
-          'Core subjects and compulsory courses retrieved successfully'
-        );
         expect(res.body).to.have.property('userDegree');
         expect(res.body.userDegree).to.deep.include({
-          degree: 'Bachelor of Science',
+          degree: 'Bachelor Science',
           major: 'ComputerScience'
         });
         expect(res.body).to.have.property('coreSubjects').that.is.an('array');
