@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
@@ -44,6 +44,6 @@ const subjectSchema = new Schema(
   { timestamps: true }
 );
 
-const Course = mongoose.model("Course", subjectSchema);
+const Course = mongoose.model('Course', subjectSchema);
 
 module.exports = Course;
