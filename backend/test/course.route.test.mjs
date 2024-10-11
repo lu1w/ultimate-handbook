@@ -1,14 +1,8 @@
 import request from 'supertest';
 import { expect } from 'chai';
 import app from '../src/app.js';
-import { resetSubjectPlanner } from '../src/service/courseService.js'; // Ensure you export this function
 
 describe('Course Routes', () => {
-  // Reset subjectPlanner before each test to avoid state leakage
-  beforeEach(() => {
-    resetSubjectPlanner();
-  });
-
   it('should retrieve core subjects and compulsory courses', (done) => {
     request(app)
       .get('/v1/course/main')
