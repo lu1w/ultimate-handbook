@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -10,12 +10,39 @@ import axios from 'axios';
 import SelectPanel from './selectPanel';
 import { Button } from '../ui/button';
 
-const allCourses = ['Science', 'Commerce'];
-const allMajors: Array<string> = [];
-
 export default function CourseForm() {
   const degreeRef = useRef<string>('');
   const majorRef = useRef<string>('');
+
+  const [allDegrees, setAllDegrees] = useState<Array<string>>([]);
+  const [majors, setMajors] = useState<Array<string>>([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await axios.get(`${SERVER_URL}/v1/home`);
+        if (allDegrees.length === 0) {
+          setAllDegrees(res.data.courseNames);
+          console.log(`"courses after push" ${allDegrees}`);
+          allDegrees.sort();
+        }
+      } catch (err) {
+        // TODO: handle error
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  async function handleDegreeSelection(degree: string) {
+    degreeRef.current = degree;
+    console.log(
+      `INFO handle degree change triggered with degree ${degreeRef.current}`,
+    );
+    const res = await axios.get(
+      `${SERVER_URL}/v1/home/majors?degree=${degreeRef.current}`,
+    );
+    setMajors(res.data.majors);
+  }
 
   async function handleSubmit() {
     if (degreeRef.current === '' || majorRef.current === '') {
@@ -23,7 +50,7 @@ export default function CourseForm() {
     }
     try {
       const url = `${SERVER_URL}/v1/course/main?degree=${degreeRef.current}&majorName=${majorRef.current}`;
-      const res = await axios.get(url); // get the major core options
+      const res = await axios.get(url);
 
       /* Selected degree and major, go to planner */
       redirect(`localhost:3000/planner`);
@@ -41,17 +68,15 @@ export default function CourseForm() {
       <h1>Select your degree</h1>
       <SelectPanel
         placeholder="Select your degree"
-        allOptions={allCourses}
-        handleSelection={(degree) => {
-          degreeRef.current = degree;
-        }}
+        allOptions={allDegrees}
+        handleSelection={handleDegreeSelection}
       />
 
       {/* Major Selection */}
       <h1>Select your major</h1>
       <SelectPanel
         placeholder="Select your major"
-        allOptions={allMajors}
+        allOptions={majors}
         handleSelection={(major) => {
           majorRef.current = major;
         }}

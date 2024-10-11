@@ -1,10 +1,13 @@
 const express = require('express');
 // const mongoose = require('mongoose');
 const router = express.Router();
+
 const mongoClient = require('../../config/mongoClient');
 
-const SUBJECT_COLLECTION = 'Subject'; // TO-DEPLOY: change to "Subject" for production, "Subjects" for testing
-const STUDY_AREA_COLLECTION = 'StudyAreaToCourse';
+const {
+  SUBJECT_COLLECTION,
+  STUDY_AREA_COLLECTION
+} = require('../../lib/dbConstants');
 
 router.use(express.json());
 

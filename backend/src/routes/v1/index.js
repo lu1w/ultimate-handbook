@@ -1,6 +1,7 @@
 const express = require('express');
 const courseRoute = require('./course.route');
 const searchRoute = require('./search.route');
+const homeRoute = require('./home.route');
 
 const router = express.Router();
 
@@ -12,6 +13,10 @@ const defaultRoutes = [
   {
     path: '/search',
     route: searchRoute
+  },
+  {
+    path: '/home',
+    route: homeRoute
   }
 ];
 

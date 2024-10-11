@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useEffect, useState } from 'react';
+import React from 'react';
 import {
   Select,
   SelectContent,
@@ -15,7 +15,6 @@ interface SelectPanelProps {
   placeholder: string;
   allOptions: Array<string>;
   handleSelection: (value: string) => void;
-  updateSelection?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function SelectPanel({
@@ -23,6 +22,7 @@ function SelectPanel({
   allOptions,
   handleSelection,
 }: SelectPanelProps) {
+  console.log(`all options into '${placeholder}' is ${allOptions}`);
   return (
     <Select onValueChange={handleSelection}>
       <SelectTrigger className="w-[180px]">
