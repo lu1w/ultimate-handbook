@@ -103,7 +103,7 @@ const isValidAdd = async (req, res, next) => {
       return studyRequireSemester === subjectSemesterInPlanner;
     });
     if (!match) {
-      Subject.semesterError = "not in right semester position!";
+      Subject.semesterError = true;
     } else {
       delete Subject.semesterError;
     }
@@ -203,7 +203,7 @@ function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
         ); // check all subjects prerequisites in planner
         if (!prerequisitesMet) {
           // mark the subject with error
-          subj.prerequisteError = "prequisites not met";
+          subj.prerequisteError = true;
         } else {
           delete subj.prerequisteError;
         }
