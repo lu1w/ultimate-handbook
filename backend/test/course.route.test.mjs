@@ -1,8 +1,14 @@
 import request from 'supertest';
 import { expect } from 'chai';
 import app from '../src/app.js';
+import { resetSubjectPlanner } from '../src/service/courseService.js'; // Ensure you export this function
 
 describe('Course Routes', () => {
+  // Reset subjectPlanner before each test to avoid state leakage
+  beforeEach(() => {
+    resetSubjectPlanner();
+  });
+
   it('should retrieve core subjects and compulsory courses', (done) => {
     request(app)
       .get('/v1/course/main')
@@ -47,12 +53,17 @@ describe('Course Routes', () => {
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
+
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
-        expect(res.body.message).to.equal('Subject added successfully.');
-        expect(res.body).to.have.property('subjectPlanner');
-        expect(res.body.subjectPlanner).to.have.property('2024s2');
-        expect(res.body.subjectPlanner['2024s2']).to.have.property('p1');
+
+        // Since response is subjectPlanner
+        expect(res.body).to.have.property('2024s2');
+        expect(res.body['2024s2']).to.have.property('p1');
+        expect(res.body['2024s2']['p1']).to.have.property(
+          'subjectCode',
+          'COMP20003'
+        );
         done();
       });
   });
@@ -60,13 +71,12 @@ describe('Course Routes', () => {
   it('should validate the addition of a subject based on semester', (done) => {
     const subjectData = {
       '2024s1p1': {
-        // Intentional mismatch in semester to trigger validation
-        subjectCode: 'COMP20003',
+        subjectCode: 'COMP20003', // This subject is only available in Semester 2
         subjectName: 'Algorithms and Data Structures',
         level: 2,
         points: 12.5,
         location: 'On Campus (Parkville)',
-        studyPeriod: ['Semester 2'], // The subject is available in Semester 2
+        studyPeriod: ['Semester 2'], // So adding it in Semester 1 should trigger a semesterError
         prerequisites: [['COMP10002', 'COMP20005']],
         corequisites: [],
         nonAllowedSubjects: ['COMP20007', 'COMP90038']
@@ -79,18 +89,57 @@ describe('Course Routes', () => {
       .end((err, res) => {
         if (err) return done(err);
 
-        // Since the subject is added in Semester 1 but only available in Semester 2,
-        // it should have a 'semesterError' property.
-
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
-        const subjectEntry = res.body.subjectPlanner['2024s1']['p1'];
+
+        // The response is subjectPlanner
+        expect(res.body).to.have.property('2024s1');
+        expect(res.body['2024s1']).to.have.property('p1');
+        const subjectEntry = res.body['2024s1']['p1'];
         expect(subjectEntry).to.have.property('semesterError', true);
         done();
       });
   });
 
   it('should determine the type of subject (compulsory, core, discipline, breadth)', (done) => {
+    const subjectData = {
+      '2024s2p2': {
+        subjectCode: 'COMP20005',
+        subjectName: 'Engineering Computation',
+        level: 2,
+        points: 12.5,
+        location: 'On Campus (Parkville)',
+        studyPeriod: ['Semester 1', 'Semester 2'],
+        prerequisites: [['MATH10005']],
+        corequisites: [],
+        nonAllowedSubjects: []
+      }
+    };
+
+    request(app)
+      .post('/v1/course/add')
+      .send(subjectData)
+      .end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('object');
+
+        // The response is subjectPlanner
+        expect(res.body).to.have.property('2024s2');
+        expect(res.body['2024s2']).to.have.property('p2');
+        const subjectEntry = res.body['2024s2']['p2'];
+        expect(subjectEntry)
+          .to.have.property('type')
+          .that.is.oneOf(['compulsory', 'core', 'discipline', 'breadth']);
+        done();
+      });
+  });
+
+  it('should remove a subject from the planner', (done) => {
+    const query = '2024s2p1';
+
+    // First, add the subject so it can be removed
     const subjectData = {
       '2024s2p1': {
         subjectCode: 'COMP20003',
@@ -105,34 +154,27 @@ describe('Course Routes', () => {
       }
     };
 
+    // Add the subject
     request(app)
       .post('/v1/course/add')
       .send(subjectData)
-      .end((err, res) => {
+      .end((err) => {
         if (err) return done(err);
-        expect(res.status).to.equal(200);
-        expect(res.body).to.be.an('object');
-        const subjectEntry = res.body.subjectPlanner['2024s2']['p1'];
-        expect(subjectEntry)
-          .to.have.property('type')
-          .that.is.oneOf(['compulsory', 'core', 'discipline', 'breadth']);
-        done();
-      });
-  });
 
-  it('should remove a subject from the planner', (done) => {
-    const query = '2024s2p1';
+        // Now remove the subject
+        request(app)
+          .delete(`/v1/course/remove/${query}`)
+          .end((err, res) => {
+            if (err) return done(err);
 
-    request(app)
-      .delete(`/v1/course/remove/${query}`)
-      .end((err, res) => {
-        if (err) return done(err);
-        expect(res.status).to.equal(200);
-        expect(res.body).to.be.an('object');
-        expect(res.body.message).to.equal('Subject removed successfully.');
-        expect(res.body).to.have.property('subjectPlanner');
-        expect(res.body.subjectPlanner['2024s2']).to.not.have.property('p1');
-        done();
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.an('object');
+
+            // Response is subjectPlanner
+            expect(res.body).to.have.property('2024s2');
+            expect(res.body['2024s2']).to.not.have.property('p1');
+            done();
+          });
       });
   });
 });
