@@ -1,16 +1,16 @@
-const express = require("express");
-const courseRoute = require("./course.route");
-const searchRoute = require("./search.route");
+const express = require('express');
+const courseRoute = require('./course.route');
+const searchRoute = require('./search.route');
 
 const router = express.Router();
 
 const defaultRoutes = [
   {
-    path: "/course",
+    path: '/course',
     route: courseRoute
   },
   {
-    path: "/search",
+    path: '/search',
     route: searchRoute
   }
 ];
