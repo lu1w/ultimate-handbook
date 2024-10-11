@@ -5,8 +5,8 @@ import app from '../src/app.js';
 describe('Course Routes', () => {
   it('should retrieve core subjects and compulsory courses', (done) => {
     request(app)
-      .get('/v1/course/main') // updated route path
-      .query({ majorName: 'Computer Science', degree: 'Science' })
+      .get('/v1/course/main')
+      .query({ majorName: 'ComputerScience', degree: 'Bachelor of Science' }) // Ensure these values exist in your database
       .end((err, res) => {
         if (err) return done(err);
         expect(res.status).to.equal(200);
@@ -14,6 +14,15 @@ describe('Course Routes', () => {
         expect(res.body.message).to.equal(
           'Core subjects and compulsory courses retrieved successfully'
         );
+        expect(res.body).to.have.property('userDegree');
+        expect(res.body.userDegree).to.deep.include({
+          degree: 'Bachelor of Science',
+          major: 'ComputerScience'
+        });
+        expect(res.body).to.have.property('coreSubjects').that.is.an('array');
+        expect(res.body)
+          .to.have.property('compulsorySubject')
+          .that.is.an('array');
         done();
       });
   });
@@ -21,72 +30,62 @@ describe('Course Routes', () => {
   it('should add a subject to the planner', (done) => {
     const subjectData = {
       '2024s2p1': {
-        _id: '670493e5d277a6e6b1a447b4',
-        subjectName: 'Algorithms and Data Structures',
         subjectCode: 'COMP20003',
+        subjectName: 'Algorithms and Data Structures',
         level: 2,
         points: 12.5,
         location: 'On Campus (Parkville)',
-        coordinator: {
-          'Semester 2': [
-            {
-              name: 'lkulik',
-              email: 'lkulik@unimelb.edu.au'
-            }
-          ]
-        },
-        subjectUrl: 'https://handbook.unimelb.edu.au/2024/subjects/comp20003',
+        studyPeriod: ['Semester 2'],
         prerequisites: [['COMP10002', 'COMP20005']],
         corequisites: [],
-        nonAllowedSubjects: ['COMP20007', 'COMP90038'],
-        studyPeriod: ['Semester 2']
+        nonAllowedSubjects: ['COMP20007', 'COMP90038']
       }
     };
 
     request(app)
-      .post('/v1/course/add') // updated route path
+      .post('/v1/course/add')
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
         expect(res.body.message).to.equal('Subject added successfully.');
+        expect(res.body).to.have.property('subjectPlanner');
+        expect(res.body.subjectPlanner).to.have.property('2024s2');
+        expect(res.body.subjectPlanner['2024s2']).to.have.property('p1');
         done();
       });
   });
 
   it('should validate the addition of a subject based on semester', (done) => {
     const subjectData = {
-      '2024s2p1': {
-        _id: '670493e5d277a6e6b1a447b4',
-        subjectName: 'Algorithms and Data Structures',
+      '2024s1p1': {
+        // Intentional mismatch in semester to trigger validation
         subjectCode: 'COMP20003',
+        subjectName: 'Algorithms and Data Structures',
         level: 2,
         points: 12.5,
         location: 'On Campus (Parkville)',
-        coordinator: {
-          'Semester 2': [
-            {
-              name: 'lkulik',
-              email: 'lkulik@unimelb.edu.au'
-            }
-          ]
-        },
-        subjectUrl: 'https://handbook.unimelb.edu.au/2024/subjects/comp20003',
+        studyPeriod: ['Semester 2'], // The subject is available in Semester 2
         prerequisites: [['COMP10002', 'COMP20005']],
         corequisites: [],
-        nonAllowedSubjects: ['COMP20007', 'COMP90038'],
-        studyPeriod: ['Semester 2']
+        nonAllowedSubjects: ['COMP20007', 'COMP90038']
       }
     };
 
     request(app)
-      .post('/v1/course/add') // updated route path for validation
+      .post('/v1/course/add')
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
+
+        // Since the subject is added in Semester 1 but only available in Semester 2,
+        // it should have a 'semesterError' property.
+
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
+        const subjectEntry = res.body.subjectPlanner['2024s1']['p1'];
+        expect(subjectEntry).to.have.property('semesterError', true);
         done();
       });
   });
@@ -94,37 +93,27 @@ describe('Course Routes', () => {
   it('should determine the type of subject (compulsory, core, discipline, breadth)', (done) => {
     const subjectData = {
       '2024s2p1': {
-        _id: '670493e5d277a6e6b1a447b4',
-        subjectName: 'Algorithms and Data Structures',
         subjectCode: 'COMP20003',
+        subjectName: 'Algorithms and Data Structures',
         level: 2,
         points: 12.5,
         location: 'On Campus (Parkville)',
-        coordinator: {
-          'Semester 2': [
-            {
-              name: 'lkulik',
-              email: 'lkulik@unimelb.edu.au'
-            }
-          ]
-        },
-        subjectUrl: 'https://handbook.unimelb.edu.au/2024/subjects/comp20003',
+        studyPeriod: ['Semester 2'],
         prerequisites: [['COMP10002', 'COMP20005']],
         corequisites: [],
-        nonAllowedSubjects: ['COMP20007', 'COMP90038'],
-        studyPeriod: ['Semester 2']
+        nonAllowedSubjects: ['COMP20007', 'COMP90038']
       }
     };
 
     request(app)
-      .post('/v1/course/add') // path used for adding and determining type
+      .post('/v1/course/add')
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('2024s2p1');
-        expect(res.body['2024s2p1'])
+        const subjectEntry = res.body.subjectPlanner['2024s2']['p1'];
+        expect(subjectEntry)
           .to.have.property('type')
           .that.is.oneOf(['compulsory', 'core', 'discipline', 'breadth']);
         done();
@@ -135,12 +124,14 @@ describe('Course Routes', () => {
     const query = '2024s2p1';
 
     request(app)
-      .delete(`/v1/course/remove/${query}`) // updated route path
+      .delete(`/v1/course/remove/${query}`)
       .end((err, res) => {
         if (err) return done(err);
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
         expect(res.body.message).to.equal('Subject removed successfully.');
+        expect(res.body).to.have.property('subjectPlanner');
+        expect(res.body.subjectPlanner['2024s2']).to.not.have.property('p1');
         done();
       });
   });
