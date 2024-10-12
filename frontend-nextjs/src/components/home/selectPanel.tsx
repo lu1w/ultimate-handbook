@@ -25,7 +25,7 @@ function SelectPanel({
   console.log(`all options into '${placeholder}' is ${allOptions}`);
   return (
     <Select onValueChange={handleSelection}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
