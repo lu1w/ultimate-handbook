@@ -2,50 +2,56 @@ const express = require('express');
 const router = express.Router();
 const mongoClient = require('../../config/mongoClient');
 const ApiError = require('../../utils/ApiError');
-const SubjectsPlanner = {};
-//Example of SubjectsPlanner:
-// {
-//   "SubjectsPlannerArray": {
-//     "2024s1": {
-//       "p1": {
-//         "SubjectsCode": "COMP10002",
-//         "SubjectsName": "COMPUTER!",
-//         "more": "..."
-//       }
-//     },
-//     "2024s2": {
-//       "p2": {
-//         "SubjectsCode": "COMP10002",
-//         "SubjectsName": "COMPUTER!",
-//         "more": "..."
-//       }
-//     }
-//   }
-// }
-
+const {
+  addSubject,
+  removeSubject,
+  getInitialInformation,
+  isValidAdd,
+  giveTypeOfSubject
+} = require('../../service/courseService');
 /**
  * @swagger
- * /:
+ * /course/main:
  *   get:
- *     summary: Welcome message
- *     description: return a welcome message
+ *     summary: Get core subjects and compulsory courses
+ *     description: Retrieve all core subjects based on the `major` and all compulsory courses based on the `degree`.
+ *     parameters:
+ *       - name: majorName
+ *         in: query
+ *         required: true
+ *         description: Major name (e.g., ComputerScience)
+ *         schema:
+ *           type: string
+ *       - name: degree
+ *         in: query
+ *         required: true
+ *         description: Degree name (e.g., Bachelor of Science)
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: successful operation
+ *         description: Successfully retrieved core subjects and compulsory courses
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: "Welcome to the U handbook!!!."
+ *                 coreSubjects:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 compulsoryCourses:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       400:
+ *         description: Missing major or degree parameter
+ *       404:
+ *         description: Major or degree not found
+ *       500:
+ *         description: Server error
  */
-router.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to the U handbook!!!.'
-  });
-});
+router.get('/main', getInitialInformation);
 
 /**
  * @swagger
@@ -68,31 +74,8 @@ router.get('/', (req, res) => {
  *       400:
  *         description: inavlid query!
  */
-// Remove one Subject from one slot
-router.delete('/remove/:query', async (req, res, next) => {
-  const { query } = req.params;
-  if (!query) {
-    return next(new ApiError(400, 'No Subject data provided.'));
-  }
 
-  const semesterKey = query.substring(0, 6); // '2024s2 '
-  const position = query.substring(6, 8); // 'p1'
-
-  // check if Subject exists
-  if (
-    !SubjectsPlanner[semesterKey] ||
-    !SubjectsPlanner[semesterKey][position]
-  ) {
-    return res.status(404).json({ message: 'No Subjects found!' });
-  }
-
-  delete SubjectsPlanner[semesterKey][position];
-
-  res.json({
-    message: 'Successfully removed Subjects!',
-    SubjectsPlanner: SubjectsPlanner
-  });
-});
+router.delete('/remove/:query', removeSubject);
 
 /**
  * @swagger
@@ -107,44 +90,14 @@ router.delete('/remove/:query', async (req, res, next) => {
  *           schema:
  *             type: object
  *             example:
- *               "2024s21": { "SubjectsCode": "COMP10002", "SubjectsName": "COMPUTER!" }
+ *               "2024s2p1": { "subjectCode": "COMP20003", "subjectName": "Algorithms and Data Structures" }
  *     responses:
  *       200:
  *         description: successfully added Subject
  *       400:
  *         description: failed to add Subject
  */
-// Drag one Subjects to one slot
-router.post('/add', async (req, res) => {
-  const SubjectsData = req.body; // e.g. { "2024s21": { Subjects } }
-  if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
-    return res.status(400).json({ message: 'No Subjects data provided.' });
-  }
-
-  const param = Object.keys(SubjectsData)[0]; //e.g.'2024s21'
-  const Subjects = SubjectsData[param]; // get the Subjects object
-
-  const time = param.substring(0, 6); // '2024s2'
-  const position = param.substring(6, 8); // 'p1'
-
-  // intialize the semester if it doesn't exist
-  if (!SubjectsPlanner[time]) {
-    SubjectsPlanner[time] = {};
-  }
-
-  // add Subjects to the planner
-  if (SubjectsPlanner[time][position]) {
-    return res
-      .status(400)
-      .json({ message: 'can not add Subjects to this slot!' });
-  }
-  SubjectsPlanner[time][position] = Subjects;
-
-  res.json({
-    message: 'successfully added Subjects!',
-    SubjectsPlanner: SubjectsPlanner
-  });
-});
+router.post('/add', addSubject, isValidAdd, giveTypeOfSubject);
 
 /**
  * @swagger
@@ -176,10 +129,7 @@ router.post('/add', async (req, res) => {
  */
 // Get all prerequisites for a given Subjects
 router.get('/subject/prerequisite/:query', async (req, res, next) => {
-  console.log('INFO enter GET /Subjects/prerequisite/');
   const { query } = req.params;
-  console.log(`INFO query is ${query}`);
-
   if (query) {
     try {
       const collection = await mongoClient.getCollection('Subject');
@@ -189,7 +139,6 @@ router.get('/subject/prerequisite/:query', async (req, res, next) => {
       }
       return res.json(Subjects.prerequisites);
     } catch (err) {
-      console.error('Error:', err);
       return next(new ApiError(500, 'Server error'));
     }
   } else {
@@ -263,11 +212,8 @@ router.get('/majorCompulsory', async (req, res, next) => {
       coreSubjects: coreSubjects
     });
   } catch (err) {
-    console.error('Error:', err);
     return next(new ApiError(500, 'Server error'));
   }
 });
-
-module.exports = router;
 
 module.exports = router;

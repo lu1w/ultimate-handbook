@@ -6,42 +6,42 @@ const subjectSchema = new Schema(
   {
     subjectName: {
       type: String,
-      required: true,
+      required: true
     },
     subjectCode: {
       type: String,
-      required: true,
+      required: true
     },
     level: {
       type: String,
-      required: true,
+      required: true
     },
     points: {
       type: String,
-      required: true,
+      required: true
     },
     location: {
       type: String,
-      default: null, 
+      default: null
     },
     subjectUrl: {
       type: String,
-      required: true,
+      required: true
     },
     prerequisites: {
       type: Array,
-      default: [], 
+      default: []
     },
     corequisites: {
       type: Array,
-      default: [], 
+      default: []
     },
     nonAllowedSubjects: {
       type: Array,
-      default: [],
-    },
+      default: []
+    }
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const Course = mongoose.model('Course', subjectSchema);
