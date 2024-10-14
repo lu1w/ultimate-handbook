@@ -1,6 +1,57 @@
 const mongoClient = require('../config/mongoClient');
 const ApiError = require('../utils/ApiError');
-const subjectPlanner = {};
+const subjectPlanner = {
+  y1s1: {
+    p1: {},
+    p2: {},
+    p3: {},
+    p4: {},
+    p5: {}
+  },
+  y1s2: {
+    p1: {},
+    p2: {},
+    p3: {},
+    p4: {},
+    p5: {}
+  },
+  y2s1: {
+    p1: {},
+    p2: {},
+    p3: {},
+    p4: {},
+    p5: {}
+  },
+  y2s2: {
+    p1: {},
+    p2: {},
+    p3: {},
+    p4: {},
+    p5: {}
+  },
+  y3s1: {
+    p1: {},
+    p2: {},
+    p3: {},
+    p4: {},
+    p5: {}
+  },
+  y3s2: {
+    p1: {},
+    p2: {},
+    p3: {},
+    p4: {},
+    p5: {}
+  },
+  y4s1: {
+    p1: {},
+    p2: {},
+    p3: {},
+    p4: {},
+    p5: {}
+  }
+};
+
 const userDegree = {
   degree: '',
   major: ''
@@ -49,20 +100,24 @@ const getInitialInformation = async (req, res, next) => {
 
 const addSubject = async (req, res, next) => {
   try {
-    const SubjectsData = req.body; // e.g. { "2024s21": { Subject } }
+    const SubjectsData = req.body; // e.g. { "y1s21": { Subject } }
     if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
       return res.status(400).json({ message: 'No Subjects data provided.' });
     }
-    const param = Object.keys(SubjectsData)[0]; // e.g.'2024s21'
+    const param = Object.keys(SubjectsData)[0]; // e.g.'y1s2p1'
     const Subject = SubjectsData[param]; // get the Subject object
-    const time = param.substring(0, 6); // '2024s2'
-    const position = param.substring(6, 8); // 'p1'
+    const time = param.substring(0, 4); // 'y1'
+    const position = param.substring(4, 6); // 'p1'
 
-    if (!subjectPlanner[time]) {
-      subjectPlanner[time] = {};
+    // Check if the slot exists
+    if (!subjectPlanner[time] || !subjectPlanner[time][position]) {
+      return res.status(400).json({ message: 'Invalid time or position.' });
     }
     // check if the Subjects already exists
-    if (subjectPlanner[time][position]) {
+    if (Object.keys(subjectPlanner[time][position]).length !== 0) {
+      console.debug(
+        'Subject already exists in this slot' + subjectPlanner[time][position]
+      );
       return res.status(400).json({
         message:
           'can not add Subjects to this slot!,because subject already exist'
@@ -82,13 +137,13 @@ const addSubject = async (req, res, next) => {
 };
 
 const isValidAdd = async (req, res, next) => {
-  const SubjectsData = req.body; // e.g. { "2024s21": { Subject } }
+  const SubjectsData = req.body; // e.g. { "y1s21": { Subject } }
   if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
     return res.status(400).json({ message: 'No Subjects data provided.' });
   }
-  const param = Object.keys(SubjectsData)[0]; // e.g.'2024s21'
+  const param = Object.keys(SubjectsData)[0]; // e.g.'y1s2p1'
   const Subject = SubjectsData[param]; // get the Subject object
-  const subjectSemesterInPlanner = param.substring(5, 6); // '2'
+  const subjectSemesterInPlanner = param.substring(3, 4); // '2'
   const subjectsCodeInPlanner = getAllSubjectCodes(subjectPlanner);
 
   checkAllSubjectPrequisites(subjectsCodeInPlanner); // we will check all subjects prerequisites in planner after adding the subject
@@ -112,11 +167,11 @@ const isValidAdd = async (req, res, next) => {
 };
 
 const giveTypeOfSubject = async (req, res, next) => {
-  const SubjectsData = req.body; // e.g. { "2024s21": { Subject } }
+  const SubjectsData = req.body; // e.g. { "y1s21": { Subject } }
   if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
     return res.status(400).json({ message: 'No Subjects data provided.' });
   }
-  const param = Object.keys(SubjectsData)[0]; // e.g.'2024s21'
+  const param = Object.keys(SubjectsData)[0]; // e.g.'y1s21'
   const Subject = SubjectsData[param]; // get the Subject object
   const { subjectCode } = Subject;
 
@@ -158,18 +213,21 @@ const removeSubject = (req, res, next) => {
       return next(new ApiError(400, 'No Subject data provided.'));
     }
 
-    const semesterKey = query.substring(0, 6); // '2024s2'
-    const position = query.substring(6, 8); // 'p1'
+    const semesterKey = query.substring(0, 4); // 'y1s2'
+    const position = query.substring(4, 6); // 'p1'
 
     // check if Subject exists
     if (
       !subjectPlanner[semesterKey] ||
-      !subjectPlanner[semesterKey][position]
+      !subjectPlanner[semesterKey][position] ||
+      Object.keys(subjectPlanner[semesterKey][position]).length === 0
     ) {
       return res.status(404).json({ message: 'No Subjects found!' });
     }
 
-    delete subjectPlanner[semesterKey][position];
+    // delete subjectPlanner[semesterKey][position];
+    // Reset the slot to an empty object
+    subjectPlanner[semesterKey][position] = {};
 
     // get all codes of subjects in the subjectPlanner (after removing the subject)
     const subjectsCodeInPlanner = getAllSubjectCodes(subjectPlanner);

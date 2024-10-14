@@ -9,23 +9,24 @@ const {
   isValidAdd,
   giveTypeOfSubject
 } = require('../../service/courseService');
+
 /**
  * @swagger
  * /course/main:
  *   get:
  *     summary: Get core subjects and compulsory courses
- *     description: Retrieve all core subjects based on the `major` and all compulsory courses based on the `degree`.
+ *     description: Retrieve all core subjects based on the `majorName` and all compulsory courses based on the `degree`.
  *     parameters:
  *       - name: majorName
  *         in: query
  *         required: true
- *         description: Major name (e.g., ComputerScience)
+ *         description: Major name (e.g., Data Science)
  *         schema:
  *           type: string
  *       - name: degree
  *         in: query
  *         required: true
- *         description: Degree name (e.g., Bachelor of Science)
+ *         description: Degree name (e.g., Science)
  *         schema:
  *           type: string
  *     responses:
@@ -36,20 +37,29 @@ const {
  *             schema:
  *               type: object
  *               properties:
+ *                 message:
+ *                   type: string
+ *                 userDegree:
+ *                   type: object
+ *                   properties:
+ *                     degree:
+ *                       type: string
+ *                     major:
+ *                       type: string
  *                 coreSubjects:
  *                   type: array
  *                   items:
  *                     type: string
- *                 compulsoryCourses:
+ *                 compulsorySubject:
  *                   type: array
  *                   items:
  *                     type: string
  *       400:
- *         description: Missing major or degree parameter
+ *         description: Both majorName and degree are required.
  *       404:
- *         description: Major or degree not found
+ *         description: Major or degree not found.
  *       500:
- *         description: Server error
+ *         description: Server error.
  */
 router.get('/main', getInitialInformation);
 
@@ -57,32 +67,38 @@ router.get('/main', getInitialInformation);
  * @swagger
  * /course/remove/{query}:
  *   delete:
- *     summary: remove Subject
- *     description: according to the given `query` to remove one Subject from Subjects planner.
+ *     summary: Remove a subject from the planner
+ *     description: Remove a subject from the subject planner based on the given `query`.
  *     parameters:
  *       - name: query
  *         in: path
  *         required: true
- *         description: Subject slot position (e.g. 2024s2p1)
+ *         description: Subject slot position (e.g., y1s2p1)
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: successfully removed Subjects
+ *         description: Successfully removed the subject.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               description: The updated subject planner.
  *       404:
- *         description: canot find the Subject!
+ *         description: No subject found in this slot.
  *       400:
- *         description: inavlid query!
+ *         description: No subject data provided.
+ *       500:
+ *         description: Server error.
  */
-
 router.delete('/remove/:query', removeSubject);
 
 /**
  * @swagger
  * /course/add:
  *   post:
- *     summary: add Subjects
- *     description: add one Subject to one of slot in Subjects planner.
+ *     summary: Add a subject to the planner
+ *     description: Add one subject to a slot in the subject planner.
  *     requestBody:
  *       required: true
  *       content:
@@ -90,12 +106,29 @@ router.delete('/remove/:query', removeSubject);
  *           schema:
  *             type: object
  *             example:
- *               "2024s2p1": { "subjectCode": "COMP20003", "subjectName": "Algorithms and Data Structures" }
+ *               "y1s2p1": {
+ *                 "subjectCode": "COMP20003",
+ *                 "subjectName": "Algorithms and Data Structures",
+ *                 "level": 2,
+ *                 "points": 12.5,
+ *                 "location": "On Campus (Parkville)",
+ *                 "studyPeriod": ["Semester 2"],
+ *                 "prerequisites": [["COMP10002", "COMP20005"]],
+ *                 "corequisites": [],
+ *                 "nonAllowedSubjects": ["COMP20007", "COMP90038"]
+ *               }
  *     responses:
  *       200:
- *         description: successfully added Subject
+ *         description: Successfully added the subject.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               description: The updated subject planner.
  *       400:
- *         description: failed to add Subject
+ *         description: Failed to add subject.
+ *       500:
+ *         description: Server error.
  */
 router.post('/add', addSubject, isValidAdd, giveTypeOfSubject);
 
@@ -103,41 +136,48 @@ router.post('/add', addSubject, isValidAdd, giveTypeOfSubject);
  * @swagger
  * /course/subject/prerequisite/{query}:
  *   get:
- *     summary: get all prerequisites
- *     description: according to the given `query` to get all prerequisites of the Subjects.
+ *     summary: Get all prerequisites for a subject
+ *     description: Retrieve all prerequisites for the subject specified by `query`.
  *     parameters:
  *       - name: query
  *         in: path
  *         required: true
- *         description: Subjects code (e.g. COMP10002)
+ *         description: Subject code (e.g., COMP10002)
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: successfully return all prerequisites
+ *         description: Successfully returned all prerequisites.
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: string
- *                 example: ["COMP20002"]
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               example:
+ *                 [
+ *                   ["COMP10002", "COMP20005"],
+ *                   ["MATH10005"]
+ *                 ]
  *       404:
- *         description: cannot find the Subjects!
+ *         description: Subject not found.
+ *       400:
+ *         description: Search query is required.
  *       500:
- *         description: server error!
+ *         description: Server error.
  */
-// Get all prerequisites for a given Subjects
 router.get('/subject/prerequisite/:query', async (req, res, next) => {
   const { query } = req.params;
   if (query) {
     try {
       const collection = await mongoClient.getCollection('Subject');
-      const Subjects = await collection.findOne({ subjectCode: query });
-      if (!Subjects) {
-        return next(new ApiError(404, 'Subjects not found.'));
+      const subject = await collection.findOne({ subjectCode: query });
+      if (!subject) {
+        return next(new ApiError(404, 'Subject not found.'));
       }
-      return res.json(Subjects.prerequisites);
+      return res.json(subject.prerequisites);
     } catch (err) {
       return next(new ApiError(500, 'Server error'));
     }
@@ -151,17 +191,17 @@ router.get('/subject/prerequisite/:query', async (req, res, next) => {
  * /course/majorCompulsory:
  *   get:
  *     summary: Get all core subjects for a given major
- *     description: Retrieve all core subjects and their prerequisites for a given `major`.
+ *     description: Retrieve all core subjects for a given `major`.
  *     parameters:
  *       - name: major
  *         in: query
  *         required: true
- *         description: Major name (e.g. ComputerScience)
+ *         description: Major name (e.g., Data Science)
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Successfully returned all core subjects
+ *         description: Successfully returned all core subjects.
  *         content:
  *           application/json:
  *             schema:
@@ -173,23 +213,15 @@ router.get('/subject/prerequisite/:query', async (req, res, next) => {
  *                 coreSubjects:
  *                   type: array
  *                   items:
- *                     type: array
- *                     items:
- *                       type: string
- *                   example: [
- *                     ["2", "ANAT30007", "ANAT30008"],
- *                     ["1", "BIOM30003"],
- *                     ["1", "CEDB30003"]
- *                   ]
+ *                     type: string
+ *                   example: ["COMP10002", "COMP20003", "COMP20007"]
  *       400:
- *         description: No major provided!
+ *         description: Major is required.
  *       404:
- *         description: Cannot find core subjects for the given major!
+ *         description: Major not found.
  *       500:
- *         description: Server error!
+ *         description: Server error.
  */
-
-// Get all complusory Subjects for a given Subject
 router.get('/majorCompulsory', async (req, res, next) => {
   try {
     const major = req.query.major;
