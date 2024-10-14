@@ -10,12 +10,12 @@ import EmptySubjectCard from '@/components/planner/emptySubjectCard';
 import subjectPlanner from '@/mock-data/courseData';
 
 interface Subject {
-  type: string;
+  header: string;
   code: string;
   level: string;
   points: string;
   name: string;
-  term: string[];
+  studyPeriods: string[];
   coordinatorName: string;
 }
 
@@ -65,12 +65,12 @@ const PlannerPage: React.FC = () => {
 
   const addSubject = (year: Year, term: Term, period: string) => {
     const newSubject: Subject = {
-      type: 'DISCIPLINE',
+      header: 'DISCIPLINE',
       code: 'SUBJ1001',
       level: '1',
       points: '12.5',
       name: 'New Subject',
-      term: ['Semester 1'],
+      studyPeriods: ['Semester 1'],
       coordinatorName: 'TBA',
     };
     const key = `${year}${term}` as keyof typeof subjectPlanner;
@@ -183,7 +183,9 @@ const PlannerPage: React.FC = () => {
                           ) : getSubject(year, term, period) ? (
                             <SubjectCard
                               {...(getSubject(year, term, period)! as Subject)}
-                              onClose={() => removeSubject(year, term, period)}
+                              handleClick={() =>
+                                removeSubject(year, term, period)
+                              }
                             />
                           ) : null}
                         </div>
