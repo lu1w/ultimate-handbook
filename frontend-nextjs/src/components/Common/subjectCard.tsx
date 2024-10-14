@@ -26,8 +26,9 @@ interface SubjectCardProps {
   points: string;
   name: string;
   studyPeriods: string[];
-  coordinatorName: string;
-  onClose?: () => void;
+  coordinatorName?: string; // TODO: put the coordinator in semester bubble
+  handleClick?: () => void;
+  button?: string;
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({
@@ -39,7 +40,8 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   name,
   studyPeriods,
   coordinatorName,
-  onClose,
+  handleClick,
+  button,
 }) => {
   const typeColor = typeColors[header] || 'bg-subject';
 
@@ -48,14 +50,14 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       <CardHeader className={cn('relative', typeColor, 'p-3', 'rounded-t-lg')}>
         <div className="flex justify-between items-center">
           <span className="text-xs font-semibold">{header}</span>
-          {onClose ? (
+          {handleClick ? (
             <Button
               variant="ghost"
               size="sm"
-              onClick={onClose}
+              onClick={handleClick}
               className="absolute text-base font-bold right-2 top-2 h-6 w-6"
             >
-              ✕
+              {button}
             </Button>
           ) : null}
         </div>

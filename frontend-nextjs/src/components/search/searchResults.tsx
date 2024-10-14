@@ -1,9 +1,13 @@
 // import '@styles/SearchResults.css';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
+
+import axios from 'axios';
 
 import SubjectCard from '@/components/common/subjectCard';
 import { Subject } from '@/lib/objectSchema';
+import { SERVER_URL } from '@/lib/utils';
 
 interface SearchResultsProps {
   className?: string | undefined;
@@ -18,6 +22,16 @@ export default function SearchResults({
   console.log(
     `INFO: searchResults passed into SearchResults<> is has length ${subjects.length} ${JSON.stringify(subjects)}`,
   );
+
+  const router = useRouter();
+
+  async function handleAdd(subject: Subject) {
+    try {
+      await axios.post(`${SERVER_URL}/v1/course/add`, { y3s1p4: subject });
+      router.replace('/planner');
+    } catch (err) {}
+    return;
+  }
   return (
     <div className={className}>
       {/* Text message - number of results */}
@@ -46,11 +60,14 @@ export default function SearchResults({
                   ? subject.studyPeriod.map((sp) => sp.toString())
                   : []
               }
-              coordinatorName={
-                subject.coordinator
-                  ? Object.values(subject.coordinator)[0]
-                  : null
-              }
+              // TODO: the coordinator is going to be in the semester bubble, so we should be passing only coordinator name
+              // coordinatorName={
+              //   subject.coordinator
+              //     ? Object.values(subject.coordinator)[0]
+              //     : null
+              // }
+              handleClick={() => handleAdd(subject)}
+              button="+"
             />
           ))}
         </div>

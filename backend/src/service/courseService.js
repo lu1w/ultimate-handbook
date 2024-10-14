@@ -153,6 +153,9 @@ const addSubject = async (req, res, next) => {
       return res.status(400).json({ message: 'lack of the subject code' });
     }
     subjectPlanner[time][position] = Subject;
+    console.log(
+      `my planner after adding subject ${subjectCode}: ${JSON.stringify(subjectPlanner)}`
+    );
     next();
   } catch (err) {
     console.error('Error:', err);

@@ -1,11 +1,9 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-// import { useRouter } from 'next/router';
-// import Link from 'next/link';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
-import { SERVER_URL, CLIENT_URL } from '@/lib/utils';
+import { SERVER_URL } from '@/lib/utils';
 import axios from 'axios';
 
 import SelectPanel from './selectPanel';
