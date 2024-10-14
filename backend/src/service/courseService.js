@@ -124,7 +124,7 @@ const getInitialInformation = async (req, res, next) => {
 
 const addSubject = async (req, res, next) => {
   try {
-    const SubjectsData = req.body; // e.g. { "y1s21": { Subject } }
+    const SubjectsData = req.body; // e.g. { "y1s2p1": { Subject } }
     if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
       return res.status(400).json({ message: 'No Subjects data provided.' });
     }
@@ -164,7 +164,7 @@ const addSubject = async (req, res, next) => {
 };
 
 const isValidAdd = async (req, res, next) => {
-  const SubjectsData = req.body; // e.g. { "y1s21": { Subject } }
+  const SubjectsData = req.body; // e.g. { "y1s2p1": { Subject } }
   if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
     return res.status(400).json({ message: 'No Subjects data provided.' });
   }
@@ -194,11 +194,11 @@ const isValidAdd = async (req, res, next) => {
 };
 
 const giveTypeOfSubject = async (req, res, next) => {
-  const SubjectsData = req.body; // e.g. { "y1s21": { Subject } }
+  const SubjectsData = req.body; // e.g. { "y1s2p1": { Subject } }
   if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
     return res.status(400).json({ message: 'No Subjects data provided.' });
   }
-  const param = Object.keys(SubjectsData)[0]; // e.g.'y1s21'
+  const param = Object.keys(SubjectsData)[0]; // e.g.'y1s2p1'
   const Subject = SubjectsData[param]; // get the Subject object
   const { subjectCode } = Subject;
 
@@ -233,6 +233,7 @@ const giveTypeOfSubject = async (req, res, next) => {
     }
   }
 };
+
 const removeSubject = (req, res, next) => {
   try {
     const { query } = req.params;
@@ -290,6 +291,7 @@ function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
     }
   }
 }
+
 // get all codes of subjects in the subjectPlanner
 function getAllSubjectCodes(subjectPlanner) {
   const subjectCodesArray = [];

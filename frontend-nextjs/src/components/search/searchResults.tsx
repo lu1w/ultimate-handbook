@@ -1,13 +1,14 @@
 // import '@styles/SearchResults.css';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import axios from 'axios';
 
 import SubjectCard from '@/components/common/subjectCard';
 import { Subject } from '@/lib/objectSchema';
 import { SERVER_URL } from '@/lib/utils';
+import assert from 'assert';
 
 interface SearchResultsProps {
   className?: string | undefined;
@@ -24,12 +25,18 @@ export default function SearchResults({
   );
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const slot: string = searchParams.get('slot')!;
 
   async function handleAdd(subject: Subject) {
     try {
-      await axios.post(`${SERVER_URL}/v1/course/add`, { y3s1p4: subject });
+      const requestBody: any = {};
+      requestBody[slot] = subject;
+      await axios.post(`${SERVER_URL}/v1/course/add`, requestBody);
       router.replace('/planner');
-    } catch (err) {}
+    } catch (err) {
+      // TODO: handle error
+    }
     return;
   }
   return (

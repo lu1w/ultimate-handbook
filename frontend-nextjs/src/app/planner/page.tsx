@@ -19,7 +19,12 @@ interface Subject {
   coordinatorName: string;
 }
 
-type Term = 'summer' | 's1' | 'winter' | 's2';
+enum Term {
+  summer = 'su',
+  sem1 = 's1',
+  winter = 'wi',
+  sem2 = 's2',
+}
 type Year = 'y1' | 'y2' | 'y3';
 
 const PlannerPage: React.FC = () => {
@@ -28,7 +33,7 @@ const PlannerPage: React.FC = () => {
   >({});
 
   const years: Year[] = ['y1', 'y2', 'y3'];
-  const terms: Term[] = ['summer', 's1', 'winter', 's2'];
+  const terms: Term[] = Object.values(Term);
 
   React.useEffect(() => {
     const initialVisibleTerms: Record<string, boolean> = {};
@@ -63,7 +68,10 @@ const PlannerPage: React.FC = () => {
         : null;
   };
 
+  const router = useRouter();
+
   const addSubject = (year: Year, term: Term, period: string) => {
+    router.push(`/search/?slot=${year}${term}${period}`);
     const newSubject: Subject = {
       header: 'DISCIPLINE',
       code: 'SUBJ1001',
@@ -157,7 +165,7 @@ const PlannerPage: React.FC = () => {
                             term.slice(1) +
                             ' Term'}
                     </div>
-                    {(term === 'summer' || term === 'winter') && (
+                    {(term === Term.summer || term === Term.winter) && (
                       <Button
                         onClick={() => toggleTerm(year, term)}
                         variant="outline"
@@ -168,7 +176,7 @@ const PlannerPage: React.FC = () => {
                       </Button>
                     )}
                   </div>
-                  {((term !== 'summer' && term !== 'winter') ||
+                  {((term !== Term.summer && term !== Term.winter) ||
                     visibleTerms[`${year}${term}`]) && (
                     <div className="grid grid-cols-4 gap-4 min-h-[50%]">
                       {getAvailablePeriods(year, term).map((period) => (
@@ -186,6 +194,7 @@ const PlannerPage: React.FC = () => {
                               handleClick={() =>
                                 removeSubject(year, term, period)
                               }
+                              button="✕"
                             />
                           ) : null}
                         </div>
