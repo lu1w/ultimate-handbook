@@ -11,7 +11,7 @@ import { Button } from '../ui/button';
 
 const SELECT_PROMPT_CSS = 'mb-4 mt-10';
 
-export default function CourseForm() {
+export default function InfoForm() {
   const degreeRef = useRef<string>('');
   const majorRef = useRef<string>('');
 
@@ -54,9 +54,8 @@ export default function CourseForm() {
       alert('Please select a degree and a major for your best experience'); // TODO-future: make this alert box better
     }
     try {
-      // TODO: uncomment this when the backend API is fixed
-      // const url = `${SERVER_URL}/v1/course/main?degree=${degreeRef.current}&majorName=${majorRef.current}`;
-      // const res = await axios.get(url);
+      const url = `${SERVER_URL}/v1/course?degree=${degreeRef.current}&major=${majorRef.current}`;
+      const res = await axios.post(url);
 
       /* Selected degree and major, go to planner */
       router.replace('/planner');

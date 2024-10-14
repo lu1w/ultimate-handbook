@@ -33,7 +33,7 @@ export default function SearchResults({
       const requestBody: any = {};
       requestBody[slot] = subject;
       await axios.post(`${SERVER_URL}/v1/course/add`, requestBody);
-      router.replace('/planner');
+      router.push('/planner');
     } catch (err) {
       // TODO: handle error
     }

@@ -1,13 +1,17 @@
 'use client';
 
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+
+import axios from 'axios';
 
 import { Button } from '@/components/ui/button';
 import SubjectCard from '@/components/common/subjectCard';
 import EmptySubjectCard from '@/components/planner/emptySubjectCard';
 import subjectPlanner from '@/mock-data/courseData';
+
+import { SERVER_URL } from '@/lib/utils';
 
 interface Subject {
   header: string;
@@ -27,15 +31,22 @@ enum Term {
 }
 type Year = 'y1' | 'y2' | 'y3';
 
+enum TermDisplay {
+  'su' = 'Summer Term',
+  's1' = 'Semester 1',
+  'wi' = 'Winter Term',
+  's2' = 'Semester 2',
+}
+
 const PlannerPage: React.FC = () => {
-  const [visibleTerms, setVisibleTerms] = React.useState<
-    Record<string, boolean>
-  >({});
+  const [visibleTerms, setVisibleTerms] = useState<Record<string, boolean>>({});
+
+  const [planner, setPlanner] = useState({});
 
   const years: Year[] = ['y1', 'y2', 'y3'];
   const terms: Term[] = Object.values(Term);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const initialVisibleTerms: Record<string, boolean> = {};
     years.forEach((year) => {
       ['summer', 'winter'].forEach((term) => {
@@ -50,6 +61,19 @@ const PlannerPage: React.FC = () => {
       });
     });
     setVisibleTerms(initialVisibleTerms);
+  }, []);
+
+  /* Initialize planner data from backend */
+  useEffect(() => {
+    const fetchPlanner = async () => {
+      try {
+        const planner = await axios.get(`${SERVER_URL}/v1/course/main`);
+        setPlanner(planner);
+      } catch (err) {
+        // TODO: handle error
+      }
+    };
+    fetchPlanner();
   }, []);
 
   const getSubject = (
@@ -156,14 +180,7 @@ const PlannerPage: React.FC = () => {
                 <div key={`${year}-${term}`} className="mb-8">
                   <div className="flex items-center mb-2">
                     <div className="font-bold">
-                      {getYear(year)}{' '}
-                      {term === 's1'
-                        ? 'Semester 1'
-                        : term === 's2'
-                          ? 'Semester 2'
-                          : term.charAt(0).toUpperCase() +
-                            term.slice(1) +
-                            ' Term'}
+                      {getYear(year)} {TermDisplay[term]}
                     </div>
                     {(term === Term.summer || term === Term.winter) && (
                       <Button

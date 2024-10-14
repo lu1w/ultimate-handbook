@@ -3,9 +3,11 @@ const router = express.Router();
 const mongoClient = require('../../config/mongoClient');
 const ApiError = require('../../utils/ApiError');
 const {
+  setInitialInfo,
+  getInitialInfo,
+  getPlanner,
   addSubject,
   removeSubject,
-  getInitialInformation,
   isValidAdd,
   giveTypeOfSubject
 } = require('../../service/courseService');
@@ -16,19 +18,6 @@ const {
  *   get:
  *     summary: Get core subjects and compulsory courses
  *     description: Retrieve all core subjects based on the `majorName` and all compulsory courses based on the `degree`.
- *     parameters:
- *       - name: majorName
- *         in: query
- *         required: true
- *         description: Major name (e.g., Data Science)
- *         schema:
- *           type: string
- *       - name: degree
- *         in: query
- *         required: true
- *         description: Degree name (e.g., Science)
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Successfully retrieved core subjects and compulsory courses
@@ -55,13 +44,36 @@ const {
  *                   items:
  *                     type: string
  *       400:
- *         description: Both majorName and degree are required.
+ *         description: Both major and degree are required.
  *       404:
  *         description: Major or degree not found.
  *       500:
  *         description: Server error.
  */
-router.get('/main', getInitialInformation);
+router.get('/main', getInitialInfo);
+
+/**
+ * @swagger
+ * /course:
+ *   post:
+ *     summary: Set user degree and major
+ *     parameters:
+ *       - name: degree
+ *         in: query
+ *         required: true
+ *         description: Degree name (e.g., Science)
+ *         schema:
+ *           type: string
+ *       - name: major
+ *         in: query
+ *         required: true
+ *         description: Major name (e.g., Data Science)
+ *         schema:
+ *           type: string
+ *   get:
+ */
+router.post('/', setInitialInfo);
+router.get('/planner', getPlanner);
 
 /**
  * @swagger
