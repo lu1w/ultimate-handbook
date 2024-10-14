@@ -177,7 +177,7 @@ describe('Course Planner API Tests', () => {
   it('should retrieve core subjects and compulsory courses', (done) => {
     request(app)
       .get('/v1/course/main')
-      .query({ majorName: 'Computer Science', degree: 'Bachelor of Science' })
+      .query({ majorName: 'Data Science', degree: 'Science' })
       .end((err, res) => {
         if (err) return done(err);
         expect(res.body).to.be.an('object');
@@ -186,8 +186,8 @@ describe('Course Planner API Tests', () => {
         );
         expect(res.body).to.have.property('userDegree');
         expect(res.body.userDegree).to.deep.include({
-          degree: 'Bachelor of Science',
-          major: 'Computer Science'
+          degree: 'Science',
+          major: 'Data Science'
         });
         expect(res.body).to.have.property('coreSubjects').that.is.an('array');
         expect(res.body)
