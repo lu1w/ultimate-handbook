@@ -68,7 +68,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       </CardContent>
       <CardFooter className="p-3 pt-0 space-x-1">
         <div className="grid grid-cols-2 gap-2">
-          {studyPeriods.map((t) => (
+          {studyPeriods?.map((t) => (
             <Button
               key={t}
               variant="secondary"
