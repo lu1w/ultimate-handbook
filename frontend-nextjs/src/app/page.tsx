@@ -1,11 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
+import CourseForm from '@/components/home/courseForm';
 
 export default function Home() {
   return (
-    <div>
+    <div className="flex justify-center flex-col items-center">
       <h1>Welcome to the Course Planner</h1>
       <p>Please fill in your enrollment details.</p>
+      <CourseForm />
       <nav>
         <ul>
           <li>

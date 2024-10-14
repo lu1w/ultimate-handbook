@@ -57,7 +57,6 @@ export default function SearchPage() {
         // TODO: Handle error
       }
     };
-
     fetchStudyAreas();
   }, []);
 

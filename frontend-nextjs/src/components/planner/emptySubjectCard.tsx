@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const EmptySubjectCard: React.FC<{ onAdd: () => void }> = ({ onAdd }) => {
   return (
-    <Card className="w-full h-full min-w-40 border border-black flex items-center justify-center">
+    <Card className="w-full h-full min-w-40 flex items-center justify-center">
       <Button
         variant="outline"
         size="icon"

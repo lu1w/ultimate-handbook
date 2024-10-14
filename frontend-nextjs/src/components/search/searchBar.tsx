@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@components/ui/input';
 // import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 
-interface SerachBarProps {
+interface SearchBarProps {
   className?: string;
   input: string;
   handleSubmit: (event: React.ChangeEvent<HTMLFormElement>) => void;
@@ -16,7 +16,7 @@ export default function SearchBar({
   input,
   handleSubmit,
   handleChange,
-}: SerachBarProps) {
+}: SearchBarProps) {
   return (
     <div
       id="search-bar"
