@@ -104,6 +104,7 @@ const setInitialInfo = async (req, res, next) => {
         return next(new ApiError(404, 'Degree not found.'));
       }
       const { compulsorySubject } = degreeInfo;
+      compulsory.length = 0;
       compulsory.push(...compulsorySubject);
     } catch (err) {
       return next(new ApiError(500, `Server error ${err}`));
@@ -124,13 +125,18 @@ const setInitialInfo = async (req, res, next) => {
         return next(new ApiError(404, 'Major not found.'));
       }
       const { coreSubjects } = majorInfo;
+      majorCore.length = 0;
       majorCore.push(...coreSubjects);
     } catch (err) {
       return next(new ApiError(500, `Server error ${err}`));
     }
   }
 
-  res.status(200).json({ message: `degree = ${degree}; major = ${major}` });
+  res.status(200).json({
+    message: `User Info Successfully Initialized: degree = ${degree}, major = ${major}`,
+    compulsory,
+    majorCore
+  });
 };
 
 const getInitialInfo = async (req, res, next) => {
