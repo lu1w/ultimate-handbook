@@ -234,7 +234,7 @@ const PlannerPage: React.FC = () => {
 
         {/* Sidebar - takes up 1 column */}
         <div className="col-span-1 bg-gray-100 p-4 rounded-lg">
-          <div className="flex justify-center">
+          <div className="flex justify-center mb-3">
             <Button 
               variant={"resolve"}
               className="m my-3 font-semibold text-lg" 
