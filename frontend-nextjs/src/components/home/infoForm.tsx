@@ -54,8 +54,9 @@ export default function InfoForm() {
       alert('Please select a degree and a major for your best experience'); // TODO-future: make this alert box better
     }
     try {
-      const url = `${SERVER_URL}/v1/course?degree=${degreeRef.current}&major=${majorRef.current}`;
-      const res = await axios.post(url);
+      const res = await axios.post(
+        `${SERVER_URL}/v1/course/main?degree=${degreeRef.current}&major=${majorRef.current}`,
+      );
 
       /* Selected degree and major, go to planner */
       router.replace('/planner');

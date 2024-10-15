@@ -72,7 +72,7 @@ router.get('/main', getInitialInfo);
  *           type: string
  *   get:
  */
-router.post('/', setInitialInfo);
+router.post('/main', setInitialInfo);
 router.get('/planner', getPlanner);
 
 /**

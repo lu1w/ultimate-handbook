@@ -304,8 +304,8 @@ describe('Course Planner API Tests', () => {
         expect(res.body['y1s2']).to.have.property('p2');
         const subjectEntry = res.body['y1s2']['p2'];
         expect(subjectEntry)
-          .to.have.property('type')
-          .that.is.oneOf(['compulsory', 'core', 'discipline', 'breadth']);
+          .to.have.property('header')
+          .that.is.oneOf(['COMPULSORY', 'MAJOR CORE', 'DISCIPLINE', 'BREADTH']);
         done();
       });
   });
