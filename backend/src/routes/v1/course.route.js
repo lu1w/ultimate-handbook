@@ -146,7 +146,7 @@ router.post('/add', addSubject, isValidAdd, giveTypeOfSubject);
 
 /**
  * @swagger
- * /course/subject/prerequisite/{query}:
+ * /course/prerequisites/{query}:
  *   get:
  *     summary: Get all prerequisites for a subject
  *     description: Retrieve all prerequisites for the subject specified by `query`.
@@ -180,7 +180,7 @@ router.post('/add', addSubject, isValidAdd, giveTypeOfSubject);
  *       500:
  *         description: Server error.
  */
-router.get('/subject/prerequisite/:query', async (req, res, next) => {
+router.get('/prerequisites/:query', async (req, res, next) => {
   const { query } = req.params;
   if (query) {
     try {
@@ -200,7 +200,7 @@ router.get('/subject/prerequisite/:query', async (req, res, next) => {
 
 /**
  * @swagger
- * /course/majorCompulsory:
+ * /course/cores/{major}:
  *   get:
  *     summary: Get all core subjects for a given major
  *     description: Retrieve all core subjects for a given `major`.
@@ -234,9 +234,9 @@ router.get('/subject/prerequisite/:query', async (req, res, next) => {
  *       500:
  *         description: Server error.
  */
-router.get('/majorCompulsory', async (req, res, next) => {
+router.get('/cores', async (req, res, next) => {
   try {
-    const major = req.query.major;
+    const { major } = req.params;
 
     if (!major) {
       return next(new ApiError(400, 'Major is required.'));

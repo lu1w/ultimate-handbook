@@ -173,7 +173,7 @@ import request from 'supertest';
 import { expect } from 'chai';
 import app from '../src/app.js';
 
-describe('Course Planner API Tests', () => {
+describe('Course Info API', () => {
   it('should initialize the user info, including degree and major', (done) => {
     const degree = 'Science';
     const major = 'Data Science';
@@ -205,7 +205,9 @@ describe('Course Planner API Tests', () => {
         done();
       });
   });
+});
 
+describe('Course Planner API', () => {
   it('should add a subject to the planner', (done) => {
     const subjectData = {
       y1s2p1: {

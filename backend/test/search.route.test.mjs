@@ -40,7 +40,7 @@ const urlWithQuery = ({
   return url;
 };
 
-describe('Search Routes: search page', () => {
+describe('Search API: search page', () => {
   it('load all 2293 subjects when entering the search page', (done) => {
     request(app)
       .get('/v1/search/')
@@ -57,7 +57,7 @@ describe('Search Routes: search page', () => {
   });
 });
 
-describe('Search Routes: search query', () => {
+describe('Search API: search query', () => {
   it('search for a subject by subject code', (done) => {
     request(app)
       .get(urlWithQuery({ input: 'COMP10002' }))
@@ -101,7 +101,7 @@ describe('Search Routes: search query', () => {
   });
 });
 
-describe('Search Routes: search filter', () => {
+describe('Search API: search filter', () => {
   it('search for a subject by filters and input query (hard coded url)', (done) => {
     request(app)
       .get(
