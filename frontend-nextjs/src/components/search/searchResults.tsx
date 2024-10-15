@@ -1,9 +1,14 @@
 // import '@styles/SearchResults.css';
 
 import React from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import axios from 'axios';
 
 import SubjectCard from '@/components/common/subjectCard';
 import { Subject } from '@/lib/objectSchema';
+import { SERVER_URL } from '@/lib/utils';
+import assert from 'assert';
 
 interface SearchResultsProps {
   className?: string | undefined;
@@ -18,6 +23,22 @@ export default function SearchResults({
   console.log(
     `INFO: searchResults passed into SearchResults<> is has length ${subjects.length} ${JSON.stringify(subjects)}`,
   );
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const slot: string = searchParams.get('slot')!;
+
+  async function handleAdd(subject: Subject) {
+    try {
+      const newSubjectInfo: any = {};
+      newSubjectInfo[slot] = subject;
+      await axios.post(`${SERVER_URL}/v1/course/add`, newSubjectInfo);
+      router.push('/planner');
+    } catch (err) {
+      // TODO: handle error
+    }
+    return;
+  }
   return (
     <div className={className}>
       {/* Text message - number of results */}
@@ -37,20 +58,23 @@ export default function SearchResults({
               key={subject._id}
               // TODO-future: mapping code to study area
               header={subject.subjectCode.substring(0, 4)}
-              name={subject.subjectName}
-              code={subject.subjectCode}
+              subjectName={subject.subjectName}
+              subjectCode={subject.subjectCode}
               level={subject.level}
               points={subject.points}
-              studyPeriods={
+              studyPeriod={
                 subject.studyPeriod // TODO: ask Weihan why are some subject availability empty
                   ? subject.studyPeriod.map((sp) => sp.toString())
                   : []
               }
-              coordinatorName={
-                subject.coordinator
-                  ? Object.values(subject.coordinator)[0]
-                  : null
-              }
+              // TODO: the coordinator is going to be in the semester bubble, so we should be passing only coordinator name
+              // coordinatorName={
+              //   subject.coordinator
+              //     ? Object.values(subject.coordinator)[0]
+              //     : null
+              // }
+              handleClick={() => handleAdd(subject)}
+              button="+"
             />
           ))}
         </div>

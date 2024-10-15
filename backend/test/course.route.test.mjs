@@ -173,30 +173,41 @@ import request from 'supertest';
 import { expect } from 'chai';
 import app from '../src/app.js';
 
-describe('Course Planner API Tests', () => {
-  it('should retrieve core subjects and compulsory courses', (done) => {
+describe('Course Info API', () => {
+  it('should initialize the user info, including degree and major', (done) => {
+    const degree = 'Science';
+    const major = 'Data Science';
     request(app)
-      .get('/v1/course/main')
-      .query({ majorName: 'Data Science', degree: 'Science' })
+      .post('/v1/course/main')
+      .query({ degree: degree, major: major })
       .end((err, res) => {
         if (err) return done(err);
-        expect(res.body).to.be.an('object');
-        expect(res.body.message).to.equal(
-          'Core subjects and compulsory courses retrieved successfully'
+
+        expect(res.status).to.equal(200);
+
+        const responseData = res.body;
+        expect(responseData.message).to.equal(
+          `User Info Successfully Initialized: degree = ${degree}, major = ${major}`
         );
-        expect(res.body).to.have.property('userDegree');
-        expect(res.body.userDegree).to.deep.include({
-          degree: 'Science',
-          major: 'Data Science'
-        });
-        expect(res.body).to.have.property('coreSubjects').that.is.an('array');
-        expect(res.body)
-          .to.have.property('compulsorySubject')
-          .that.is.an('array');
+        expect(responseData.compulsory).deep.equal(['SCIE10005']);
+        expect(responseData.majorCore).deep.equal([
+          [4, 'MAST30025', 'MAST30027', 'MAST30034', 'COMP30027']
+        ]);
+        // expect(res.body).to.have.property('userInfo');
+        // expect(res.body.userDegree).to.deep.include({
+        //   degree: 'Science',
+        //   major: 'Data Science'
+        // });
+        // expect(res.body).to.have.property('coreSubjects').that.is.an('array');
+        // expect(res.body)
+        //   .to.have.property('compulsorySubject')
+        //   .that.is.an('array');
         done();
       });
   });
+});
 
+describe('Course Planner API', () => {
   it('should add a subject to the planner', (done) => {
     const subjectData = {
       y1s2p1: {
@@ -294,8 +305,8 @@ describe('Course Planner API Tests', () => {
         expect(res.body['y1s2']).to.have.property('p2');
         const subjectEntry = res.body['y1s2']['p2'];
         expect(subjectEntry)
-          .to.have.property('type')
-          .that.is.oneOf(['compulsory', 'core', 'discipline', 'breadth']);
+          .to.have.property('header')
+          .that.is.oneOf(['COMPULSORY', 'MAJOR CORE', 'DISCIPLINE', 'BREADTH']);
         done();
       });
   });

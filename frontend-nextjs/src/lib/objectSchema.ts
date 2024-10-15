@@ -1,6 +1,6 @@
 export interface Subject {
   _id: string;
-  type?: string;
+  header: string;
   subjectName: string;
   subjectCode: string;
   level: string;

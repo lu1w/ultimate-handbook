@@ -3,9 +3,11 @@ const router = express.Router();
 const mongoClient = require('../../config/mongoClient');
 const ApiError = require('../../utils/ApiError');
 const {
+  setInitialInfo,
+  getInitialInfo,
+  getPlanner,
   addSubject,
   removeSubject,
-  getInitialInformation,
   isValidAdd,
   giveTypeOfSubject
 } = require('../../service/courseService');
@@ -16,19 +18,6 @@ const {
  *   get:
  *     summary: Get core subjects and compulsory courses
  *     description: Retrieve all core subjects based on the `majorName` and all compulsory courses based on the `degree`.
- *     parameters:
- *       - name: majorName
- *         in: query
- *         required: true
- *         description: Major name (e.g., Data Science)
- *         schema:
- *           type: string
- *       - name: degree
- *         in: query
- *         required: true
- *         description: Degree name (e.g., Science)
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Successfully retrieved core subjects and compulsory courses
@@ -55,22 +44,45 @@ const {
  *                   items:
  *                     type: string
  *       400:
- *         description: Both majorName and degree are required.
+ *         description: Both major and degree are required.
  *       404:
  *         description: Major or degree not found.
  *       500:
  *         description: Server error.
  */
-router.get('/main', getInitialInformation);
+router.get('/main', getInitialInfo);
 
 /**
  * @swagger
- * /course/remove/{query}:
+ * /course:
+ *   post:
+ *     summary: Set user degree and major
+ *     parameters:
+ *       - name: degree
+ *         in: query
+ *         required: true
+ *         description: Degree name (e.g., Science)
+ *         schema:
+ *           type: string
+ *       - name: major
+ *         in: query
+ *         required: false
+ *         description: Major name (e.g., Data Science)
+ *         schema:
+ *           type: string
+ *   get:
+ */
+router.post('/main', setInitialInfo);
+router.get('/planner', getPlanner);
+
+/**
+ * @swagger
+ * /course/remove/{slot}:
  *   delete:
  *     summary: Remove a subject from the planner
- *     description: Remove a subject from the subject planner based on the given `query`.
+ *     description: Remove a subject from the subject planner based on the given `slot`.
  *     parameters:
- *       - name: query
+ *       - name: slot
  *         in: path
  *         required: true
  *         description: Subject slot position (e.g., y1s2p1)
@@ -91,7 +103,7 @@ router.get('/main', getInitialInformation);
  *       500:
  *         description: Server error.
  */
-router.delete('/remove/:query', removeSubject);
+router.delete('/remove/:slot', removeSubject);
 
 /**
  * @swagger
@@ -134,7 +146,7 @@ router.post('/add', addSubject, isValidAdd, giveTypeOfSubject);
 
 /**
  * @swagger
- * /course/subject/prerequisite/{query}:
+ * /course/prerequisites/{query}:
  *   get:
  *     summary: Get all prerequisites for a subject
  *     description: Retrieve all prerequisites for the subject specified by `query`.
@@ -168,7 +180,7 @@ router.post('/add', addSubject, isValidAdd, giveTypeOfSubject);
  *       500:
  *         description: Server error.
  */
-router.get('/subject/prerequisite/:query', async (req, res, next) => {
+router.get('/prerequisites/:query', async (req, res, next) => {
   const { query } = req.params;
   if (query) {
     try {
@@ -188,7 +200,7 @@ router.get('/subject/prerequisite/:query', async (req, res, next) => {
 
 /**
  * @swagger
- * /course/majorCompulsory:
+ * /course/cores/{major}:
  *   get:
  *     summary: Get all core subjects for a given major
  *     description: Retrieve all core subjects for a given `major`.
@@ -222,9 +234,9 @@ router.get('/subject/prerequisite/:query', async (req, res, next) => {
  *       500:
  *         description: Server error.
  */
-router.get('/majorCompulsory', async (req, res, next) => {
+router.get('/cores', async (req, res, next) => {
   try {
-    const major = req.query.major;
+    const { major } = req.params;
 
     if (!major) {
       return next(new ApiError(400, 'Major is required.'));
