@@ -185,12 +185,12 @@ describe('Course Planner API Tests', () => {
 
         expect(res.status).to.equal(200);
 
-        const responseJson = res.json();
-        expect(responseJson.message).to.equal(
+        const responseData = res.body;
+        expect(responseData.message).to.equal(
           `User Info Successfully Initialized: degree = ${degree}, major = ${major}`
         );
-        expect(responseJson.compulsory).deep.equal(['SCIE10005']);
-        expect(responseJson.majorCore).deep.equal([
+        expect(responseData.compulsory).deep.equal(['SCIE10005']);
+        expect(responseData.majorCore).deep.equal([
           [4, 'MAST30025', 'MAST30027', 'MAST30034', 'COMP30027']
         ]);
         // expect(res.body).to.have.property('userInfo');
