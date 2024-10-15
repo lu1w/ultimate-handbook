@@ -25,6 +25,12 @@ const buttonVariants = cva(
 
         /** Clear filter button */
         helper: 'text-search-muted hover:text-search-header hover:underline',
+
+        /** Add or delete summer winter terms */
+        planner: 'border-2 border-black border-input bg-background hover:bg-accent hover:text-accent-foreground',
+
+        /** Button for resolve */
+        resolve: 'text-white bg-planner-header hover:bg-white-op/90 hover:text-search-header',
       },
       size: {
         default: 'h-9 px-4 py-2',
