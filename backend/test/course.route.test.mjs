@@ -185,7 +185,7 @@ describe('Course Planner API Tests', () => {
 
         expect(res.status).to.equal(200);
 
-        const responseJson = res.json;
+        const responseJson = res.json();
         expect(responseJson.message).to.equal(
           `User Info Successfully Initialized: degree = ${degree}, major = ${major}`
         );
