@@ -153,23 +153,23 @@ const getPlanner = (req, res) => {
 
 const addSubject = async (req, res, next) => {
   try {
-    const SubjectsData = req.body; // e.g. { "y1s2p1": { Subject } }
-    if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
+    const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
+    if (!subjectData || Object.keys(subjectData).length === 0) {
       return res.status(400).json({ message: 'No Subjects data provided.' });
     }
-    const param = Object.keys(SubjectsData)[0]; // e.g.'y1s2p1'
-    const Subject = SubjectsData[param]; // get the Subject object
-    const time = param.substring(0, 4); // 'y1'
-    const position = param.substring(4, 6); // 'p1'
+    const slot = Object.keys(subjectData)[0]; // e.g.'y1s2p1'
+    const subject = subjectData[slot]; // get the Subject object
+    const term = slot.substring(0, 4); // 'y1s2'
+    const position = slot.substring(4, 6); // 'p1'
 
     // Check if the slot exists
-    if (!planner[time] || !planner[time][position]) {
+    if (!planner[term] || !planner[term][position]) {
       return res.status(400).json({ message: 'Invalid time or position.' });
     }
     // check if the Subjects already exists
-    if (Object.keys(planner[time][position]).length !== 0) {
+    if (Object.keys(planner[term][position]).length !== 0) {
       console.debug(
-        'Subject already exists in this slot' + planner[time][position]
+        'Subject already exists in this slot' + planner[term][position]
       );
       return res.status(400).json({
         message:
@@ -177,11 +177,11 @@ const addSubject = async (req, res, next) => {
       });
     }
 
-    const { subjectCode } = Subject;
+    const { subjectCode } = subject;
     if (!subjectCode) {
       return res.status(400).json({ message: 'lack of the subject code' });
     }
-    planner[time][position] = Subject;
+    planner[term][position] = subject;
     console.log(
       `my planner after adding subject ${subjectCode}: ${JSON.stringify(planner)}`
     );
@@ -193,19 +193,19 @@ const addSubject = async (req, res, next) => {
 };
 
 const isValidAdd = async (req, res, next) => {
-  const SubjectsData = req.body; // e.g. { "y1s2p1": { Subject } }
-  if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
+  const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
+  if (!subjectData || Object.keys(subjectData).length === 0) {
     return res.status(400).json({ message: 'No Subjects data provided.' });
   }
-  const param = Object.keys(SubjectsData)[0]; // e.g.'y1s2p1'
-  const Subject = SubjectsData[param]; // get the Subject object
-  const subjectSemesterInPlanner = param.substring(3, 4); // '2'
+  const slot = Object.keys(subjectData)[0]; // e.g.'y1s2p1'
+  const subject = subjectData[slot]; // get the Subject object
+  const subjectSemesterInPlanner = slot.substring(3, 4); // '2'
   const subjectsCodeInPlanner = getAllSubjectCodes(planner);
 
   checkAllSubjectPrequisites(subjectsCodeInPlanner); // we will check all subjects prerequisites in planner after adding the subject
 
   // check if the Subjects is in the right semester
-  const { studyPeriod } = Subject;
+  const { studyPeriod } = subject;
   // Check if studyPeriod array contains any items
   if (studyPeriod && studyPeriod.length > 0) {
     // Loop through each study period to check against the subjectSemesterInPlanner
@@ -214,46 +214,45 @@ const isValidAdd = async (req, res, next) => {
       return studyRequireSemester === subjectSemesterInPlanner;
     });
     if (!match) {
-      Subject.semesterError = true;
+      subject.semesterError = true;
     } else {
-      delete Subject.semesterError;
+      delete subject.semesterError;
     }
   }
   next();
 };
 
 const giveTypeOfSubject = async (req, res, next) => {
-  const SubjectsData = req.body; // e.g. { "y1s2p1": { Subject } }
-  if (!SubjectsData || Object.keys(SubjectsData).length === 0) {
+  const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
+  if (!subjectData || Object.keys(subjectData).length === 0) {
     return res.status(400).json({ message: 'No Subjects data provided.' });
   }
-  const param = Object.keys(SubjectsData)[0]; // e.g.'y1s2p1'
-  const Subject = SubjectsData[param]; // get the Subject object
-  const { subjectCode } = Subject;
+  const slot = Object.keys(subjectData)[0]; // e.g.'y1s2p1'
+  const subject = subjectData[slot]; // get the Subject object
+  const { subjectCode } = subject;
 
   if (compulsory.includes(subjectCode)) {
-    Subject.header = 'COMPULSORY';
+    subject.header = 'COMPULSORY';
   } else if (majorCore.includes(subjectCode)) {
-    Subject.header = 'MAJOR CORE';
+    subject.header = 'MAJOR CORE';
   } else {
     // get the first 4 characters of the Subjects code
-    const codePrefix = subjectCode.substring(0, 4).toUpperCase();
+    const studyAreaCode = subjectCode.substring(0, 4).toUpperCase();
     try {
       const collection = await mongoClient.getCollection('StudyAreaToCourse');
       const studyAreaDoc = await collection.findOne({});
 
-      if (studyAreaDoc && studyAreaDoc[codePrefix]) {
-        const degreeNameForPrefix = studyAreaDoc[codePrefix]; // get the degree name for the prefix(e.g. MAST)
+      if (studyAreaDoc && studyAreaDoc[studyAreaCode]) {
+        const degreeName = studyAreaDoc[studyAreaCode]; // get the degree name for the prefix(e.g. MAST)
         // check if the Subjects is discipline or breadth
-        const userDegreeName = userInfo.degree;
 
-        if (degreeNameForPrefix === userDegreeName) {
-          Subject.header = 'DISCIPLINE';
+        if (degreeName === userInfo.degree) {
+          subject.header = 'DISCIPLINE';
         } else {
-          Subject.header = 'BREADTH';
+          subject.header = 'BREADTH';
         }
       } else {
-        Subject.header = 'BREADTH';
+        subject.header = 'BREADTH';
       }
       res.status(200).send(planner);
     } catch (err) {
@@ -264,27 +263,28 @@ const giveTypeOfSubject = async (req, res, next) => {
 };
 
 const removeSubject = (req, res, next) => {
+  console.log(`Enter removeSubject()`);
   try {
-    const { query } = req.params;
-    if (!query) {
+    const { slot } = req.params;
+    if (!slot) {
       return next(new ApiError(400, 'No Subject data provided.'));
     }
 
-    const semesterKey = query.substring(0, 4); // 'y1s2'
-    const position = query.substring(4, 6); // 'p1'
+    const studyPeriod = slot.substring(0, 4); // 'y1s2'
+    const position = slot.substring(4, 6); // 'p1'
 
     // check if Subject exists
     if (
-      !planner[semesterKey] ||
-      !planner[semesterKey][position] ||
-      Object.keys(planner[semesterKey][position]).length === 0
+      !planner[studyPeriod] ||
+      !planner[studyPeriod][position] ||
+      Object.keys(planner[studyPeriod][position]).length === 0
     ) {
       return res.status(404).json({ message: 'No Subjects found!' });
     }
 
     // delete planner[semesterKey][position];
     // Reset the slot to an empty object
-    planner[semesterKey][position] = {};
+    planner[studyPeriod][position] = {};
 
     // get all codes of subjects in the planner (after removing the subject)
     const subjectsCodeInPlanner = getAllSubjectCodes(planner);

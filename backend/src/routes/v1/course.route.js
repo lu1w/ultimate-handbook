@@ -66,7 +66,7 @@ router.get('/main', getInitialInfo);
  *           type: string
  *       - name: major
  *         in: query
- *         required: true
+ *         required: false
  *         description: Major name (e.g., Data Science)
  *         schema:
  *           type: string
@@ -77,12 +77,12 @@ router.get('/planner', getPlanner);
 
 /**
  * @swagger
- * /course/remove/{query}:
+ * /course/remove/{slot}:
  *   delete:
  *     summary: Remove a subject from the planner
- *     description: Remove a subject from the subject planner based on the given `query`.
+ *     description: Remove a subject from the subject planner based on the given `slot`.
  *     parameters:
- *       - name: query
+ *       - name: slot
  *         in: path
  *         required: true
  *         description: Subject slot position (e.g., y1s2p1)
@@ -103,7 +103,7 @@ router.get('/planner', getPlanner);
  *       500:
  *         description: Server error.
  */
-router.delete('/remove/:query', removeSubject);
+router.delete('/remove/:slot', removeSubject);
 
 /**
  * @swagger

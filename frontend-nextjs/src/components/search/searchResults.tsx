@@ -30,9 +30,9 @@ export default function SearchResults({
 
   async function handleAdd(subject: Subject) {
     try {
-      const requestBody: any = {};
-      requestBody[slot] = subject;
-      await axios.post(`${SERVER_URL}/v1/course/add`, requestBody);
+      const newSubjectInfo: any = {};
+      newSubjectInfo[slot] = subject;
+      await axios.post(`${SERVER_URL}/v1/course/add`, newSubjectInfo);
       router.push('/planner');
     } catch (err) {
       // TODO: handle error

@@ -77,12 +77,12 @@ const PlannerPage: React.FC = () => {
   const getSubject = (
     year: Year,
     term: Term,
-    period: string,
+    position: string,
   ): Subject | null | undefined => {
     const key = `${year}${term}` as keyof typeof planner;
     const termData = planner[key];
     if (!termData) return undefined;
-    const subject = termData[period as keyof typeof termData];
+    const subject = termData[position as keyof typeof termData];
     return subject && Object.keys(subject).length > 0
       ? (subject as Subject)
       : subject === undefined
@@ -92,8 +92,8 @@ const PlannerPage: React.FC = () => {
 
   const router = useRouter();
 
-  const addSubject = (year: Year, term: Term, period: string) => {
-    router.push(`/search/?slot=${year}${term}${period}`);
+  const addSubject = (year: Year, term: Term, position: string) => {
+    router.push(`/search/?slot=${year}${term}${position}`);
     // const newSubject: Subject = {
     //   header: 'DISCIPLINE',
     //   code: 'SUBJ1001',
@@ -105,25 +105,33 @@ const PlannerPage: React.FC = () => {
     // };
     // const key = `${year}${term}` as keyof typeof planner;
     // if (planner[key]) {
-    //   (planner[key] as any)[period] = newSubject;
+    //   (planner[key] as any)[position] = newSubject;
     // }
     setVisibleTerms((prev) => ({ ...prev, [`${year}${term}`]: true }));
   };
 
-  const removeSubject = (year: Year, term: Term, period: string) => {
-    const key = `${year}${term}` as keyof typeof planner;
-    if (planner[key]) {
-      (planner[key] as any)[period] = {};
-    }
-    // Check if there are any non-empty subjects left in the term
-    const termData = planner[key];
-    const hasNonEmptySubject = Object.values(termData).some(
-      (subject) => subject && Object.keys(subject).length > 0,
+  const removeSubject = async (year: Year, term: Term, position: string) => {
+    const res = await axios.delete(
+      `${SERVER_URL}/v1/course/remove/${year}${term}${position}`,
     );
-    setVisibleTerms((prev) => ({
-      ...prev,
-      [`${year}${term}`]: hasNonEmptySubject,
-    }));
+    const planner = res.data;
+    setPlanner(planner);
+    console.log(
+      `my planner after removing ${year}${term}${position} is ${JSON.stringify(planner)}`,
+    );
+    // const key = `${year}${term}` as keyof typeof planner;
+    // if (planner[key]) {
+    //   (planner[key] as any)[position] = {};
+    // }
+    // // Check if there are any non-empty subjects left in the term
+    // const termData = planner[key];
+    // const hasNonEmptySubject = Object.values(termData).some(
+    //   (subject) => subject && Object.keys(subject).length > 0,
+    // );
+    // setVisibleTerms((prev) => ({
+    //   ...prev,
+    //   [`${year}${term}`]: hasNonEmptySubject,
+    // }));
   };
 
   const toggleTerm = (year: Year, term: Term) => {
