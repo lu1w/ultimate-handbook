@@ -58,11 +58,11 @@ export default function SearchResults({
               key={subject._id}
               // TODO-future: mapping code to study area
               header={subject.subjectCode.substring(0, 4)}
-              name={subject.subjectName}
-              code={subject.subjectCode}
+              subjectName={subject.subjectName}
+              subjectCode={subject.subjectCode}
               level={subject.level}
               points={subject.points}
-              studyPeriods={
+              studyPeriod={
                 subject.studyPeriod // TODO: ask Weihan why are some subject availability empty
                   ? subject.studyPeriod.map((sp) => sp.toString())
                   : []

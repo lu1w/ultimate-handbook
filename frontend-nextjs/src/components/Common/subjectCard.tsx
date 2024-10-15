@@ -11,7 +11,7 @@ import {
 import { cn } from '@/lib/utils';
 
 // Mapping subject types to colours
-const typeColors: Record<string, string> = {
+const TYPE_COLOURS: Record<string, string> = {
   'COMPULSORY': 'bg-subject-compulsory',
   'MAJOR CORE': 'bg-subject-core',
   'DISCIPLINE': 'bg-subject-discipline',
@@ -21,11 +21,11 @@ const typeColors: Record<string, string> = {
 interface SubjectCardProps {
   className?: string;
   header: string;
-  code: string;
+  subjectCode: string;
+  subjectName: string;
   level: string;
   points: string;
-  name: string;
-  studyPeriods: string[];
+  studyPeriod: string[];
   coordinatorName?: string; // TODO: put the coordinator in semester bubble
   handleClick?: () => void;
   button?: string;
@@ -34,16 +34,16 @@ interface SubjectCardProps {
 const SubjectCard: React.FC<SubjectCardProps> = ({
   className,
   header,
-  code,
+  subjectCode,
+  subjectName,
   level,
   points,
-  name,
-  studyPeriods,
+  studyPeriod,
   coordinatorName,
   handleClick,
   button,
 }) => {
-  const typeColor = typeColors[header] || 'bg-subject';
+  const typeColor = TYPE_COLOURS[header] || 'bg-subject';
 
   return (
     <Card className={`w-full h-full min-w-40 ${className}`}>
@@ -63,14 +63,14 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
         </div>
       </CardHeader>
       <CardContent className="p-3">
-        <CardDescription className="text-xs">{`${code} | Level ${level} | ${points} points`}</CardDescription>
+        <CardDescription className="text-xs">{`${subjectCode} | Level ${level} | ${points} points`}</CardDescription>
         <CardTitle className="mt-1 text-base font-bold font-serif pt-3 pb-2">
-          {name}
+          {subjectName}
         </CardTitle>
       </CardContent>
       <CardFooter className="p-3 pt-0 space-x-1">
         <div className="grid grid-cols-2 gap-2">
-          {studyPeriods?.map((t) => (
+          {studyPeriod?.map((t) => (
             <Button
               key={t}
               variant="secondary"

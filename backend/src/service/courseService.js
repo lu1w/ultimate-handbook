@@ -232,9 +232,9 @@ const giveTypeOfSubject = async (req, res, next) => {
   const { subjectCode } = Subject;
 
   if (compulsory.includes(subjectCode)) {
-    Subject.header = 'compulsory';
+    Subject.header = 'COMPULSORY';
   } else if (majorCore.includes(subjectCode)) {
-    Subject.header = 'core';
+    Subject.header = 'MAJOR CORE';
   } else {
     // get the first 4 characters of the Subjects code
     const codePrefix = subjectCode.substring(0, 4).toUpperCase();
@@ -248,12 +248,12 @@ const giveTypeOfSubject = async (req, res, next) => {
         const userDegreeName = userInfo.degree;
 
         if (degreeNameForPrefix === userDegreeName) {
-          Subject.header = 'discipline';
+          Subject.header = 'DISCIPLINE';
         } else {
-          Subject.header = 'breadth';
+          Subject.header = 'BREADTH';
         }
       } else {
-        Subject.header = 'breadth';
+        Subject.header = 'BREADTH';
       }
       res.status(200).send(planner);
     } catch (err) {

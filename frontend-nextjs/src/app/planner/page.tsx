@@ -9,34 +9,30 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import SubjectCard from '@/components/common/subjectCard';
 import EmptySubjectCard from '@/components/planner/emptySubjectCard';
-import subjectPlanner from '@/mock-data/courseData';
+// import subjectPlanner from '@/mock-data/courseData';
 
 import { SERVER_URL } from '@/lib/utils';
+import { Subject } from '@/lib/objectSchema';
 
-interface Subject {
-  header: string;
-  code: string;
-  level: string;
-  points: string;
-  name: string;
-  studyPeriods: string[];
-  coordinatorName: string;
-}
+// interface Subject {
+//   header: string;
+//   subjectCode: string;
+//   level: string;
+//   points: string;
+//   subjectName: string;
+//   studyPeriods: string[];
+//   coordinatorName: string;
+// }
 
-enum Term {
-  summer = 'su',
-  sem1 = 's1',
-  winter = 'wi',
-  sem2 = 's2',
-}
-type Year = 'y1' | 'y2' | 'y3';
-
-enum TermDisplay {
+enum TermName {
   'su' = 'Summer Term',
   's1' = 'Semester 1',
   'wi' = 'Winter Term',
   's2' = 'Semester 2',
 }
+
+type Term = keyof typeof TermName;
+type Year = 'y1' | 'y2' | 'y3';
 
 const PlannerPage: React.FC = () => {
   const [visibleTerms, setVisibleTerms] = useState<Record<string, boolean>>({});
@@ -44,14 +40,14 @@ const PlannerPage: React.FC = () => {
   const [planner, setPlanner] = useState({});
 
   const years: Year[] = ['y1', 'y2', 'y3'];
-  const terms: Term[] = Object.values(Term);
+  const terms: Term[] = ['su', 's1', 'wi', 's2'];
 
   useEffect(() => {
     const initialVisibleTerms: Record<string, boolean> = {};
     years.forEach((year) => {
-      ['summer', 'winter'].forEach((term) => {
-        const key = `${year}${term}` as keyof typeof subjectPlanner;
-        const termData = subjectPlanner[key];
+      ['su', 'wi'].forEach((term) => {
+        const key = `${year}${term}` as keyof typeof planner;
+        const termData = planner[key];
         if (termData) {
           const hasNonEmptySubject = Object.values(termData).some(
             (subject) => subject && Object.keys(subject).length > 0,
@@ -65,10 +61,12 @@ const PlannerPage: React.FC = () => {
 
   /* Initialize planner data from backend */
   useEffect(() => {
+    console.log(`enter useEffect() to fetch planner`);
     const fetchPlanner = async () => {
       try {
-        const planner = await axios.get(`${SERVER_URL}/v1/course/main`);
-        setPlanner(planner);
+        const res = await axios.get(`${SERVER_URL}/v1/course/planner`);
+        setPlanner(res.data);
+        console.log(`my planner is: ${JSON.stringify(res.data)}`);
       } catch (err) {
         // TODO: handle error
       }
@@ -81,8 +79,8 @@ const PlannerPage: React.FC = () => {
     term: Term,
     period: string,
   ): Subject | null | undefined => {
-    const key = `${year}${term}` as keyof typeof subjectPlanner;
-    const termData = subjectPlanner[key];
+    const key = `${year}${term}` as keyof typeof planner;
+    const termData = planner[key];
     if (!termData) return undefined;
     const subject = termData[period as keyof typeof termData];
     return subject && Object.keys(subject).length > 0
@@ -96,29 +94,29 @@ const PlannerPage: React.FC = () => {
 
   const addSubject = (year: Year, term: Term, period: string) => {
     router.push(`/search/?slot=${year}${term}${period}`);
-    const newSubject: Subject = {
-      header: 'DISCIPLINE',
-      code: 'SUBJ1001',
-      level: '1',
-      points: '12.5',
-      name: 'New Subject',
-      studyPeriods: ['Semester 1'],
-      coordinatorName: 'TBA',
-    };
-    const key = `${year}${term}` as keyof typeof subjectPlanner;
-    if (subjectPlanner[key]) {
-      (subjectPlanner[key] as any)[period] = newSubject;
-    }
+    // const newSubject: Subject = {
+    //   header: 'DISCIPLINE',
+    //   code: 'SUBJ1001',
+    //   level: '1',
+    //   points: '12.5',
+    //   name: 'New Subject',
+    //   studyPeriods: ['Semester 1'],
+    //   coordinatorName: 'TBA',
+    // };
+    // const key = `${year}${term}` as keyof typeof planner;
+    // if (planner[key]) {
+    //   (planner[key] as any)[period] = newSubject;
+    // }
     setVisibleTerms((prev) => ({ ...prev, [`${year}${term}`]: true }));
   };
 
   const removeSubject = (year: Year, term: Term, period: string) => {
-    const key = `${year}${term}` as keyof typeof subjectPlanner;
-    if (subjectPlanner[key]) {
-      (subjectPlanner[key] as any)[period] = {};
+    const key = `${year}${term}` as keyof typeof planner;
+    if (planner[key]) {
+      (planner[key] as any)[period] = {};
     }
     // Check if there are any non-empty subjects left in the term
-    const termData = subjectPlanner[key];
+    const termData = planner[key];
     const hasNonEmptySubject = Object.values(termData).some(
       (subject) => subject && Object.keys(subject).length > 0,
     );
@@ -148,9 +146,9 @@ const PlannerPage: React.FC = () => {
     }
   };
 
-  const getAvailablePeriods = (year: Year, term: Term): string[] => {
-    const key = `${year}${term}` as keyof typeof subjectPlanner;
-    const termData = subjectPlanner[key];
+  const getAvailablePosition = (year: Year, term: Term): string[] => {
+    const key = `${year}${term}` as keyof typeof planner;
+    const termData = planner[key];
     if (!termData) return [];
     return ['p1', 'p2', 'p3', 'p4'].filter((p) => p in termData);
   };
@@ -180,9 +178,9 @@ const PlannerPage: React.FC = () => {
                 <div key={`${year}-${term}`} className="mb-8">
                   <div className="flex items-center mb-2">
                     <div className="font-bold">
-                      {getYear(year)} {TermDisplay[term]}
+                      {getYear(year)} {TermName[term]}
                     </div>
-                    {(term === Term.summer || term === Term.winter) && (
+                    {(term === 'su' || term === 'wi') && (
                       <Button
                         onClick={() => toggleTerm(year, term)}
                         variant="outline"
@@ -193,23 +191,27 @@ const PlannerPage: React.FC = () => {
                       </Button>
                     )}
                   </div>
-                  {((term !== Term.summer && term !== Term.winter) ||
+                  {((term !== 'su' && term !== 'wi') ||
                     visibleTerms[`${year}${term}`]) && (
                     <div className="grid grid-cols-4 gap-4 min-h-[50%]">
-                      {getAvailablePeriods(year, term).map((period) => (
+                      {getAvailablePosition(year, term).map((position) => (
                         <div
-                          key={`${year}-${term}-${period}`}
+                          key={`${year}${term}${position}`}
                           className="min-h-[15rem]"
                         >
-                          {getSubject(year, term, period) === null ? (
+                          {getSubject(year, term, position) === null ? (
                             <EmptySubjectCard
-                              onAdd={() => addSubject(year, term, period)}
+                              onAdd={() => addSubject(year, term, position)}
                             />
-                          ) : getSubject(year, term, period) ? (
+                          ) : getSubject(year, term, position) ? (
                             <SubjectCard
-                              {...(getSubject(year, term, period)! as Subject)}
+                              {...(getSubject(
+                                year,
+                                term,
+                                position,
+                              )! as Subject)}
                               handleClick={() =>
-                                removeSubject(year, term, period)
+                                removeSubject(year, term, position)
                               }
                               button="✕"
                             />
