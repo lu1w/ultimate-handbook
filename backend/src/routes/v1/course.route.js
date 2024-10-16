@@ -11,8 +11,9 @@ const {
   removeSubject,
   isValidAdd,
   giveTypeOfSubject,
+  getProgression,
   resolveMiddleware,
-  checkOutComeAfterResolve,
+  checkOutComeAfterResolve
 } = require('../../service/courseService');
 
 /**
@@ -265,5 +266,13 @@ router.get('/:userId/cores', async (req, res, next) => {
     return next(new ApiError(500, 'Server error'));
   }
 });
+
+/**
+ * @swagger
+ * /course/progressions:
+ *   get:
+ *     summary: get all the degree progression statistics
+ */
+router.get('/progressions', getProgression);
 
 module.exports = router;
