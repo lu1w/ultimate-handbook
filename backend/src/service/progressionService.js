@@ -32,7 +32,7 @@ function progressionDisplay(range) {
   return `${range[0]}(min) & ${range[1]}(max) Credit Points`; // display   12.5 / 50(min) & 75.5(max) Credit Points
 }
 
-function scienceProgression(courseInfo, progressionStats) {
+function scienceProgressions(courseInfo, progressionStats) {
   /* This is the current progression of the user.
    * When it returns, the object will look something like this:
    *
@@ -67,7 +67,7 @@ function scienceProgression(courseInfo, progressionStats) {
    *       fulfilled: true
    *     },
    *   },
-   *   progression: {
+   *   degreeProgression: {
    *     level1: {
    *       stats: '12.5 / 50 Credit Points of Level 1 subjects before studying Level 2 subjects'
    *       fulfilled: false
@@ -86,11 +86,11 @@ function scienceProgression(courseInfo, progressionStats) {
    *
    * }
    */
-  const progression = {
+  const progressions = {
     overall: {},
     discipline: {},
     breadth: {},
-    progression: {}
+    degreeProgression: {}
   };
 
   /* Fill in the data for constraints on the number of credit points for each level */
@@ -118,7 +118,7 @@ function scienceProgression(courseInfo, progressionStats) {
         `INFO data: min=${min}, max=${max}, progressionType=${progressionType}, lv=${lv}`
       );
 
-      Object.assign(progression[progressionType], {
+      Object.assign(progressions[progressionType], {
         [`level${lv}`]: {
           stats: `${progressionStats[field]} / ${progressionDisplay(courseInfo[field])} ${progressionDescription[index]}`,
           fulfilled:
@@ -131,9 +131,9 @@ function scienceProgression(courseInfo, progressionStats) {
   /* TODO: Fill in the degree progression rule */
   ['progression1', 'progression2'].forEach(() => {});
 
-  return progression;
+  return progressions;
 }
 
 module.exports = {
-  scienceProgression
+  scienceProgressions
 };

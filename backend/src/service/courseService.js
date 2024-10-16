@@ -2,7 +2,7 @@ const mongoClient = require('../config/mongoClient');
 const { v4: uuidv4 } = require('uuid');
 const ApiError = require('../utils/ApiError');
 const { COURSE_COLLECTION, MAJOR_COLLECTION } = require('../lib/dbConstants');
-const { scienceProgression } = require('./progressionService');
+const { scienceProgressions } = require('./progressionService');
 
 const axios = require('axios');
 const PRESMALLER = -1;
@@ -172,8 +172,17 @@ const addTerm = (req, res) => {
 const addSubject = async (req, res, next) => {
   try {
     const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
-    if (!subjectData || Object.keys(subjectData).length === 0) {
-      return res.status(400).json({ message: 'No Subjects data provided.' });
+    console.log(
+      `subject data passed into addSubject: ${JSON.stringify(subjectData)}`
+    );
+    if (!subjectData) {
+      return res.status(400).json({ error: 'No query body.' });
+    }
+    console.log(
+      `subject data passed into addSubject: ${Object.keys(subjectData)}`
+    );
+    if (Object.keys(subjectData).length === 0) {
+      return res.status(400).json({ error: 'No subject provided.' });
     }
     const slot = Object.keys(subjectData)[0]; // e.g.'y1s2p1'
     const subject = subjectData[slot]; // get the Subject object
@@ -182,7 +191,7 @@ const addSubject = async (req, res, next) => {
 
     // Check if the slot exists
     if (!planner[term] || !planner[term][position]) {
-      return res.status(400).json({ message: 'Invalid time or position.' });
+      return res.status(400).json({ error: 'Invalid time or position.' });
     }
     // check if the Subjects already exists
     if (Object.keys(planner[term][position]).length !== 0) {
@@ -198,10 +207,13 @@ const addSubject = async (req, res, next) => {
     if (!subjectCode) {
       return res.status(400).json({ message: 'Missing subject code' });
     }
+
+    /* Add subject to planner */
     planner[term][position] = subject;
     console.log(
       `my planner after adding subject ${subjectCode}: ${JSON.stringify(planner)}`
     );
+
     next();
   } catch (err) {
     console.error('Error:', err);
@@ -273,7 +285,8 @@ const giveTypeOfSubject = async (req, res, next) => {
           message: 'Error: subject area not correctly stored in the database'
         });
       }
-      res.status(200).send(planner);
+      updateProgressions(subject);
+      res.status(200).send({ planner, progressionStats });
     } catch (err) {
       console.error('error:', err);
       return next(new ApiError(500, 'server error'));
@@ -300,6 +313,8 @@ const removeSubject = (req, res, next) => {
     ) {
       return res.status(404).json({ message: 'No Subjects found!' });
     }
+
+    updateProgressions(planner[studyPeriod][position], -1);
 
     // delete planner[semesterKey][position];
     // Reset the slot to an empty object
@@ -517,7 +532,8 @@ function compareSemesters(semesterA, semesterB) {
   }
 }
 
-const getProgression = async (req, res) => {
+async function getProgressions() {
+  const progressions = {};
   try {
     const courseCollection = await mongoClient.getCollection(COURSE_COLLECTION);
     const course = await courseCollection.findOne({
@@ -526,22 +542,41 @@ const getProgression = async (req, res) => {
 
     console.log(`INFO current userInfo.degree=${userInfo.degree}`);
 
-    let progression;
     switch (userInfo.degree) {
       case 'Science':
-        progression = scienceProgression(course, progressionStats);
+        Object.assign(
+          progressions,
+          scienceProgressions(course, progressionStats)
+        );
         break;
       case 'Commerce':
         break;
       default: // TODO: this default case should be removed since `userInfo.degree` should be one of the above cases
-        progression = scienceProgression(course, progressionStats);
+        Object.assign(
+          progressions,
+          scienceProgressions(course, progressionStats)
+        );
     }
-    res.status(200).send(progression);
+    // res.status(200).send(progression);
   } catch (err) {
     console.log(err);
-    res.status(500);
+    // res.status(500);
   }
-};
+
+  return progressions;
+}
+
+function updateProgressions(subject, side = 1) {
+  /* Update the progression stats */
+  const { level, points, header } = subject;
+  const diffPoints = side * points;
+  progressionStats[`overall${level}`] += diffPoints;
+  if (header == 'DISCIPLINE') {
+    progressionStats[`discipline${level}`] += diffPoints;
+  } else if (header == 'BREADTH') {
+    progressionStats[`breadth${level}`] += diffPoints;
+  }
+}
 
 module.exports = {
   setInitialInfo,
@@ -552,7 +587,7 @@ module.exports = {
   isValidAdd,
   giveTypeOfSubject,
   removeSubject,
-  getProgression,
+  getProgressions,
   resolveMiddleware,
   checkOutComeAfterResolve
 };

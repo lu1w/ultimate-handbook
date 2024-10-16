@@ -11,7 +11,7 @@ const {
   removeSubject,
   isValidAdd,
   giveTypeOfSubject,
-  getProgression,
+  getProgressions,
   resolveMiddleware,
   checkOutComeAfterResolve
 } = require('../../service/courseService');
@@ -273,6 +273,13 @@ router.get('/:userId/cores', async (req, res, next) => {
  *   get:
  *     summary: get all the degree progression statistics
  */
-router.get('/progressions', getProgression);
+router.get('/progressions', async (req, res) => {
+  // try {
+  const progressions = await getProgressions();
+  res.status(200).send(progressions);
+  // } catch (err) {
+  //   // TODO: handle error
+  // }
+});
 
 module.exports = router;
