@@ -14,7 +14,7 @@ const progressionDisplay = (range) => {
     // no minimum
     return `${range[1]}(max) Credit Points`; // display   12.5 / 50(max) Credit Points
   }
-  if (range[1] === -1) {
+  if (range[1] >= 300) {
     // no maximum
     return `${range[0]}(min) Credit Points`; // display   12.5 / 50(min) Credit Points
   }
@@ -23,18 +23,17 @@ const progressionDisplay = (range) => {
 
 const levels = ['1', '2', '3'];
 
-const progressionContext = [].concat(
+const progressionDescription = [].concat(
   levels.map((lv) => `of Level ${lv} Subject`),
   levels.map((lv) => `of Level ${lv} Discipline Subject`),
   levels.map((lv) => `of Level ${lv} Breadth Subject`)
 );
 
-const progressionField = levels.map((lv) => `level${lv}`);
+// const progressionField = levels.map((lv) => `level${lv}`);
 
-const isProgressionFulfilled = (min, max, curr) =>
-  min <= curr && (curr <= max || max === -1);
+// const isProgressionFulfilled = (min, max, curr) => min <= curr && curr <= max;
 
-const scienceProgression = (courseInfo, progression) => {
+const scienceProgression = (courseInfo, progressionStats) => {
   /* This is the current progression of the user.
    * When it returns, the object will look something like this:
    *
@@ -88,7 +87,7 @@ const scienceProgression = (courseInfo, progression) => {
    *
    * }
    */
-  const currentProgression = {
+  const progression = {
     overall: {},
     discipline: {},
     breadth: {},
@@ -107,12 +106,24 @@ const scienceProgression = (courseInfo, progression) => {
     'breadth2',
     'breadth3'
   ].forEach((field, index) => {
+    // e.g. field = 'overall1'
+    console.log(`INFO fill in data for field: ${field}`);
     if (courseInfo[field]) {
-      const [min, max] = courseInfo.field;
-      Object.assign(currentProgression.overall, {
-        [progressionField[index]]: {
-          stats: `${progression[field]} / ${progressionDisplay(courseInfo[field])} ${progressionContext[index]}`,
-          fulfilled: isProgressionFulfilled(min, max, progression[field])
+      console.log(
+        `INFO data exists for field: ${field} is ${courseInfo[field]}`
+      );
+      const [min, max] = courseInfo[field];
+      const progressionType = field.slice(0, -1); // e.g. 'overall'
+      const lv = field.charAt(field.length - 1); // e.g. '1'
+      console.log(
+        `INFO data: min=${min}, max=${max}, progressionType=${progressionType}, lv=${lv}`
+      );
+
+      Object.assign(progression[progressionType], {
+        [`level${lv}`]: {
+          stats: `${progressionStats[field]} / ${progressionDisplay(courseInfo[field])} ${progressionDescription[index]}`,
+          fulfilled:
+            min <= progressionStats[field] && progressionStats[field] <= max
         }
       });
     }
@@ -140,7 +151,10 @@ const scienceProgression = (courseInfo, progression) => {
   //   }
   // });
 
-  return currentProgression;
+  /* Fill in the degree progression rule */
+  ['progression1', 'progression2'].forEach(() => {});
+
+  return progression;
 };
 
 module.exports = {

@@ -520,10 +520,12 @@ const getProgression = async (req, res) => {
   try {
     const courseCollection = await mongoClient.getCollection(COURSE_COLLECTION);
     const course = await courseCollection.findOne({
-      courseName: userInfo.degree
+      courseName: 'Science' // TODO: change this to userInfo.degree
     });
 
-    let progressionStats = {};
+    console.log(`INFO current userInfo.degree=${userInfo.degree}`);
+
+    let progressionStats;
     switch (userInfo.degree) {
       case 'Science':
         progressionStats = scienceProgression(course, progression);
@@ -536,6 +538,7 @@ const getProgression = async (req, res) => {
     res.status(200).send(progressionStats);
   } catch (err) {
     console.log(err);
+    res.status(500);
   }
 };
 
