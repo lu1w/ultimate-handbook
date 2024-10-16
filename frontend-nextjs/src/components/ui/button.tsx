@@ -31,6 +31,9 @@ const buttonVariants = cva(
 
         /** Button for resolve */
         resolve: 'text-white bg-planner-header hover:bg-white-op/90 hover:text-search-header',
+
+        /** Button for errors */
+        error: 'border-[0.25rem] border-white shadow-sm hover:border-gray-300'
       },
       size: {
         default: 'h-9 px-4 py-2',
