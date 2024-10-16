@@ -64,7 +64,7 @@ const userInfo = {
 const compulsory = [];
 const majorCore = [];
 
-const progression = {
+const progressionStats = {
   overall1: 0,
   overall2: 0,
   overall3: 0,
@@ -190,14 +190,13 @@ const addSubject = async (req, res, next) => {
         'Subject already exists in this slot' + planner[term][position]
       );
       return res.status(400).json({
-        message:
-          'can not add Subjects to this slot!,because subject already exist'
+        message: 'Subject already exist in the slot'
       });
     }
 
     const { subjectCode } = subject;
     if (!subjectCode) {
-      return res.status(400).json({ message: 'lack of the subject code' });
+      return res.status(400).json({ message: 'Missing subject code' });
     }
     planner[term][position] = subject;
     console.log(
@@ -270,7 +269,9 @@ const giveTypeOfSubject = async (req, res, next) => {
           subject.header = 'BREADTH';
         }
       } else {
-        subject.header = 'BREADTH';
+        res.status(500).send({
+          message: 'Error: subject area not correctly stored in the database'
+        });
       }
       res.status(200).send(planner);
     } catch (err) {
@@ -520,22 +521,22 @@ const getProgression = async (req, res) => {
   try {
     const courseCollection = await mongoClient.getCollection(COURSE_COLLECTION);
     const course = await courseCollection.findOne({
-      courseName: 'Science' // TODO: change this to userInfo.degree
+      courseName: userInfo.degree ? userInfo.degree : 'Science' // TODO: change this to only userInfo.degree
     });
 
     console.log(`INFO current userInfo.degree=${userInfo.degree}`);
 
-    let progressionStats;
+    let progression;
     switch (userInfo.degree) {
       case 'Science':
-        progressionStats = scienceProgression(course, progression);
+        progression = scienceProgression(course, progressionStats);
         break;
       case 'Commerce':
         break;
       default: // TODO: this default case should be removed since `userInfo.degree` should be one of the above cases
-        progressionStats = scienceProgression(course, progression);
+        progression = scienceProgression(course, progressionStats);
     }
-    res.status(200).send(progressionStats);
+    res.status(200).send(progression);
   } catch (err) {
     console.log(err);
     res.status(500);

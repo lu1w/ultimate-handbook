@@ -1,4 +1,4 @@
-// const progression = {
+// const progressionStats = {
 //     overall1: 0,
 //     overall2: 0,
 //     overall3: 0,
@@ -9,17 +9,6 @@
 //     breadth2: 0,
 //     breadth3: 0
 //   };
-const progressionDisplay = (range) => {
-  if (range[0] === 0) {
-    // no minimum
-    return `${range[1]}(max) Credit Points`; // display   12.5 / 50(max) Credit Points
-  }
-  if (range[1] >= 300) {
-    // no maximum
-    return `${range[0]}(min) Credit Points`; // display   12.5 / 50(min) Credit Points
-  }
-  return `${range[0]}(min) & ${range[1]}(max) Credit Points`; // display   12.5 / 50(min) & 75.5(max) Credit Points
-};
 
 const levels = ['1', '2', '3'];
 
@@ -29,11 +18,21 @@ const progressionDescription = [].concat(
   levels.map((lv) => `of Level ${lv} Breadth Subject`)
 );
 
-// const progressionField = levels.map((lv) => `level${lv}`);
+function progressionDisplay(range) {
+  // no minimum
+  if (range[0] === 0) {
+    return `${range[1]}(max) Credit Points`; // display   12.5 / 50(max) Credit Points
+  }
 
-// const isProgressionFulfilled = (min, max, curr) => min <= curr && curr <= max;
+  // no maximum
+  if (range[1] >= 300) {
+    return `${range[0]}(min) Credit Points`; // display   12.5 / 50(min) Credit Points
+  }
 
-const scienceProgression = (courseInfo, progressionStats) => {
+  return `${range[0]}(min) & ${range[1]}(max) Credit Points`; // display   12.5 / 50(min) & 75.5(max) Credit Points
+}
+
+function scienceProgression(courseInfo, progressionStats) {
   /* This is the current progression of the user.
    * When it returns, the object will look something like this:
    *
@@ -129,33 +128,11 @@ const scienceProgression = (courseInfo, progressionStats) => {
     }
   });
 
-  // [
-  //   (courseInfo.overall1,
-  //   courseInfo.overall2,
-  //   courseInfo.overall3,
-  //   courseInfo.discipline1,
-  //   courseInfo.discipline2,
-  //   courseInfo.discipline3,
-  //   courseInfo.breadth1,
-  //   courseInfo.breadth2,
-  //   courseInfo.breadth3)
-  // ].forEach((requirement, index) => {
-  //   if (requirement) {
-  //     const [min, max] = requirement;
-  //     Object.assign(currentProgression.overall, {
-  //       [progressionField[index]]: {
-  //         stats: `${progression.overall1} / ${progressionDisplay(courseInfo.overall1)} ${progressionContext[index]}`,
-  //         fulfilled: isProgressionFulfilled(min, max, progression.overall1)
-  //       }
-  //     });
-  //   }
-  // });
-
-  /* Fill in the degree progression rule */
+  /* TODO: Fill in the degree progression rule */
   ['progression1', 'progression2'].forEach(() => {});
 
   return progression;
-};
+}
 
 module.exports = {
   scienceProgression
