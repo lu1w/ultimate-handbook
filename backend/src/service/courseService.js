@@ -308,13 +308,13 @@ const removeSubject = (req, res, next) => {
 const resolveMiddleware = async (req, res, next) => {
   try {
     const response = await axios.post('http://localhost:5000/resolve', {
-      courseName: userDegree.degree,
-      coursePlanner: subjectPlanner
+      courseName: userInfo.degree,
+      coursePlanner: planner
     });
     
-    Object.assign(subjectPlanner, response.data);
+    Object.assign(planner, response.data);
 
-    console.log('Updated subjectPlanner:', subjectPlanner);
+    console.log('Updated planner:', planner);
     next();
   } catch (error) {
     if (error.response) {
@@ -327,9 +327,9 @@ const resolveMiddleware = async (req, res, next) => {
 
 const checkOutComeAfterResolve = async (req, res, next) => {
   try {
-    const subjectsCodeInPlanner = getAllSubjectCodes(subjectPlanner);
+    const subjectsCodeInPlanner = getAllSubjectCodes(planner);
     checkAllSubjectPrequisites(subjectsCodeInPlanner);
-    res.status(200).send(subjectPlanner);// but we should make a loop if errors exist!
+    res.status(200).send(planner);// but we should make a loop if errors exist!
   }
   catch (error) {
     if (error.response) {
