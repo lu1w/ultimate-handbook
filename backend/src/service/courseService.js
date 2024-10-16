@@ -1,6 +1,7 @@
 const mongoClient = require('../config/mongoClient');
 const ApiError = require('../utils/ApiError');
 const { COURSE_COLLECTION, MAJOR_COLLECTION } = require('../lib/dbConstants');
+const axios = require('axios');
 
 const planner = {
   y1su: {
@@ -304,6 +305,40 @@ const removeSubject = (req, res, next) => {
   }
 };
 
+const resolveMiddleware = async (req, res, next) => {
+  try {
+    const response = await axios.post('http://localhost:5000/resolve', {
+      courseName: userInfo.degree,
+      coursePlanner: planner
+    });
+    
+    Object.assign(planner, response.data);
+
+    console.log('Updated planner:', planner);
+    next();
+  } catch (error) {
+    if (error.response) {
+      next(new ApiError(error.response.status, error.response.data));
+    } else {
+      next(new ApiError(500, 'Error communicating with Python API'));
+    }
+  }
+};
+
+const checkOutComeAfterResolve = async (req, res, next) => {
+  try {
+    const subjectsCodeInPlanner = getAllSubjectCodes(planner);
+    checkAllSubjectPrequisites(subjectsCodeInPlanner);
+    res.status(200).send(planner);// but we should make a loop if errors exist!
+  }
+  catch (error) {
+    if (error.response) {
+      next(new ApiError(error.response.status, error.response.data));
+    } else {
+      next(new ApiError(500, 'Error communicating with Python API'));
+    }
+  }   
+}
 // this function will decide whether need to add error to the subject
 function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
   // loop all subjects in the planner
@@ -370,5 +405,7 @@ module.exports = {
   addSubject,
   isValidAdd,
   giveTypeOfSubject,
-  removeSubject
+  removeSubject,
+  resolveMiddleware,
+  checkOutComeAfterResolve
 };

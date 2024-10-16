@@ -9,7 +9,10 @@ const {
   addSubject,
   removeSubject,
   isValidAdd,
-  giveTypeOfSubject
+  giveTypeOfSubject,
+  resolveMiddleware,
+  checkOutComeAfterResolve
+
 } = require('../../service/courseService');
 
 /**
@@ -197,6 +200,9 @@ router.get('/prerequisites/:query', async (req, res, next) => {
     return next(new ApiError(400, 'Search query is required'));
   }
 });
+
+router.post('/resolve', resolveMiddleware, checkOutComeAfterResolve);
+
 
 /**
  * @swagger

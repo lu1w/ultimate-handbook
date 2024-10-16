@@ -150,8 +150,8 @@ def resolve():
                     return subject
                 
     data = request.json  # Receive data sent in the POST request
-    course = data.get('course')
-    json_planner = data.get('course_planner')
+    course = data.get('courseName')
+    json_planner = data.get('coursePlanner')
     course_planner = json_to_course_planner(json_planner)
     all_subjects = set(subject for sem in course_planner.values() for subjects in sem.values() for subject in subjects)
     subject_to_int = {subject: idx for idx, subject in enumerate(all_subjects)}
