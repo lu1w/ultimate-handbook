@@ -200,7 +200,8 @@ router.get('/prerequisites/:query', async (req, res, next) => {
     return next(new ApiError(400, 'Search query is required'));
   }
 });
-router.get('/resolve', resolveMiddleware, checkOutComeAfterResolve);
+
+router.post('/resolve', resolveMiddleware, checkOutComeAfterResolve);
 
 
 /**
