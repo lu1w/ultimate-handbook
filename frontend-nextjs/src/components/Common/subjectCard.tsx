@@ -27,8 +27,8 @@ interface SubjectCardProps {
   points: string;
   studyPeriod: string[];
   coordinatorName?: string; // TODO: put the coordinator in semester bubble
-  prerequisiteError: boolean;
-  semesterError: boolean;
+  prerequisiteError?: boolean;
+  semesterError?: boolean;
   handleClick?: () => void;
   button?: string;
 }
