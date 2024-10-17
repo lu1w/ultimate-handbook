@@ -24,7 +24,6 @@ enum StudyPeriodType {
 type StudyPeriod = keyof typeof StudyPeriodType;
 type Year = 'y1' | 'y2' | 'y3';
 
-
 const PlannerPage: React.FC = () => {
   const [planner, setPlanner] = useState({});
 
@@ -34,20 +33,27 @@ const PlannerPage: React.FC = () => {
 
   const getStudyPeriodName = (period: StudyPeriod) => {
     switch (period) {
-      case 's1': return 'Semester 1'
-      case 's2': return 'Semester 2'
-      case 'su': return 'Summer Term'
-      case 'wi': return 'Winter Term'
+      case 's1':
+        return 'Semester 1';
+      case 's2':
+        return 'Semester 2';
+      case 'su':
+        return 'Summer Term';
+      case 'wi':
+        return 'Winter Term';
     }
-  }
+  };
 
   const getYearName = (year: Year) => {
     switch (year) {
-      case 'y1': return intakeYear
-      case 'y2': return intakeYear + 1
-      case 'y3': return intakeYear + 2
+      case 'y1':
+        return intakeYear;
+      case 'y2':
+        return intakeYear + 1;
+      case 'y3':
+        return intakeYear + 2;
     }
-  }
+  };
 
   /* Initialize planner data from backend */
   useEffect(() => {
@@ -66,11 +72,19 @@ const PlannerPage: React.FC = () => {
 
   const router = useRouter();
 
-  const addSubject = (year: Year, studyPeriod: StudyPeriod, position: string) => {
+  const addSubject = (
+    year: Year,
+    studyPeriod: StudyPeriod,
+    position: string,
+  ) => {
     router.push(`/search/?slot=${year}${studyPeriod}${position}`);
   };
 
-  const removeSubject = async (year: Year, studyPeriod: StudyPeriod, position: string) => {
+  const removeSubject = async (
+    year: Year,
+    studyPeriod: StudyPeriod,
+    position: string,
+  ) => {
     const res = await axios.delete(
       `${SERVER_URL}/v1/course/remove/${year}${studyPeriod}${position}`,
     );
@@ -87,16 +101,19 @@ const PlannerPage: React.FC = () => {
 
   const removeStudyPeriod = (year: Year, studyPeriod: StudyPeriod) => {
     router.push('');
-  }
+  };
 
-  const callResolve = () => {
-
-  }
+  const callResolve = async () => {
+    const res = await axios.post(`${SERVER_URL}/v1/course/resolve`);
+    const planner = res.data;
+    console.log(planner);
+    setPlanner(planner);
+  };
 
   const getSubject = (
     year: Year,
     studyPeriod: StudyPeriod,
-    position: string
+    position: string,
   ): Subject | null | undefined => {
     const key = `${year}${studyPeriod}` as keyof typeof planner;
     const termData = planner[key];
@@ -107,13 +124,13 @@ const PlannerPage: React.FC = () => {
     // If the subject is explicitly null, return null (meaning the slot is intentionally empty).
     // If there's no subject data at all, return undefined.
     return subject && Object.keys(subject).length > 0
-      ? (subject as Subject) 
+      ? (subject as Subject)
       : subject === undefined
-      ? undefined
-      : null;
+        ? undefined
+        : null;
   };
 
-  const getSemesterRow = ( year: Year, studyPeriod: StudyPeriod, ) => {
+  const getSemesterRow = (year: Year, studyPeriod: StudyPeriod) => {
     const title = (
       <h2 className="text-xl font-semibold mb-2">{`${getYearName(year)} ${getStudyPeriodName(studyPeriod)}`}</h2>
     );
@@ -127,24 +144,24 @@ const PlannerPage: React.FC = () => {
         return (
           <div className="flex items-center">
             <span className="text-lg">{title}</span>
-            <Button 
-              variant={"planner"}
-              className="ml-4 mb-1 font-semibold" 
+            <Button
+              variant={'planner'}
+              className="ml-4 mb-1 font-semibold"
               onClick={() => addStudyPeriod(year, studyPeriod)} // Replace with your button logic
             >
               Add Term
             </Button>
           </div>
         );
-      // If summer or winter term is added
+        // If summer or winter term is added
       } else {
         return (
           <div>
             <div className="flex items-center pb-2">
               {title}
-              <Button 
-                variant={"planner"}
-                className="ml-4 mb-1 font-semibold" 
+              <Button
+                variant={'planner'}
+                className="ml-4 mb-1 font-semibold"
                 onClick={() => removeStudyPeriod(year, studyPeriod)} // Replace with your button logic
               >
                 Remove Term
@@ -155,14 +172,19 @@ const PlannerPage: React.FC = () => {
               {['p1', 'p2'].map((position, index) => {
                 const subject = getSubject(year, studyPeriod, position); // Get the subject for the current position
                 return subject ? (
-                  <SubjectCard 
-                    key={position} 
-                    {...subject} 
-                    handleClick={() => removeSubject(year, studyPeriod, position)} 
-                    button = 'x'
+                  <SubjectCard
+                    key={position}
+                    {...subject}
+                    handleClick={() =>
+                      removeSubject(year, studyPeriod, position)
+                    }
+                    button="x"
                   />
                 ) : (
-                  <EmptySubjectCard key={position} onAdd={() => addSubject(year, studyPeriod, position)} />
+                  <EmptySubjectCard
+                    key={position}
+                    onAdd={() => addSubject(year, studyPeriod, position)}
+                  />
                 );
               })}
             </div>
@@ -183,14 +205,19 @@ const PlannerPage: React.FC = () => {
               {['p1', 'p2', 'p3', 'p4'].map((position, index) => {
                 const subject = getSubject(year, studyPeriod, position); // Get the subject for the current position
                 return subject ? (
-                  <SubjectCard 
-                    key={position} 
-                    {...subject} 
-                    handleClick={() => removeSubject(year, studyPeriod, position)}
-                    button = 'x'
+                  <SubjectCard
+                    key={position}
+                    {...subject}
+                    handleClick={() =>
+                      removeSubject(year, studyPeriod, position)
+                    }
+                    button="x"
                   />
                 ) : (
-                  <EmptySubjectCard key={position} onAdd={() => addSubject(year, studyPeriod, position)} />
+                  <EmptySubjectCard
+                    key={position}
+                    onAdd={() => addSubject(year, studyPeriod, position)}
+                  />
                 );
               })}
             </div>
@@ -199,7 +226,7 @@ const PlannerPage: React.FC = () => {
       }
     }
     return null; // Default return in case something is undefined
-  }
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -224,20 +251,23 @@ const PlannerPage: React.FC = () => {
             studyPeriods.map((studyPeriod) => {
               const semesterRow = getSemesterRow(year, studyPeriod);
               return semesterRow ? (
-                <div key={`${year}-${studyPeriod}`} className="semester-row mb-6">
+                <div
+                  key={`${year}-${studyPeriod}`}
+                  className="semester-row mb-6"
+                >
                   {semesterRow}
                 </div>
               ) : null;
-            })
+            }),
           )}
         </div>
 
         {/* Sidebar - takes up 1 column */}
         <div className="col-span-1 bg-gray-100 p-4 rounded-lg">
           <div className="flex justify-center mb-3">
-            <Button 
-              variant={"resolve"}
-              className="m my-3 font-semibold text-lg" 
+            <Button
+              variant={'resolve'}
+              className="m my-3 font-semibold text-lg"
               onClick={() => callResolve()} // Replace with your button logic
             >
               Resolve
@@ -265,6 +295,6 @@ const PlannerPage: React.FC = () => {
         {/* Footer content */}
       </footer>
     </div>
-  )
-}
+  );
+};
 export default PlannerPage;

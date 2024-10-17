@@ -7,4 +7,6 @@ export interface Subject {
   points: string;
   studyPeriod: string[];
   coordinator: object;
+  prerequisteError: boolean;
+  semesterError: boolean;
 }
