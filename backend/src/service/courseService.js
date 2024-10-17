@@ -4,19 +4,11 @@ const { COURSE_COLLECTION, MAJOR_COLLECTION } = require('../lib/dbConstants');
 const axios = require('axios');
 
 const planner = {
-  y1su: {
-    p1: {},
-    p2: {}
-  },
   y1s1: {
     p1: {},
     p2: {},
     p3: {},
     p4: {}
-  },
-  y1wi: {
-    p1: {},
-    p2: {}
   },
   y1s2: {
     p1: {},
@@ -24,20 +16,11 @@ const planner = {
     p3: {},
     p4: {}
   },
-
-  y2su: {
-    p1: {},
-    p2: {}
-  },
   y2s1: {
     p1: {},
     p2: {},
     p3: {},
     p4: {}
-  },
-  y2wi: {
-    p1: {},
-    p2: {}
   },
   y2s2: {
     p1: {},
@@ -45,31 +28,17 @@ const planner = {
     p3: {},
     p4: {}
   },
-
-  y3su: {
-    p1: {},
-    p2: {}
-  },
   y3s1: {
     p1: {},
     p2: {},
     p3: {},
     p4: {}
   },
-  y3wi: {
-    p1: {},
-    p2: {}
-  },
   y3s2: {
     p1: {},
     p2: {},
     p3: {},
     p4: {}
-  },
-
-  y4su: {
-    p1: {},
-    p2: {}
   },
   y4s1: {
     p1: {},
@@ -157,6 +126,25 @@ const getInitialInfo = async (req, res, next) => {
 const getPlanner = (req, res) => {
   res.send(planner);
 };
+const addTerm = (req, res, next) => {
+  const { term } = req.body; // e.g., term = 'y1su' or 'y1wi'
+  if (!term) {
+    return res.status(400).json({ message: 'No term provided.' });
+  }
+  if (planner[term]) {
+    return res.status(400).json({ message: 'Term already exists in planner.' });
+  }
+  // Define positions based on term type
+  let positions = {};
+  if (term.endsWith('su') || term.endsWith('wi')) {
+    positions = { p1: {}, p2: {} };
+  } else {
+    positions = { p1: {}, p2: {}, p3: {}, p4: {} };
+  }
+  planner[term] = positions;
+  res.status(200).json({ message: 'Term added successfully.', planner });
+};
+
 
 const addSubject = async (req, res, next) => {
   try {
@@ -353,9 +341,9 @@ function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
         ); // check all subjects prerequisites in planner
         if (!prerequisitesMet) {
           // mark the subject with error
-          subj.prerequisteError = true;
+          subj.prerequisiteError = true;
         } else {
-          delete subj.prerequisteError;
+          delete subj.prerequisiteError;
         }
       }
     }
@@ -403,6 +391,7 @@ module.exports = {
   getInitialInfo,
   getPlanner,
   addSubject,
+  addTerm,
   isValidAdd,
   giveTypeOfSubject,
   removeSubject,
