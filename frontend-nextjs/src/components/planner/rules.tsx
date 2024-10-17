@@ -10,6 +10,8 @@ interface RulesProps {
   ruleType: keyof Progressions;
 }
 
+const itemClass = 'flex items-center mb-4';
+
 export default function Rules({ progressions, ruleType }: RulesProps) {
   return (
     <div>
@@ -29,7 +31,7 @@ export default function Rules({ progressions, ruleType }: RulesProps) {
         )} */}
 
         {progressions[ruleType].level1 ? (
-          <li className="flex items-center">
+          <li className={itemClass}>
             {progressions[ruleType].level1?.fulfilled ? (
               <span className="text-green-500 mr-4">✔</span>
             ) : (
@@ -39,7 +41,7 @@ export default function Rules({ progressions, ruleType }: RulesProps) {
           </li>
         ) : null}
         {progressions[ruleType].level2 ? (
-          <li className="flex items-center">
+          <li className={itemClass}>
             {progressions[ruleType].level2?.fulfilled ? (
               <span className="text-green-500 mr-4">✔</span>
             ) : (
@@ -49,7 +51,7 @@ export default function Rules({ progressions, ruleType }: RulesProps) {
           </li>
         ) : null}
         {progressions[ruleType].level3 ? (
-          <li className="flex items-center">
+          <li className={itemClass}>
             {progressions[ruleType].level3?.fulfilled ? (
               <span className="text-green-500 mr-4">✔</span>
             ) : (
