@@ -11,7 +11,7 @@ export interface Subject {
   semesterError: boolean;
 }
 
-interface ProgressionItem {
+export interface ProgressionItem {
   stats: string;
   fulfilled: boolean;
 }
