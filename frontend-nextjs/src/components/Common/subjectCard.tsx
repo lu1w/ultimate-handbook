@@ -68,30 +68,32 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       </CardHeader>
       <CardContent className="p-3">
         <CardDescription className="text-xs">{`${subjectCode} | Level ${level} | ${points} points`}</CardDescription>
-        <div className="flex items-center justify-between pr-4 pt-2">
-          <CardTitle className="mt-1 text-base font-bold font-serif pb-2">
+        <div className="flex items-center justify-between pt-2">
+          <CardTitle className="w-4/7 pr-2 mt-1 text-base font-bold font-serif pb-2">
             {subjectName}
           </CardTitle>
-          {prerequisiteError? (
-            <Button
-              variant="prereqError"
-              size="icon"
-              className="rounded-full flex-none h-[2rem] w-[2rem] bg-red-500 h-8 w-8 items-center justify-center mt-2"
-              onClick={() => {/* Your click handler here */}}
-            >
-              <img src="/error_1.svg" className="h-7 w-7" />
-            </Button>
-          ): null}
-          {semesterError? (
-            <Button
-              variant="semesterError"
-              size="icon"
-              className="rounded-full flex-none h-[2rem] w-[2rem] bg-red-500 h-8 w-8 items-center justify-center mt-2"
-              onClick={() => {/* Your click handler here */}}
-            >
-              <img src="/error_1.svg" className="h-7 w-7" />
-            </Button>
-          ): null}
+          <div className="w-2/7 flex justify-end items-center space-x-2">
+            {prerequisiteError? (
+              <Button
+                variant="prereqError"
+                size="icon"
+                className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-red-500 items-center justify-center"
+                onClick={() => {/* Your click handler here */}}
+              >
+                <img src="/error_1.svg" className="h-5 w-5" />
+              </Button>
+            ): null}
+            {semesterError? (
+              <Button
+                variant="semesterError"
+                size="icon"
+                className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-orange-400 items-center justify-center"
+                onClick={() => {/* Your click handler here */}}
+              >
+                <img src="/error_1.svg" className="h-5 w-5" />
+              </Button>
+            ): null}
+          </div>
         </div>
       </CardContent>
       <CardFooter className="p-3 pt-0 space-x-1">
