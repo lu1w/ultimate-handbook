@@ -35,6 +35,13 @@ def resolve():
                 credit += sum([subject_credits[subject] for subject in subjects if subject and int(subject[4]) == level])    
         return credit
 
+    def original_diff_penalty(X):
+        penalty = 0
+        for i in range(len(X)):
+            if int_to_subject[X[i]] != "":
+                penalty += abs(original.index(X[i]) - i)
+        return penalty * 0.001
+        
     def progression_rule_penalty():
         penalty = 0
         for level, threshold in progression_rule.items():
@@ -116,7 +123,7 @@ def resolve():
     def f(ga, X, X_idx):    
         array_to_course_planner(X)
         fitness = 0
-        fitness -= unavailable_sem() + prereq_violations() + coreq_violations() + progression_rule_penalty()
+        fitness -= original_diff_penalty(X) + unavailable_sem() + prereq_violations() + coreq_violations() + progression_rule_penalty() 
         return fitness
 
 
@@ -188,7 +195,7 @@ def resolve():
     for sems in course_planner.values():
         initial_population.extend(sems.values())
     initial_population = [subject_to_int[subject] for sem in initial_population for subject in sem]
-
+    original = initial_population.copy()
     
 
     model = pygad.GA(initial_population = [initial_population, initial_population],
@@ -211,4 +218,4 @@ def resolve():
 
 if __name__ == '__main__':
     # Run the app on localhost at port 5000
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5001)

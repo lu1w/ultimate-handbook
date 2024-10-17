@@ -46,13 +46,13 @@ const planner = {
     p2: {},
     p3: {},
     p4: {}
-  },
-  y4s1: {
-    p1: {},
-    p2: {},
-    p3: {},
-    p4: {}
   }
+  // y4s1: {
+  //   p1: {},
+  //   p2: {},
+  //   p3: {},
+  //   p4: {}
+  // }
 };
 
 const userInfo = {
@@ -135,7 +135,8 @@ const getInitialInfo = async (req, res, next) => {
 const getPlanner = (req, res) => {
   res.send(planner);
 };
-const addTerm = (req, res, next) => {
+
+const addTerm = (req, res) => {
   const { term } = req.body; // e.g., term = 'y1su' or 'y1wi'
   if (!term) {
     return res.status(400).json({ message: 'No term provided.' });
@@ -153,7 +154,6 @@ const addTerm = (req, res, next) => {
   planner[term] = positions;
   res.status(200).json({ message: 'Term added successfully.', planner });
 };
-
 
 const addSubject = async (req, res, next) => {
   try {
@@ -304,11 +304,11 @@ const removeSubject = (req, res, next) => {
 
 const resolveMiddleware = async (req, res, next) => {
   try {
-    const response = await axios.post('http://localhost:5000/resolve', {
+    const response = await axios.post('http://localhost:5001/resolve', {
       courseName: userInfo.degree,
       coursePlanner: planner
     });
-    
+
     Object.assign(planner, response.data);
 
     console.log('Updated planner:', planner);
@@ -325,9 +325,8 @@ const checkOutComeAfterResolve = async (req, res, next) => {
   try {
     const subjectsCodeInPlanner = getAllSubjectCodes(planner);
     checkAllSubjectPrequisites(subjectsCodeInPlanner);
-    res.status(200).send(planner);// but we should make a loop if errors exist!
-  }
-  catch (error) {
+    res.status(200).send(planner); // but we should make a loop if errors exist!
+  } catch (error) {
     if (error.response) {
       next(new ApiError(error.response.status, error.response.data));
     } else {
@@ -359,6 +358,9 @@ const checkOutComeAfterResolve = async (req, res, next) => {
 //   }
 // }
 // V2: Updated function to decide whether need to add error to the subject
+  }
+};
+// this function will decide whether need to add error to the subject
 function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
   // Loop all subjects in the planner
   for (const semester in planner) {
