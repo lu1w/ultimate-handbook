@@ -9,7 +9,10 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import SubjectCard from '@/components/common/subjectCard';
 import EmptySubjectCard from '@/components/planner/emptySubjectCard';
+import Rules from '@/components/planner/rules';
 // import subjectPlanner from '@/mock-data/courseData';
+
+import { Progressions } from '@/lib/objectSchema';
 
 import { SERVER_URL } from '@/lib/utils';
 import { Subject } from '@/lib/objectSchema';
@@ -26,6 +29,12 @@ type Year = 'y1' | 'y2' | 'y3';
 
 const PlannerPage: React.FC = () => {
   const [planner, setPlanner] = useState({});
+  const [progressions, setProgressions] = useState<Progressions>({
+    overall: {},
+    discipline: {},
+    breadth: {},
+    degreeProgression: {},
+  });
 
   const years: Year[] = ['y1', 'y2', 'y3'];
   const intakeYear = 2024;
@@ -65,9 +74,26 @@ const PlannerPage: React.FC = () => {
         console.log(`my planner is: ${JSON.stringify(res.data)}`);
       } catch (err) {
         // TODO: handle error
+        console.error('Cannot fetch planner from backend');
       }
     };
     fetchPlanner();
+  }, []);
+
+  /* Initialize progression rules data from backend */
+  useEffect(() => {
+    console.log(`enter useEffect() to fetch planner`);
+    const fetchProgressions = async () => {
+      try {
+        const res = await axios.get(`${SERVER_URL}/v1/course/progressions`);
+        setProgressions(res.data);
+        console.log(`my progressions are: ${JSON.stringify(res.data)}`);
+      } catch (err) {
+        // TODO: handle error
+        console.error('Cannot fetch progressions from backend');
+      }
+    };
+    fetchProgressions();
   }, []);
 
   const router = useRouter();
@@ -267,14 +293,17 @@ const PlannerPage: React.FC = () => {
           <div className="flex justify-center mb-3">
             <Button
               variant={'resolve'}
-              className="m my-3 font-semibold text-lg"
+              className="my-3 font-semibold text-lg"
               onClick={() => callResolve()} // Replace with your button logic
             >
               Resolve
             </Button>
           </div>
-          <h2 className="text-lg font-bold mb-4">Plan Checklist</h2>
-          <ul className="space-y-2">
+          <h2 className="text-lg font-bold mb-4">Degree Checklist</h2>
+          <Rules progressions={progressions} ruleType="overall" />
+          <Rules progressions={progressions} ruleType="discipline" />
+          <Rules progressions={progressions} ruleType="breadth" />
+          {/* <ul className="space-y-2">
             <li className="flex items-center">
               <input type="checkbox" className="mr-2" />
               <span>Complete core subjects</span>
@@ -287,7 +316,7 @@ const PlannerPage: React.FC = () => {
               <input type="checkbox" className="mr-2" />
               <span>Add electives</span>
             </li>
-          </ul>
+          </ul> */}
         </div>
       </div>
 
