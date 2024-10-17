@@ -58,9 +58,9 @@ describe('Search API: search page', () => {
 });
 
 describe('Search API: search query', () => {
-  it('search for a subject by subject code "COMP10002', (done) => {
+  it('search for a subject by subject code ignoring the cases "comp10002"', (done) => {
     request(app)
-      .get(urlWithQuery({ input: 'COMP10002' }))
+      .get(urlWithQuery({ input: 'comp10002' }))
       .expect(200)
       .end((err, res) => {
         if (err) return done(err); // if error, fail with err
@@ -82,7 +82,7 @@ describe('Search API: search query', () => {
       .timeout(5000);
   });
 
-  it('search for a subject by subject name', (done) => {
+  it('search for a subject by subject name "linear algebra"', (done) => {
     request(app)
       .get(urlWithQuery({ input: 'linear algebra' }))
       .expect(200)

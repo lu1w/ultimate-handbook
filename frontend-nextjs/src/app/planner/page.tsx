@@ -111,11 +111,15 @@ const PlannerPage: React.FC = () => {
     studyPeriod: StudyPeriod,
     position: string,
   ) => {
-    const res = await axios.delete(
+    const resPlanner = await axios.delete(
       `${SERVER_URL}/v1/course/remove/${year}${studyPeriod}${position}`,
     );
-    const planner = res.data;
-    setPlanner(planner);
+    setPlanner(resPlanner.data);
+
+    const resProgressions = await axios.get(
+      `${SERVER_URL}/v1/course/progressions`,
+    );
+    setProgressions(resProgressions.data);
     console.log(
       `my planner after removing ${year}${studyPeriod}${position} is ${JSON.stringify(planner)}`,
     );

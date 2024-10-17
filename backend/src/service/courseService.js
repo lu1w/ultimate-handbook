@@ -286,7 +286,7 @@ const giveTypeOfSubject = async (req, res, next) => {
         });
       }
       updateProgressions(subject);
-      res.status(200).send({ planner, progressionStats });
+      res.status(200).send(planner);
     } catch (err) {
       console.error('error:', err);
       return next(new ApiError(500, 'server error'));
