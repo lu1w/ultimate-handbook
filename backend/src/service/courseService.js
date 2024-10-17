@@ -1,4 +1,5 @@
 const mongoClient = require('../config/mongoClient');
+const { v4: uuidv4 } = require('uuid');
 const ApiError = require('../utils/ApiError');
 const { COURSE_COLLECTION, MAJOR_COLLECTION } = require('../lib/dbConstants');
 const axios = require('axios');
@@ -56,6 +57,7 @@ const compulsory = [];
 const majorCore = [];
 
 const setInitialInfo = async (req, res, next) => {
+  const userId = uuidv4(); // 生成唯一的 userId
   console.log('enter setInitInfo');
   const { degree, major } = req.query;
   console.log(`get degree and major, degree = ${degree}, major = ${major}`);
@@ -105,7 +107,8 @@ const setInitialInfo = async (req, res, next) => {
   res.status(200).send({
     message: `User Info Successfully Initialized: degree = ${degree}, major = ${major}`,
     compulsory,
-    majorCore
+    majorCore,
+    userId,
   });
 };
 

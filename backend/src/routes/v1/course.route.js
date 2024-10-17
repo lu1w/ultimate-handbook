@@ -106,7 +106,7 @@ router.get('/planner', getPlanner);
  *       500:
  *         description: Server error.
  */
-router.delete('/remove/:slot', removeSubject);
+router.delete('/:userId/remove/:slot', removeSubject);
 
 /**
  * @swagger
@@ -145,7 +145,7 @@ router.delete('/remove/:slot', removeSubject);
  *       500:
  *         description: Server error.
  */
-router.post('/add', addSubject, isValidAdd, giveTypeOfSubject);
+router.post('/:userId/add', addSubject, isValidAdd, giveTypeOfSubject);
 
 /**
  * @swagger
@@ -183,7 +183,7 @@ router.post('/add', addSubject, isValidAdd, giveTypeOfSubject);
  *       500:
  *         description: Server error.
  */
-router.get('/prerequisites/:query', async (req, res, next) => {
+router.get('/:userId/prerequisites/:query', async (req, res, next) => {
   const { query } = req.params;
   if (query) {
     try {
@@ -201,9 +201,9 @@ router.get('/prerequisites/:query', async (req, res, next) => {
   }
 });
 
-router.post('/resolve', resolveMiddleware, checkOutComeAfterResolve);
+router.post('/:userId/resolve', resolveMiddleware, checkOutComeAfterResolve);
 
-router.post('/addTerm', addTerm);
+router.post('/:userId/addTerm', addTerm);
 /**
  * @swagger
  * /course/cores/{major}:
@@ -240,7 +240,7 @@ router.post('/addTerm', addTerm);
  *       500:
  *         description: Server error.
  */
-router.get('/cores', async (req, res, next) => {
+router.get('/:userId/cores', async (req, res, next) => {
   try {
     const { major } = req.params;
 
