@@ -74,7 +74,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
           </CardTitle>
           {prerequisiteError? (
             <Button
-              variant="error"
+              variant="prereqError"
               size="icon"
               className="rounded-full flex-none h-[2rem] w-[2rem] bg-red-500 h-8 w-8 items-center justify-center mt-2"
               onClick={() => {/* Your click handler here */}}
@@ -84,7 +84,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
           ): null}
           {semesterError? (
             <Button
-              variant="error"
+              variant="semesterError"
               size="icon"
               className="rounded-full flex-none h-[2rem] w-[2rem] bg-red-500 h-8 w-8 items-center justify-center mt-2"
               onClick={() => {/* Your click handler here */}}
