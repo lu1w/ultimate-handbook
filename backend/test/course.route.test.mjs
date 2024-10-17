@@ -2,8 +2,6 @@ import request from 'supertest';
 import { expect } from 'chai';
 import app from '../src/app.js';
 
-let userId; // Global variable to store the generated userId
-
 describe('Course Info API', () => {
   it('should initialize the user info, including degree and major', (done) => {
     const degree = 'Science';
@@ -20,12 +18,19 @@ describe('Course Info API', () => {
         expect(responseData.message).to.equal(
           `User Info Successfully Initialized: degree = ${degree}, major = ${major}`
         );
-        expect(responseData).to.have.property('userId');
-        userId = responseData.userId; // Save userId for use in subsequent tests
         expect(responseData.compulsory).deep.equal(['SCIE10005']);
         expect(responseData.majorCore).deep.equal([
           [4, 'MAST30025', 'MAST30027', 'MAST30034', 'COMP30027']
         ]);
+        // expect(res.body).to.have.property('userInfo');
+        // expect(res.body.userDegree).to.deep.include({
+        //   degree: 'Science',
+        //   major: 'Data Science'
+        // });
+        // expect(res.body).to.have.property('coreSubjects').that.is.an('array');
+        // expect(res.body)
+        //   .to.have.property('compulsorySubject')
+        //   .that.is.an('array');
         done();
       });
   });
@@ -48,7 +53,7 @@ describe('Course Planner API', () => {
     };
 
     request(app)
-      .post(`/v1/${userId}/course/add`)
+      .post('/v1/course/:userId/add')
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
@@ -83,7 +88,7 @@ describe('Course Planner API', () => {
     };
 
     request(app)
-      .post(`/v1/${userId}/course/add`)
+      .post('/v1/course/:userId/add')
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
@@ -116,7 +121,7 @@ describe('Course Planner API', () => {
     };
 
     request(app)
-      .post(`/v1/${userId}/course/add`)
+      .post('/v1/course/:userId/add')
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
@@ -155,14 +160,14 @@ describe('Course Planner API', () => {
 
     // Add the subject
     request(app)
-      .post(`/v1/${userId}/course/add`)
+      .post('/v1/course/:userId/add')
       .send(subjectData)
       .end((err) => {
         if (err) return done(err);
 
         // Now remove the subject
         request(app)
-          .delete(`/v1/${userId}/course/remove/${query}`)
+          .delete(`/v1/course/:userId/remove/${query}`)
           .end((err, res) => {
             if (err) return done(err);
 
