@@ -7,12 +7,12 @@ const {
   getInitialInfo,
   getPlanner,
   addSubject,
+  addTerm,
   removeSubject,
   isValidAdd,
   giveTypeOfSubject,
   resolveMiddleware,
-  checkOutComeAfterResolve
-
+  checkOutComeAfterResolve,
 } = require('../../service/courseService');
 
 /**
@@ -203,7 +203,7 @@ router.get('/prerequisites/:query', async (req, res, next) => {
 
 router.post('/resolve', resolveMiddleware, checkOutComeAfterResolve);
 
-
+router.post('/addTerm', addTerm);
 /**
  * @swagger
  * /course/cores/{major}:
