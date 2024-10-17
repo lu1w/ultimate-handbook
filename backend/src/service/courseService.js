@@ -445,7 +445,7 @@ function arePrerequisitesMet(prerequisites, subjectSemesters, currentSemester) {
     // andGroup is an array of subject codes which need to be all satisfied
     let groupSatisfied = false;
     for (const subjectCode of andGroup) {
-      if (subjectSemesters.hasOwnProperty(subjectCode)) {
+      if (Object.prototype.hasOwnProperty.call(subjectSemesters,subjectCode)) {
         const prereqSemester = subjectSemesters[subjectCode];
         const comparison = compareSemesters(prereqSemester, currentSemester);
           if (comparison !== PRESMALLER) {
