@@ -1,8 +1,15 @@
 const mongoClient = require('../config/mongoClient');
+const { v4: uuidv4 } = require('uuid');
 const ApiError = require('../utils/ApiError');
 const { COURSE_COLLECTION, MAJOR_COLLECTION } = require('../lib/dbConstants');
 const axios = require('axios');
-
+const PRESMALLER = -1;
+const semesterOrder = {
+  's1': 1,
+  's2': 2,
+  'su': 3,
+  'wi': 4
+};
 const planner = {
   y1s1: {
     p1: {},
@@ -56,6 +63,7 @@ const compulsory = [];
 const majorCore = [];
 
 const setInitialInfo = async (req, res, next) => {
+  const userId = uuidv4(); // 生成唯一的 userId
   console.log('enter setInitInfo');
   const { degree, major } = req.query;
   console.log(`get degree and major, degree = ${degree}, major = ${major}`);
@@ -105,7 +113,8 @@ const setInitialInfo = async (req, res, next) => {
   res.status(200).send({
     message: `User Info Successfully Initialized: degree = ${degree}, major = ${major}`,
     compulsory,
-    majorCore
+    majorCore,
+    userId,
   });
 };
 
@@ -312,7 +321,6 @@ const resolveMiddleware = async (req, res, next) => {
     }
   }
 };
-
 const checkOutComeAfterResolve = async (req, res, next) => {
   try {
     const subjectsCodeInPlanner = getAllSubjectCodes(planner);
@@ -324,22 +332,47 @@ const checkOutComeAfterResolve = async (req, res, next) => {
     } else {
       next(new ApiError(500, 'Error communicating with Python API'));
     }
-  }
-};
+  }   
+}
+
+// V1: this function will decide whether need to add error to the subject
+// function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
+//   // loop all subjects in the planner
+//   for (const semester in planner) {
+//     for (const pos in planner[semester]) {
+//       const subj = planner[semester][pos];
+//       const { prerequisites } = subj;
+//       if (prerequisites && prerequisites.length > 0) {
+//         const prerequisitesMet = arePrerequisitesMet(
+//           prerequisites,
+//           subjectsCodeInPlanner
+//         ); // check all subjects prerequisites in planner
+//         if (!prerequisitesMet) {
+//           // mark the subject with error
+//           subj.prerequisiteError = true;
+//         } else {
+//           delete subj.prerequisiteError;
+//         }
+//       }
+//     }
+//   }
+// }
+// V2: Updated function to decide whether need to add error to the subject
 // this function will decide whether need to add error to the subject
 function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
-  // loop all subjects in the planner
+  // Loop all subjects in the planner
   for (const semester in planner) {
     for (const pos in planner[semester]) {
       const subj = planner[semester][pos];
       const { prerequisites } = subj;
       if (prerequisites && prerequisites.length > 0) {
         const prerequisitesMet = arePrerequisitesMet(
-          prerequisites,
-          subjectsCodeInPlanner
-        ); // check all subjects prerequisites in planner
+          prerequisites, // [[a,b], [c,d]]
+          subjectsCodeInPlanner, // { COMP10002: 'y1s1', COMP20003: 'y1s2' }
+          semester // 'y1s2' 
+        );
         if (!prerequisitesMet) {
-          // mark the subject with error
+          // Mark the subject with error
           subj.prerequisiteError = true;
         } else {
           delete subj.prerequisiteError;
@@ -349,42 +382,128 @@ function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
   }
 }
 
-// get all codes of subjects in the planner
+// V1: get all codes of subjects in the planner
+// function getAllSubjectCodes(planner) {
+//   const subjectCodesArray = [];
+//   for (const semester in planner) {
+//     for (const position in planner[semester]) {
+//       const subject = planner[semester][position];
+//       if (subject && subject.subjectCode) {
+//         subjectCodesArray.push(subject.subjectCode);
+//       }
+//     }
+//   }
+//   return subjectCodesArray;
+// } 
+// V2: Function to get subject semesters
 function getAllSubjectCodes(planner) {
-  const subjectCodesArray = [];
+  const subjectSemesters = {}; // Mapping from subject code to semester
   for (const semester in planner) {
     for (const position in planner[semester]) {
       const subject = planner[semester][position];
       if (subject && subject.subjectCode) {
-        subjectCodesArray.push(subject.subjectCode);
+        subjectSemesters[subject.subjectCode] = semester;
+        console.log('Subject semesters:', subjectSemesters);
       }
     }
   }
-  return subjectCodesArray;
+  return subjectSemesters;
 }
 
-function arePrerequisitesMet(prerequisites, subjectsCodeInPlanner) {
-  // prerequisites are an array of arrays
-  // subjectsCodeInPlanner is an array of subject codes
-  console.log('Here is all prerequisite of subjects', prerequisites);
+// V1: 
+// function arePrerequisitesMet(prerequisites, subjectsCodeInPlanner) {
+//   // prerequisites are an array of arrays
+//   // subjectsCodeInPlanner is an array of subject codes
+//   console.log('Here is all prerequisite of subjects', prerequisites);
+
+//   for (const andGroup of prerequisites) {
+//     // andGroup is an array of subject codes which need to be all satisfied
+//     let groupSatisfied = false;
+//     for (const subjectCode of andGroup) {
+//       if (subjectsCodeInPlanner.includes(subjectCode)) {
+//         groupSatisfied = true;
+//         break;
+//       }
+//     }
+//     if (!groupSatisfied) {
+//       // if any group is not satisfied, return false
+//       return false;
+//     }
+//   }
+//   console.log('Here is all subjects in planner now', subjectsCodeInPlanner);
+//   return true;
+// }
+// Updated function to check if prerequisites are met
+// V2:
+function arePrerequisitesMet(prerequisites, subjectSemesters, currentSemester) {
+  // Prerequisites are an array of arrays (OR of ANDs)
+  // subjectSemesters is an object mapping subject codes to semesters
+  // currentSemester is the semester of the subject being added
+  console.log('Here are all prerequisites of the subject:', prerequisites);
 
   for (const andGroup of prerequisites) {
     // andGroup is an array of subject codes which need to be all satisfied
     let groupSatisfied = false;
     for (const subjectCode of andGroup) {
-      if (subjectsCodeInPlanner.includes(subjectCode)) {
-        groupSatisfied = true;
+      if (Object.prototype.hasOwnProperty.call(subjectSemesters,subjectCode)) {
+        const prereqSemester = subjectSemesters[subjectCode];
+        const comparison = compareSemesters(prereqSemester, currentSemester);
+          if (comparison !== PRESMALLER) {
+            // Prerequisite is not scheduled before current semester
+            groupSatisfied = false; 
+            continue;// continue to find next prerequisite in one array
+          }
+          else if (comparison === PRESMALLER) {
+            groupSatisfied = true;
+            break;
+          }
+      } 
+      else {
+        // Prerequisite subject is not even exist
+        groupSatisfied = false;
         break;
       }
     }
-    if (!groupSatisfied) {
-      // if any group is not satisfied, return false
+    if(!groupSatisfied) {
+      // At least one group is satisfied
+      console.log('Current subject\'s prerequisites are met.');
       return false;
     }
   }
-  console.log('Here is all subjects in planner now', subjectsCodeInPlanner);
+  // None of the groups are satisfied
   return true;
 }
+
+// Function to compare semesters
+function compareSemesters(semesterA, semesterB) {
+  // Returns -1 if semesterA is earlier than semesterB
+  // Returns 0 if semesterA is the same as semesterB
+  // Returns 1 if semesterA is later than semesterB
+
+  const yearA = parseInt(semesterA.substring(1, 2)); // e.g., 'y1s1' -> '1'
+  const semAKey = semesterA.substring(2,4); // 's1', 's2', 'su', 'wi'
+  const semAOrder = semesterOrder[semAKey];
+
+  const yearB = parseInt(semesterB.substring(1, 2));
+  const semBKey = semesterB.substring(2);
+  const semBOrder = semesterOrder[semBKey];
+
+  if (yearA < yearB) {
+    return -1;
+  } else if (yearA > yearB) {
+    return 1;
+  } else {
+    // Same year, compare semesters
+    if (semAOrder < semBOrder) {
+      return -1;
+    } else if (semAOrder > semBOrder) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+}
+
 module.exports = {
   setInitialInfo,
   getInitialInfo,
