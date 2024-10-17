@@ -27,6 +27,8 @@ interface SubjectCardProps {
   points: string;
   studyPeriod: string[];
   coordinatorName?: string; // TODO: put the coordinator in semester bubble
+  prerequisiteError: boolean;
+  semesterError: boolean;
   handleClick?: () => void;
   button?: string;
 }
@@ -40,6 +42,8 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   points,
   studyPeriod,
   coordinatorName,
+  prerequisiteError,
+  semesterError,
   handleClick,
   button,
 }) => {
@@ -64,9 +68,31 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       </CardHeader>
       <CardContent className="p-3">
         <CardDescription className="text-xs">{`${subjectCode} | Level ${level} | ${points} points`}</CardDescription>
-        <CardTitle className="mt-1 text-base font-bold font-serif pt-3 pb-2">
-          {subjectName}
-        </CardTitle>
+        <div className="flex items-center justify-between pr-4 pt-2">
+          <CardTitle className="mt-1 text-base font-bold font-serif pb-2">
+            {subjectName}
+          </CardTitle>
+          {prerequisiteError? (
+            <Button
+              variant="prereqError"
+              size="icon"
+              className="rounded-full flex-none h-[2rem] w-[2rem] bg-red-500 h-8 w-8 items-center justify-center mt-2"
+              onClick={() => {/* Your click handler here */}}
+            >
+              <img src="/error_1.svg" className="h-7 w-7" />
+            </Button>
+          ): null}
+          {semesterError? (
+            <Button
+              variant="semesterError"
+              size="icon"
+              className="rounded-full flex-none h-[2rem] w-[2rem] bg-red-500 h-8 w-8 items-center justify-center mt-2"
+              onClick={() => {/* Your click handler here */}}
+            >
+              <img src="/error_1.svg" className="h-7 w-7" />
+            </Button>
+          ): null}
+        </div>
       </CardContent>
       <CardFooter className="p-3 pt-0 space-x-1">
         <div className="grid grid-cols-2 gap-2">
