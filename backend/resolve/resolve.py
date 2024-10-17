@@ -36,7 +36,11 @@ def resolve():
         return credit
 
     def original_diff_penalty(X):
-        return sum(1 for x, y in zip(original, X) if x != y) / 2 * 0.05
+        penalty = 0
+        for i in range(len(X)):
+            if int_to_subject[X[i]] != "":
+                penalty += abs(original.index(X[i]) - i)
+        return penalty * 0.001
         
     def progression_rule_penalty():
         penalty = 0
