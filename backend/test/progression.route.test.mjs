@@ -24,7 +24,7 @@ describe('Progression rule: Bachelor of Science', () => {
               'overall',
               'discipline',
               'breadth',
-              'progression'
+              'degreeProgression'
             );
 
             /* check the filds within each requirements */

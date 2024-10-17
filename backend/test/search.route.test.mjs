@@ -58,7 +58,7 @@ describe('Search API: search page', () => {
 });
 
 describe('Search API: search query', () => {
-  it('search for a subject by subject code', (done) => {
+  it('search for a subject by subject code "COMP10002', (done) => {
     request(app)
       .get(urlWithQuery({ input: 'COMP10002' }))
       .expect(200)
