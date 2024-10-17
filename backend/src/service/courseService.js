@@ -358,8 +358,6 @@ const checkOutComeAfterResolve = async (req, res, next) => {
 //   }
 // }
 // V2: Updated function to decide whether need to add error to the subject
-  }
-};
 // this function will decide whether need to add error to the subject
 function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
   // Loop all subjects in the planner
