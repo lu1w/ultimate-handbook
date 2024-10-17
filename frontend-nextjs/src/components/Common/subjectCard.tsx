@@ -72,27 +72,32 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
           <CardTitle className="w-4/7 pr-2 mt-1 text-base font-bold font-serif pb-2">
             {subjectName}
           </CardTitle>
+
           <div className="w-2/7 flex justify-end items-center space-x-2">
-            {prerequisiteError? (
+            {prerequisiteError ? (
               <Button
                 variant="prereqError"
                 size="icon"
                 className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-red-500 items-center justify-center"
-                onClick={() => {/* Your click handler here */}}
+                onClick={() => {
+                  /* Your click handler here */
+                }}
               >
                 <img src="/error_1.svg" className="h-5 w-5" />
               </Button>
-            ): null}
-            {semesterError? (
+            ) : null}
+            {semesterError ? (
               <Button
                 variant="semesterError"
                 size="icon"
                 className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-orange-400 items-center justify-center"
-                onClick={() => {/* Your click handler here */}}
+                onClick={() => {
+                  /* Your click handler here */
+                }}
               >
                 <img src="/error_1.svg" className="h-5 w-5" />
               </Button>
-            ): null}
+            ) : null}
           </div>
         </div>
       </CardContent>
