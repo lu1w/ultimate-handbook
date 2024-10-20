@@ -2,13 +2,15 @@ const mongoClient = require('../config/mongoClient');
 const { v4: uuidv4 } = require('uuid');
 const ApiError = require('../utils/ApiError');
 const { COURSE_COLLECTION, MAJOR_COLLECTION } = require('../lib/dbConstants');
+const { scienceProgressions } = require('./progressionService');
+
 const axios = require('axios');
 const PRESMALLER = -1;
 const semesterOrder = {
-  's1': 1,
-  's2': 2,
-  'su': 3,
-  'wi': 4
+  s1: 1,
+  s2: 2,
+  su: 3,
+  wi: 4
 };
 const planner = {
   y1s1: {
@@ -62,9 +64,20 @@ const userInfo = {
 const compulsory = [];
 const majorCore = [];
 
+const progressionStats = {
+  overall1: 0,
+  overall2: 0,
+  overall3: 0,
+  discipline1: 0,
+  discipline2: 0,
+  discipline3: 0,
+  breadth1: 0,
+  breadth2: 0,
+  breadth3: 0
+};
+
 const setInitialInfo = async (req, res, next) => {
   const userId = uuidv4(); // 生成唯一的 userId
-  console.log('enter setInitInfo');
   const { degree, major } = req.query;
   console.log(`get degree and major, degree = ${degree}, major = ${major}`);
 
@@ -111,10 +124,11 @@ const setInitialInfo = async (req, res, next) => {
   }
 
   res.status(200).send({
-    message: `User Info Successfully Initialized: degree = ${degree}, major = ${major}`,
+    degree,
+    major,
     compulsory,
     majorCore,
-    userId,
+    userId
   });
 };
 
@@ -137,7 +151,7 @@ const getPlanner = (req, res) => {
 };
 
 const addTerm = (req, res) => {
-  const { term } = req.body; // e.g., term = 'y1su' or 'y1wi'
+  const { term } = req.params; // e.g., term = 'y1su' or 'y1wi'
   if (!term) {
     return res.status(400).json({ message: 'No term provided.' });
   }
@@ -158,8 +172,17 @@ const addTerm = (req, res) => {
 const addSubject = async (req, res, next) => {
   try {
     const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
-    if (!subjectData || Object.keys(subjectData).length === 0) {
-      return res.status(400).json({ message: 'No Subjects data provided.' });
+    console.log(
+      `subject data passed into addSubject: ${JSON.stringify(subjectData)}`
+    );
+    if (!subjectData) {
+      return res.status(400).json({ error: 'No query body.' });
+    }
+    console.log(
+      `subject data passed into addSubject: ${Object.keys(subjectData)}`
+    );
+    if (Object.keys(subjectData).length === 0) {
+      return res.status(400).json({ error: 'No subject provided.' });
     }
     const slot = Object.keys(subjectData)[0]; // e.g.'y1s2p1'
     const subject = subjectData[slot]; // get the Subject object
@@ -168,7 +191,7 @@ const addSubject = async (req, res, next) => {
 
     // Check if the slot exists
     if (!planner[term] || !planner[term][position]) {
-      return res.status(400).json({ message: 'Invalid time or position.' });
+      return res.status(400).json({ error: 'Invalid time or position.' });
     }
     // check if the Subjects already exists
     if (Object.keys(planner[term][position]).length !== 0) {
@@ -176,19 +199,21 @@ const addSubject = async (req, res, next) => {
         'Subject already exists in this slot' + planner[term][position]
       );
       return res.status(400).json({
-        message:
-          'can not add Subjects to this slot!,because subject already exist'
+        message: 'Subject already exist in the slot'
       });
     }
 
     const { subjectCode } = subject;
     if (!subjectCode) {
-      return res.status(400).json({ message: 'lack of the subject code' });
+      return res.status(400).json({ message: 'Missing subject code' });
     }
+
+    /* Add subject to planner */
     planner[term][position] = subject;
     console.log(
       `my planner after adding subject ${subjectCode}: ${JSON.stringify(planner)}`
     );
+
     next();
   } catch (err) {
     console.error('Error:', err);
@@ -256,8 +281,11 @@ const giveTypeOfSubject = async (req, res, next) => {
           subject.header = 'BREADTH';
         }
       } else {
-        subject.header = 'BREADTH';
+        res.status(500).send({
+          message: 'Error: subject area not correctly stored in the database'
+        });
       }
+      updateProgressions(subject);
       res.status(200).send(planner);
     } catch (err) {
       console.error('error:', err);
@@ -285,6 +313,8 @@ const removeSubject = (req, res, next) => {
     ) {
       return res.status(404).json({ message: 'No Subjects found!' });
     }
+
+    updateProgressions(planner[studyPeriod][position], -1);
 
     // delete planner[semesterKey][position];
     // Reset the slot to an empty object
@@ -332,8 +362,8 @@ const checkOutComeAfterResolve = async (req, res, next) => {
     } else {
       next(new ApiError(500, 'Error communicating with Python API'));
     }
-  }   
-}
+  }
+};
 
 // V1: this function will decide whether need to add error to the subject
 // function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
@@ -369,7 +399,7 @@ function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
         const prerequisitesMet = arePrerequisitesMet(
           prerequisites, // [[a,b], [c,d]]
           subjectsCodeInPlanner, // { COMP10002: 'y1s1', COMP20003: 'y1s2' }
-          semester // 'y1s2' 
+          semester // 'y1s2'
         );
         if (!prerequisitesMet) {
           // Mark the subject with error
@@ -394,7 +424,7 @@ function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
 //     }
 //   }
 //   return subjectCodesArray;
-// } 
+// }
 // V2: Function to get subject semesters
 function getAllSubjectCodes(planner) {
   const subjectSemesters = {}; // Mapping from subject code to semester
@@ -410,7 +440,7 @@ function getAllSubjectCodes(planner) {
   return subjectSemesters;
 }
 
-// V1: 
+// V1:
 // function arePrerequisitesMet(prerequisites, subjectsCodeInPlanner) {
 //   // prerequisites are an array of arrays
 //   // subjectsCodeInPlanner is an array of subject codes
@@ -445,28 +475,26 @@ function arePrerequisitesMet(prerequisites, subjectSemesters, currentSemester) {
     // andGroup is an array of subject codes which need to be all satisfied
     let groupSatisfied = false;
     for (const subjectCode of andGroup) {
-      if (Object.prototype.hasOwnProperty.call(subjectSemesters,subjectCode)) {
+      if (Object.prototype.hasOwnProperty.call(subjectSemesters, subjectCode)) {
         const prereqSemester = subjectSemesters[subjectCode];
         const comparison = compareSemesters(prereqSemester, currentSemester);
-          if (comparison !== PRESMALLER) {
-            // Prerequisite is not scheduled before current semester
-            groupSatisfied = false; 
-            continue;// continue to find next prerequisite in one array
-          }
-          else if (comparison === PRESMALLER) {
-            groupSatisfied = true;
-            break;
-          }
-      } 
-      else {
+        if (comparison !== PRESMALLER) {
+          // Prerequisite is not scheduled before current semester
+          groupSatisfied = false;
+          continue; // continue to find next prerequisite in one array
+        } else if (comparison === PRESMALLER) {
+          groupSatisfied = true;
+          break;
+        }
+      } else {
         // Prerequisite subject is not even exist
         groupSatisfied = false;
         break;
       }
     }
-    if(!groupSatisfied) {
+    if (!groupSatisfied) {
       // At least one group is satisfied
-      console.log('Current subject\'s prerequisites are met.');
+      console.log("Current subject's prerequisites are met.");
       return false;
     }
   }
@@ -481,7 +509,7 @@ function compareSemesters(semesterA, semesterB) {
   // Returns 1 if semesterA is later than semesterB
 
   const yearA = parseInt(semesterA.substring(1, 2)); // e.g., 'y1s1' -> '1'
-  const semAKey = semesterA.substring(2,4); // 's1', 's2', 'su', 'wi'
+  const semAKey = semesterA.substring(2, 4); // 's1', 's2', 'su', 'wi'
   const semAOrder = semesterOrder[semAKey];
 
   const yearB = parseInt(semesterB.substring(1, 2));
@@ -504,6 +532,50 @@ function compareSemesters(semesterA, semesterB) {
   }
 }
 
+async function getProgressions() {
+  const progressions = {};
+  try {
+    const courseCollection = await mongoClient.getCollection(COURSE_COLLECTION);
+    const course = await courseCollection.findOne({
+      courseName: userInfo.degree ? userInfo.degree : 'Science' // TODO: change this to only userInfo.degree
+    });
+
+    console.log(`INFO current userInfo.degree=${userInfo.degree}`);
+
+    switch (userInfo.degree) {
+      case 'Science':
+        Object.assign(
+          progressions,
+          scienceProgressions(course, progressionStats)
+        );
+        break;
+      case 'Commerce':
+        break;
+      default: // TODO: this default case should be removed since `userInfo.degree` should be one of the above cases
+        Object.assign(
+          progressions,
+          scienceProgressions(course, progressionStats)
+        );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+
+  return progressions;
+}
+
+function updateProgressions(subject, side = 1) {
+  /* Update the progression stats */
+  const { level, points, header } = subject;
+  const diffPoints = side * points;
+  progressionStats[`overall${level}`] += diffPoints;
+  if (header == 'DISCIPLINE') {
+    progressionStats[`discipline${level}`] += diffPoints;
+  } else if (header == 'BREADTH') {
+    progressionStats[`breadth${level}`] += diffPoints;
+  }
+}
+
 module.exports = {
   setInitialInfo,
   getInitialInfo,
@@ -513,6 +585,7 @@ module.exports = {
   isValidAdd,
   giveTypeOfSubject,
   removeSubject,
+  getProgressions,
   resolveMiddleware,
   checkOutComeAfterResolve
 };
