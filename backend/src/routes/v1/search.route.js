@@ -25,7 +25,6 @@ router.use(express.json());
  */
 router.get('/', async (req, res) => {
   console.log('INFO enter GET search/');
-  //console.log(req);
 
   try {
     console.log('INFO try getting all subjects');
@@ -41,8 +40,6 @@ router.get('/', async (req, res) => {
       .status(500)
       .json({ error: 'Database query failed: query all subjects' });
   }
-
-  //res.send(req);
 });
 
 /**
@@ -153,7 +150,6 @@ router.get('/conditions', async (req, res) => {
   console.log(`INFO ------------------------------------------ `);
   console.log(`INFO req url is: `);
   console.log(req.url);
-  console.log('INFO enter GET search/conditions/');
 
   const input = req.query.input;
   const levels = req.query.levels
@@ -221,7 +217,6 @@ router.get('/conditions', async (req, res) => {
       error: `Internal server error, failure in retrieve subjects from database`
     });
   }
-  //res.send(req);
 });
 
 /** API for internal usage */

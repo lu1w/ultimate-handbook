@@ -557,10 +557,8 @@ async function getProgressions() {
           scienceProgressions(course, progressionStats)
         );
     }
-    // res.status(200).send(progression);
   } catch (err) {
     console.log(err);
-    // res.status(500);
   }
 
   return progressions;
