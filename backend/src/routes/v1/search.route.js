@@ -44,31 +44,31 @@ router.get('/', async (req, res) => {
 
 /**
  * @swagger
- * /search/conditions?{params}:
+ * /search/conditions?{query}:
  *   get:
  *     summary: Search subjects
  *     description: Retrieve a list of subjects based on subject name or subject code; the query is case-insensitive.
  *     parameters:
  *       - name: input
- *         in: path
+ *         in: query
  *         required: false
  *         schema:
  *           type: string
  *         description: The search query string to match against subject names or subject codes.
  *       - name: levels
- *         in: path
+ *         in: query
  *         required: false
  *         schema:
  *           type: array
  *         description: The array of levels to match against the subject level.
  *       - name: studyPeriods
- *         in: path
+ *         in: query
  *         required: false
  *         schema:
  *           type: array
  *         description: The study periods to match against any of the subject study period.
  *       - name: studyAreas
- *         in: path
+ *         in: query
  *         required: false
  *         schema:
  *           type: array

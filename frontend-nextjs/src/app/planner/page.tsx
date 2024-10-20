@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import axios from 'axios';
 
@@ -28,6 +28,10 @@ type StudyPeriod = keyof typeof StudyPeriodType;
 type Year = 'y1' | 'y2' | 'y3';
 
 const PlannerPage: React.FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get('userId');
+
   const [planner, setPlanner] = useState({});
   const [progressions, setProgressions] = useState<Progressions>({
     overall: {},
@@ -69,7 +73,9 @@ const PlannerPage: React.FC = () => {
     console.log(`enter useEffect() to fetch planner`);
     const fetchPlanner = async () => {
       try {
-        const res = await axios.get(`${SERVER_URL}/v1/course/planner`);
+        const res = await axios.get(
+          `${SERVER_URL}/v1/course/user/${userId}/planner`,
+        );
         setPlanner(res.data);
         console.log(`my planner is: ${JSON.stringify(res.data)}`);
       } catch (err) {
@@ -85,7 +91,9 @@ const PlannerPage: React.FC = () => {
     console.log(`enter useEffect() to fetch planner`);
     const fetchProgressions = async () => {
       try {
-        const res = await axios.get(`${SERVER_URL}/v1/course/progressions`);
+        const res = await axios.get(
+          `${SERVER_URL}/v1/course/user/${userId}/progressions`,
+        );
         setProgressions(res.data);
         console.log(`my progressions are: ${JSON.stringify(res.data)}`);
       } catch (err) {
@@ -96,14 +104,14 @@ const PlannerPage: React.FC = () => {
     fetchProgressions();
   }, []);
 
-  const router = useRouter();
-
   const addSubject = (
     year: Year,
     studyPeriod: StudyPeriod,
     position: string,
   ) => {
-    router.push(`/search/?slot=${year}${studyPeriod}${position}`);
+    router.push(
+      `/search/?userId=${userId}&slot=${year}${studyPeriod}${position}`,
+    );
   };
 
   const removeSubject = async (
@@ -112,12 +120,12 @@ const PlannerPage: React.FC = () => {
     position: string,
   ) => {
     const resPlanner = await axios.delete(
-      `${SERVER_URL}/v1/course/remove/${year}${studyPeriod}${position}`,
+      `${SERVER_URL}/v1/course/user/${userId}/remove/${year}${studyPeriod}${position}`,
     );
     setPlanner(resPlanner.data);
 
     const resProgressions = await axios.get(
-      `${SERVER_URL}/v1/course/progressions`,
+      `${SERVER_URL}/v1/course/user/${userId}/progressions`,
     );
     setProgressions(resProgressions.data);
     console.log(
@@ -134,7 +142,9 @@ const PlannerPage: React.FC = () => {
   };
 
   const callResolve = async () => {
-    const res = await axios.post(`${SERVER_URL}/v1/course/resolve`);
+    const res = await axios.post(
+      `${SERVER_URL}/v1/course/user/${userId}/resolve`,
+    );
     const planner = res.data;
     console.log(planner);
     setPlanner(planner);
@@ -330,4 +340,5 @@ const PlannerPage: React.FC = () => {
     </div>
   );
 };
+
 export default PlannerPage;

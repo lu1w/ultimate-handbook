@@ -8,7 +8,6 @@ import axios from 'axios';
 import SubjectCard from '@/components/common/subjectCard';
 import { Subject } from '@/lib/objectSchema';
 import { SERVER_URL } from '@/lib/utils';
-import assert from 'assert';
 
 interface SearchResultsProps {
   className?: string | undefined;
@@ -27,18 +26,23 @@ export default function SearchResults({
   const router = useRouter();
   const searchParams = useSearchParams();
   const slot: string = searchParams.get('slot')!;
+  const userId = searchParams.get('userId');
 
   async function handleAdd(subject: Subject) {
     try {
       const newSubjectInfo: any = {};
       newSubjectInfo[slot] = subject;
-      await axios.post(`${SERVER_URL}/v1/course/add`, newSubjectInfo);
+      await axios.post(
+        `${SERVER_URL}/v1/course/user/${userId}/add`,
+        newSubjectInfo,
+      );
       router.push('/planner');
     } catch (err) {
       // TODO: handle error
     }
     return;
   }
+
   return (
     <div className={className}>
       {/* Text message - number of results */}

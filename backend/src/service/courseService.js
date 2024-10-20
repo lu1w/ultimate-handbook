@@ -151,7 +151,7 @@ const getPlanner = (req, res) => {
 };
 
 const addTerm = (req, res) => {
-  const { term } = req.body; // e.g., term = 'y1su' or 'y1wi'
+  const { term } = req.params; // e.g., term = 'y1su' or 'y1wi'
   if (!term) {
     return res.status(400).json({ message: 'No term provided.' });
   }

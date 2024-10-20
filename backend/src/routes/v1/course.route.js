@@ -77,11 +77,16 @@ router.get('/main', getInitialInfo);
  *   get:
  */
 router.post('/main', setInitialInfo);
-router.get('/planner', getPlanner);
 
 /**
  * @swagger
- * /course/remove/{slot}:
+ * /course/user/{userId}/planner:
+ */
+router.get('/user/:userId/planner', getPlanner);
+
+/**
+ * @swagger
+ * /course/user/{userId}/remove/{slot}:
  *   delete:
  *     summary: Remove a subject from the planner
  *     description: Remove a subject from the subject planner based on the given `slot`.
@@ -107,15 +112,15 @@ router.get('/planner', getPlanner);
  *       500:
  *         description: Server error.
  */
-router.delete('/:userId/remove/:slot', removeSubject);
+router.delete('/user/:userId/remove/:slot', removeSubject);
 
 /**
  * @swagger
- * /course/add:
+ * /course/user/{userId}/add:
  *   post:
  *     summary: Add a subject to the planner
  *     description: Add one subject to a slot in the subject planner.
- *     requestBody:
+ *     request:
  *       required: true
  *       content:
  *         application/json:
@@ -146,7 +151,7 @@ router.delete('/:userId/remove/:slot', removeSubject);
  *       500:
  *         description: Server error.
  */
-router.post('/:userId/add', addSubject, isValidAdd, giveTypeOfSubject);
+router.post('/user/:userId/add', addSubject, isValidAdd, giveTypeOfSubject);
 
 /**
  * @swagger
@@ -184,7 +189,7 @@ router.post('/:userId/add', addSubject, isValidAdd, giveTypeOfSubject);
  *       500:
  *         description: Server error.
  */
-router.get('/:userId/prerequisites/:query', async (req, res, next) => {
+router.get('/prerequisites/:query', async (req, res, next) => {
   const { query } = req.params;
   if (query) {
     try {
@@ -202,9 +207,22 @@ router.get('/:userId/prerequisites/:query', async (req, res, next) => {
   }
 });
 
-router.post('/:userId/resolve', resolveMiddleware, checkOutComeAfterResolve);
+/**
+ * @swagger
+ * /course/user/{userId}/resolve:
+ */
+router.post(
+  '/user/:userId/resolve',
+  resolveMiddleware,
+  checkOutComeAfterResolve
+);
 
-router.post('/:userId/addTerm', addTerm);
+/**
+ * @swagger
+ * /course/user/{userId}/addTerm/{term}:
+ */
+router.post('/user/:userId/addTerm/:term', addTerm);
+
 /**
  * @swagger
  * /course/cores/{major}:
@@ -241,7 +259,7 @@ router.post('/:userId/addTerm', addTerm);
  *       500:
  *         description: Server error.
  */
-router.get('/:userId/cores', async (req, res, next) => {
+router.get('/cores/:major', async (req, res, next) => {
   try {
     const { major } = req.params;
 
@@ -269,11 +287,11 @@ router.get('/:userId/cores', async (req, res, next) => {
 
 /**
  * @swagger
- * /course/progressions:
+ * /course/user/{userId}/progressions:
  *   get:
  *     summary: get all the degree progression statistics
  */
-router.get('/progressions', async (req, res) => {
+router.get('/user/:userId/progressions', async (req, res) => {
   // try {
   const progressions = await getProgressions();
   res.status(200).send(progressions);
