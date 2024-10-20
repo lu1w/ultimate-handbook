@@ -12,7 +12,7 @@ describe('Progression rule: Bachelor of Science', () => {
         if (err) return done(err);
 
         request(app)
-          .get('/v1/course/progressions')
+          .get('/v1/course/user/:userId/progressions')
           .expect(200)
           .end((err, res) => {
             if (err) return done(err);

@@ -53,7 +53,7 @@ describe('Course Planner API', () => {
     };
 
     request(app)
-      .post('/v1/course/:userId/add')
+      .post('/v1/course/user/:userId/add')
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
@@ -88,7 +88,7 @@ describe('Course Planner API', () => {
     };
 
     request(app)
-      .post('/v1/course/:userId/add')
+      .post('/v1/course/user/:userId/add')
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
@@ -121,7 +121,7 @@ describe('Course Planner API', () => {
     };
 
     request(app)
-      .post('/v1/course/:userId/add')
+      .post('/v1/course/user/:userId/add')
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
@@ -160,14 +160,14 @@ describe('Course Planner API', () => {
 
     // Add the subject
     request(app)
-      .post('/v1/course/:userId/add')
+      .post('/v1/course/user/:userId/add')
       .send(subjectData)
       .end((err) => {
         if (err) return done(err);
 
         // Now remove the subject
         request(app)
-          .delete(`/v1/course/:userId/remove/${query}`)
+          .delete(`/v1/course/user/:userId/remove/${query}`)
           .end((err, res) => {
             if (err) return done(err);
 
