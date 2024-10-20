@@ -52,8 +52,7 @@ describe('Search API: search page', () => {
         expect(res.body.subjects).to.have.lengthOf(2293);
 
         return done();
-      })
-      .timeout(5000);
+      });
   });
 });
 

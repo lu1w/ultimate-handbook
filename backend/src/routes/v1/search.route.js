@@ -27,13 +27,10 @@ router.get('/', async (req, res) => {
   console.log('INFO enter GET search/');
 
   try {
-    console.log('INFO try getting all subjects');
     const collection = await mongoClient.getCollection(SUBJECT_COLLECTION);
-    // Query all subjects
     const subjects = await collection.find({}).toArray();
 
     res.status(200).send({ subjects });
-    console.log('INFO finished searching all subjects');
   } catch (err) {
     console.error(err);
     res
@@ -147,9 +144,8 @@ router.get('/', async (req, res) => {
  *                   example: "Internal server error, failure in retrieve subjects from database"
  */
 router.get('/conditions', async (req, res) => {
-  console.log(`INFO ------------------------------------------ `);
-  console.log(`INFO req url is: `);
-  console.log(req.url);
+  // console.log(`INFO req url is: `);
+  // console.log(req.url);
 
   const input = req.query.input;
   const levels = req.query.levels
@@ -164,11 +160,11 @@ router.get('/conditions', async (req, res) => {
     ? req.query.studyAreas.split(',')
     : [];
 
-  console.log(
-    `INFO input=${input}, levels=${levels}, studyPeriods=${studyPeriods}, studyAreas=${studyAreas}; 
-    studyArea is array: ${Array.isArray(studyAreas)}
-    input parse to bool: ${Boolean(input)}`
-  );
+  // console.log(
+  //   `INFO input=${input}, levels=${levels}, studyPeriods=${studyPeriods}, studyAreas=${studyAreas};
+  //   studyArea is array: ${Array.isArray(studyAreas)}
+  //   input parse to bool: ${Boolean(input)}`
+  // );
 
   const filtersQuery = [
     { level: { $in: levels } },
@@ -183,7 +179,7 @@ router.get('/conditions', async (req, res) => {
   try {
     const collection = await mongoClient.getCollection(SUBJECT_COLLECTION);
     if (input) {
-      console.log(`INFO start searching for query ${input}`);
+      // console.log(`INFO start searching for query ${input}`);
 
       // Query the database for subjects matching the search query
       const subjects = await collection
@@ -199,7 +195,7 @@ router.get('/conditions', async (req, res) => {
         })
         .toArray();
 
-      console.log(`INFO done searching for ${input}`);
+      // console.log(`INFO done searching for ${input}`);
       res.status(200).send({ subjects }); // Return the matching subjects
     } else {
       const subjects = await collection
@@ -208,7 +204,7 @@ router.get('/conditions', async (req, res) => {
         })
         .toArray();
 
-      console.log(`INFO done searching for ${input}`);
+      // console.log(`INFO done searching for ${input}`);
       res.status(200).send({ subjects }); // Return the matching subjects
     }
   } catch (err) {
@@ -230,7 +226,6 @@ router.get('/studyareas', async (req, res) => {
     if (index !== -1) {
       studyAreas.splice(index, 1);
     }
-    console.log(`INFO studyAreas = ${studyAreas}`);
 
     // Send back all study areas
     res.status(200).send({ studyAreas });

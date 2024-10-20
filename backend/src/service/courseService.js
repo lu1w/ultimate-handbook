@@ -78,7 +78,6 @@ const progressionStats = {
 
 const setInitialInfo = async (req, res, next) => {
   const userId = uuidv4(); // 生成唯一的 userId
-  console.log('enter setInitInfo');
   const { degree, major } = req.query;
   console.log(`get degree and major, degree = ${degree}, major = ${major}`);
 
@@ -125,7 +124,8 @@ const setInitialInfo = async (req, res, next) => {
   }
 
   res.status(200).send({
-    message: `User Info Successfully Initialized: degree = ${degree}, major = ${major}`,
+    degree,
+    major,
     compulsory,
     majorCore,
     userId
