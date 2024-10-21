@@ -6,8 +6,9 @@ const {
   setInitialInfo,
   getInitialInfo,
   getPlanner,
-  addSubject,
   addTerm,
+  removeTerm,
+  addSubject,
   removeSubject,
   isValidAdd,
   giveTypeOfSubject,
@@ -222,6 +223,12 @@ router.post(
  * /course/user/{userId}/addTerm/{term}:
  */
 router.post('/user/:userId/addTerm/:term', addTerm);
+
+/**
+ * @swagger
+ * /course/user/{userId}/removeTerm/{term}:
+ */
+router.post('/user/:userId/removeTerm/:term', removeTerm);
 
 /**
  * @swagger
