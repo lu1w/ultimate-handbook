@@ -153,10 +153,10 @@ const getPlanner = (req, res) => {
 const addTerm = (req, res) => {
   const { term } = req.params; // e.g., term = 'y1su' or 'y1wi'
   if (!term) {
-    return res.status(400).json({ message: 'No term provided.' });
+    return res.status(400).send({ message: 'No term provided.' });
   }
   if (planner[term]) {
-    return res.status(400).json({ message: 'Term already exists in planner.' });
+    return res.status(400).send({ message: 'Term already exists in planner.' });
   }
   // Define positions based on term type
   let positions = {};
@@ -166,7 +166,19 @@ const addTerm = (req, res) => {
     positions = { p1: {}, p2: {}, p3: {}, p4: {} };
   }
   planner[term] = positions;
-  res.status(200).json({ message: 'Term added successfully.', planner });
+  res.status(200).send({ message: 'Term added successfully.', planner });
+};
+
+const removeTerm = (req, res) => {
+  const { term } = req.params; // e.g., term = 'y1su' or 'y1wi'
+  if (planner[term].p1) {
+    updateProgressions(planner[term].p1, -1);
+  }
+  if (planner[term].p2) {
+    updateProgressions(planner[term].p2, -1);
+  }
+  delete planner[term];
+  res.status(200).send({ planner });
 };
 
 const addSubject = async (req, res, next) => {
@@ -580,8 +592,9 @@ module.exports = {
   setInitialInfo,
   getInitialInfo,
   getPlanner,
-  addSubject,
   addTerm,
+  removeTerm,
+  addSubject,
   isValidAdd,
   giveTypeOfSubject,
   removeSubject,

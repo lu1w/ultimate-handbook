@@ -119,18 +119,23 @@ const PlannerPage: React.FC = () => {
     studyPeriod: StudyPeriod,
     position: string,
   ) => {
-    const resPlanner = await axios.delete(
-      `${SERVER_URL}/v1/course/user/${userId}/remove/${year}${studyPeriod}${position}`,
-    );
-    setPlanner(resPlanner.data);
+    try {
+      const resPlanner = await axios.delete(
+        `${SERVER_URL}/v1/course/user/${userId}/remove/${year}${studyPeriod}${position}`,
+      );
+      setPlanner(resPlanner.data);
 
-    const resProgressions = await axios.get(
-      `${SERVER_URL}/v1/course/user/${userId}/progressions`,
-    );
-    setProgressions(resProgressions.data);
-    console.log(
-      `my planner after removing ${year}${studyPeriod}${position} is ${JSON.stringify(planner)}`,
-    );
+      const resProgressions = await axios.get(
+        `${SERVER_URL}/v1/course/user/${userId}/progressions`,
+      );
+      setProgressions(resProgressions.data);
+
+      console.log(
+        `my planner after removing ${year}${studyPeriod}${position} is ${JSON.stringify(planner)}`,
+      );
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const addStudyPeriod = async (year: Year, studyPeriod: StudyPeriod) => {
@@ -143,8 +148,19 @@ const PlannerPage: React.FC = () => {
     }
   };
 
-  const removeStudyPeriod = (year: Year, studyPeriod: StudyPeriod) => {
-    router.push('');
+  const removeStudyPeriod = async (year: Year, studyPeriod: StudyPeriod) => {
+    const url = `${SERVER_URL}/v1/course/user/${userId}/removeTerm/${year}${studyPeriod}`;
+    try {
+      const res = await axios.post(url);
+      setPlanner(res.data.planner);
+
+      const resProgressions = await axios.get(
+        `${SERVER_URL}/v1/course/user/${userId}/progressions`,
+      );
+      setProgressions(resProgressions.data);
+    } catch (err) {
+      console.error(`Failed in handling POST ${url}`);
+    }
   };
 
   const callResolve = async () => {
