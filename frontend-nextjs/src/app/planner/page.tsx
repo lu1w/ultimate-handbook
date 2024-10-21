@@ -133,8 +133,14 @@ const PlannerPage: React.FC = () => {
     );
   };
 
-  const addStudyPeriod = (year: Year, studyPeriod: StudyPeriod) => {
-    router.push('');
+  const addStudyPeriod = async (year: Year, studyPeriod: StudyPeriod) => {
+    const url = `${SERVER_URL}/v1/course/user/${userId}/addTerm/${year}${studyPeriod}`;
+    try {
+      const res = await axios.post(url);
+      setPlanner(res.data.planner);
+    } catch (err) {
+      console.error(`Failed in handling POST ${url}`);
+    }
   };
 
   const removeStudyPeriod = (year: Year, studyPeriod: StudyPeriod) => {
