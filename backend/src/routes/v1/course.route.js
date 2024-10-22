@@ -254,7 +254,7 @@ router.get('/prerequisites/:query', async (req, res, next) => {
   } else {
     return next(new ApiError(400, 'Search query is required'));
   }
-}
+});
        
 
 
