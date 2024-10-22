@@ -186,8 +186,16 @@ const getPlanner = async (req, res, next) => {
 };
 
 
-const addTerm = (req, res) => {
-  const { term } = req.params; // e.g., term = 'y1su' or 'y1wi'
+const addTerm = async(req, res) => {
+  const { term, userId } = req.params; // e.g., term = 'y1su' or 'y1wi'
+  const plannerCollection = await mongoClient.getCollection('PlannerCollection');
+  const userPlanner = await plannerCollection.findOne({ userId: userId });
+  const planner = userPlanner.planner;
+  
+  if (!userPlanner) {
+    return res.status(404).json({ message: 'Planner not found.' });
+  }
+
   if (!term) {
     return res.status(400).send({ message: 'No term provided.' });
   }
@@ -206,7 +214,16 @@ const addTerm = (req, res) => {
 };
 
 const removeTerm = (req, res) => {
-  const { term } = req.params; // e.g., term = 'y1su' or 'y1wi'
+  const { term, userId } = req.params; // e.g., term = 'y1su' or 'y1wi'
+
+  const plannerCollection = mongoClient.getCollection('PlannerCollection');
+  const userPlanner = plannerCollection.findOne({ userId: userId });
+  const planner = userPlanner.planner;
+    
+  if (!userPlanner) {
+    return res.status(404).json({ message: 'Planner not found.' });
+  }
+
   if (planner[term].p1) {
     updateProgressions(planner[term].p1, -1);
   }
@@ -701,7 +718,6 @@ module.exports = {
   getInitialInfo,
   getPlanner,
   loadUserPlanner,
-  addSubject,
   addTerm,
   removeTerm,
   addSubject,
