@@ -213,11 +213,11 @@ const addTerm = async(req, res) => {
   res.status(200).send({ message: 'Term added successfully.', planner });
 };
 
-const removeTerm = (req, res) => {
+const removeTerm = async(req, res) => {
   const { term, userId } = req.params; // e.g., term = 'y1su' or 'y1wi'
 
-  const plannerCollection = mongoClient.getCollection('PlannerCollection');
-  const userPlanner = plannerCollection.findOne({ userId: userId });
+  const plannerCollection = await mongoClient.getCollection('PlannerCollection');
+  const userPlanner = await plannerCollection.findOne({ userId: userId });
   const planner = userPlanner.planner;
     
   if (!userPlanner) {
