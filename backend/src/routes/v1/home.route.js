@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
 
 /**
  * @swagger
- * /home/majors?{params}/:
+ * /home/majors?{params}:
  *   get:
  *     summary: Get all majors of a degree
  *     description: Based on the degree, return all majors under the degree

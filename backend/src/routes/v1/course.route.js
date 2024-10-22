@@ -6,15 +6,18 @@ const {
   setInitialInfo,
   getInitialInfo,
   getPlanner,
-  addSubject,
   addTerm,
+  removeTerm,
+  addSubject,
   removeSubject,
   isValidAdd,
   giveTypeOfSubject,
+  getProgressions,
   resolveMiddleware,
   checkOutComeAfterResolve,
   loadUserPlanner,
   savePlanner,
+  checkOutComeAfterResolve
 } = require('../../service/courseService');
 
 /**
@@ -106,11 +109,16 @@ router.get('/main', getInitialInfo);
  */
 
 router.post('/main', setInitialInfo);
-router.get('/planner', getPlanner);
 
 /**
  * @swagger
- * /course/{userId}/remove/{slot}:
+ * /course/user/{userId}/planner:
+ */
+router.get('/user/:userId/planner', getPlanner);
+
+/**
+ * @swagger
+ * /course/user/{userId}/remove/{slot}:
  *   delete:
  *     summary: Remove a subject from the planner
  *     description: Remove a subject from the planner for a user based on the provided `slot` and `userId`.
@@ -146,22 +154,15 @@ router.get('/planner', getPlanner);
  *         description: Server error.
  */
 
-router.delete('/:userId/remove/:slot', removeSubject);
+router.delete('/user/:userId/remove/:slot', removeSubject);
 
 /**
  * @swagger
- * /course/{userId}/add:
+ * /course/user/{userId}/add:
  *   post:
  *     summary: Add a subject to the planner
- *     description: Add a subject to a specific slot (e.g., y1s2p1) in the subject planner for a user.
- *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         description: The ID of the user adding the subject.
- *         schema:
- *           type: string
- *     requestBody:
+ *     description: Add one subject to a slot in the subject planner.
+ *     request:
  *       required: true
  *       content:
  *         application/json:
@@ -199,7 +200,7 @@ router.delete('/:userId/remove/:slot', removeSubject);
  *       500:
  *         description: Server error.
  */
-router.post('/:userId/add', loadUserPlanner ,addSubject, isValidAdd, giveTypeOfSubject,savePlanner);
+router.post('/user/:userId/add', loadUserPlanner ,addSubject, isValidAdd, giveTypeOfSubject,savePlanner);
 
 /**
  * @swagger
@@ -237,7 +238,7 @@ router.post('/:userId/add', loadUserPlanner ,addSubject, isValidAdd, giveTypeOfS
  *       500:
  *         description: Server error.
  */
-router.get('/:userId/prerequisites/:query', async (req, res, next) => {
+router.get('/prerequisites/:query', async (req, res, next) => {
   const { query } = req.params;
   if (query) {
     try {
@@ -253,11 +254,29 @@ router.get('/:userId/prerequisites/:query', async (req, res, next) => {
   } else {
     return next(new ApiError(400, 'Search query is required'));
   }
-});
+}
+       
 
-router.post('/:userId/resolve',loadUserPlanner ,resolveMiddleware, checkOutComeAfterResolve);
 
-router.post('/:userId/addTerm', addTerm);
+/**
+ * @swagger
+ * /course/user/{userId}/resolve:
+ */
+router.post('/user/:userId/resolve',loadUserPlanner ,resolveMiddleware, checkOutComeAfterResolve);
+
+/**
+ * @swagger
+ * /course/user/{userId}/addTerm/{term}:
+ */
+router.post('/user/:userId/addTerm/:term', addTerm);
+
+/**
+ * @swagger
+ * /course/user/{userId}/removeTerm/{term}:
+ */
+router.post('/user/:userId/removeTerm/:term', removeTerm);
+
+
 /**
  * @swagger
  * /course/cores/{major}:
@@ -294,7 +313,7 @@ router.post('/:userId/addTerm', addTerm);
  *       500:
  *         description: Server error.
  */
-router.get('/:userId/cores', async (req, res, next) => {
+router.get('/cores/:major', async (req, res, next) => {
   try {
     const { major } = req.params;
 
@@ -318,6 +337,21 @@ router.get('/:userId/cores', async (req, res, next) => {
   } catch (err) {
     return next(new ApiError(500, 'Server error'));
   }
+});
+
+/**
+ * @swagger
+ * /course/user/{userId}/progressions:
+ *   get:
+ *     summary: get all the degree progression statistics
+ */
+router.get('/user/:userId/progressions', async (req, res) => {
+  // try {
+  const progressions = await getProgressions();
+  res.status(200).send(progressions);
+  // } catch (err) {
+  //   // TODO: handle error
+  // }
 });
 
 module.exports = router;

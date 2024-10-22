@@ -49,7 +49,7 @@ export default function InfoForm() {
 
   async function handleSubmit(event: React.ChangeEvent<HTMLFormElement>) {
     event.preventDefault();
-    // router.push('/planner');
+
     if (degreeRef.current === '' || majorRef.current === '') {
       alert('Please select a degree and a major for your best experience'); // TODO-future: make this alert box better
     }
@@ -58,8 +58,8 @@ export default function InfoForm() {
         `${SERVER_URL}/v1/course/main?degree=${degreeRef.current}&major=${majorRef.current}`,
       );
 
-      /* Selected degree and major, go to planner */
-      router.replace('/planner');
+      /* Selected degree and major, go to planner with unique user ID */
+      router.replace(`/planner/?userId=${res.data.userId}`);
     } catch (err) {
       // TODO: handle error
       console.log(err);
