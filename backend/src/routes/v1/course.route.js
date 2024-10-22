@@ -13,6 +13,8 @@ const {
   giveTypeOfSubject,
   resolveMiddleware,
   checkOutComeAfterResolve,
+  loadUserPlanner,
+  savePlanner,
 } = require('../../service/courseService');
 
 /**
@@ -57,69 +59,115 @@ router.get('/main', getInitialInfo);
 
 /**
  * @swagger
- * /course:
+ * /course/main:
  *   post:
- *     summary: Set user degree and major
+ *     summary: Set user degree and major, and initialize user planner information.
  *     parameters:
  *       - name: degree
  *         in: query
  *         required: true
- *         description: Degree name (e.g., Science)
+ *         description: Degree name (e.g., Science). This sets the compulsory subjects for the degree.
  *         schema:
  *           type: string
  *       - name: major
  *         in: query
  *         required: false
- *         description: Major name (e.g., Data Science)
+ *         description: Major name (e.g., Data Science). This sets the core subjects for the major.
  *         schema:
  *           type: string
- *   get:
+ *     responses:
+ *       200:
+ *         description: User information successfully initialized, returning userId, compulsory subjects, and core subjects for the degree and major.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User Info Successfully Initialized: degree = Science, major = Data Science"
+ *                 userId:
+ *                   type: string
+ *                   example: "5f8d0d55b54764421b7156b7"
+ *                 compulsory:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["Mathematics", "Physics"]
+ *                 majorCore:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["Data Structures", "Algorithms"]
+ *       404:
+ *         description: Degree or Major not found.
+ *       500:
+ *         description: Server error.
  */
+
 router.post('/main', setInitialInfo);
 router.get('/planner', getPlanner);
 
 /**
  * @swagger
- * /course/remove/{slot}:
+ * /course/{userId}/remove/{slot}:
  *   delete:
  *     summary: Remove a subject from the planner
- *     description: Remove a subject from the subject planner based on the given `slot`.
+ *     description: Remove a subject from the planner for a user based on the provided `slot` and `userId`.
  *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: The ID of the user whose subject is being removed.
+ *         schema:
+ *           type: string
  *       - name: slot
  *         in: path
  *         required: true
- *         description: Subject slot position (e.g., y1s2p1)
+ *         description: Subject slot position (e.g., y1s2p1).
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Successfully removed the subject.
+ *         description: Successfully removed the subject from the planner.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
- *               description: The updated subject planner.
- *       404:
- *         description: No subject found in this slot.
+ *               properties:
+ *                 planner:
+ *                   type: object
+ *                   description: The updated planner after removing the subject.
  *       400:
- *         description: No subject data provided.
+ *         description: No userId or slot provided, or invalid slot.
+ *       404:
+ *         description: No subject found in this slot or planner not found for the given user.
  *       500:
  *         description: Server error.
  */
+
 router.delete('/:userId/remove/:slot', removeSubject);
 
 /**
  * @swagger
- * /course/add:
+ * /course/{userId}/add:
  *   post:
  *     summary: Add a subject to the planner
- *     description: Add one subject to a slot in the subject planner.
+ *     description: Add a subject to a specific slot (e.g., y1s2p1) in the subject planner for a user.
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: The ID of the user adding the subject.
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             description: An object where the key is the slot (e.g., 'y1s2p1') and the value is the subject data.
  *             example:
  *               "y1s2p1": {
  *                 "subjectCode": "COMP20003",
@@ -134,18 +182,24 @@ router.delete('/:userId/remove/:slot', removeSubject);
  *               }
  *     responses:
  *       200:
- *         description: Successfully added the subject.
+ *         description: Successfully added the subject to the planner.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
- *               description: The updated subject planner.
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Operation successful."
+ *                 planner:
+ *                   type: object
+ *                   description: The updated planner after adding the subject.
  *       400:
- *         description: Failed to add subject.
+ *         description: No subject data provided, invalid slot, or subject already exists in the slot.
  *       500:
  *         description: Server error.
  */
-router.post('/:userId/add', addSubject, isValidAdd, giveTypeOfSubject);
+router.post('/:userId/add', loadUserPlanner ,addSubject, isValidAdd, giveTypeOfSubject,savePlanner);
 
 /**
  * @swagger
@@ -201,7 +255,7 @@ router.get('/:userId/prerequisites/:query', async (req, res, next) => {
   }
 });
 
-router.post('/:userId/resolve', resolveMiddleware, checkOutComeAfterResolve);
+router.post('/:userId/resolve',loadUserPlanner ,resolveMiddleware, checkOutComeAfterResolve);
 
 router.post('/:userId/addTerm', addTerm);
 /**
