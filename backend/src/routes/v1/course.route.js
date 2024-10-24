@@ -16,8 +16,7 @@ const {
   resolveMiddleware,
   checkOutComeAfterResolve,
   loadUserPlanner,
-  savePlanner,
-  checkOutComeAfterResolve
+  savePlanner
 } = require('../../service/courseService');
 
 /**
@@ -200,7 +199,14 @@ router.delete('/user/:userId/remove/:slot', removeSubject);
  *       500:
  *         description: Server error.
  */
-router.post('/user/:userId/add', loadUserPlanner ,addSubject, isValidAdd, giveTypeOfSubject,savePlanner);
+router.post(
+  '/user/:userId/add',
+  loadUserPlanner,
+  addSubject,
+  isValidAdd,
+  giveTypeOfSubject,
+  savePlanner
+);
 
 /**
  * @swagger
@@ -209,7 +215,7 @@ router.post('/user/:userId/add', loadUserPlanner ,addSubject, isValidAdd, giveTy
  *     summary: Get all prerequisites for a subject
  *     description: Retrieve all prerequisites for the subject specified by `query`.
  *     parameters:
- *       - name: query
+ *       - name: subjectCode
  *         in: path
  *         required: true
  *         description: Subject code (e.g., COMP10002)
@@ -238,12 +244,12 @@ router.post('/user/:userId/add', loadUserPlanner ,addSubject, isValidAdd, giveTy
  *       500:
  *         description: Server error.
  */
-router.get('/prerequisites/:query', async (req, res, next) => {
-  const { query } = req.params;
-  if (query) {
+router.get('/prerequisites/:subjectCode', async (req, res, next) => {
+  const { subjectCode } = req.params;
+  if (subjectCode) {
     try {
       const collection = await mongoClient.getCollection('Subject');
-      const subject = await collection.findOne({ subjectCode: query });
+      const subject = await collection.findOne({ subjectCode: subjectCode });
       if (!subject) {
         return next(new ApiError(404, 'Subject not found.'));
       }
@@ -252,17 +258,22 @@ router.get('/prerequisites/:query', async (req, res, next) => {
       return next(new ApiError(500, 'Server error'));
     }
   } else {
-    return next(new ApiError(400, 'Search query is required'));
+    return next(
+      new ApiError(400, 'Search query (i.e. subject code) is missing')
+    );
   }
 });
-       
-
 
 /**
  * @swagger
  * /course/user/{userId}/resolve:
  */
-router.post('/user/:userId/resolve',loadUserPlanner ,resolveMiddleware, checkOutComeAfterResolve);
+router.post(
+  '/user/:userId/resolve',
+  loadUserPlanner,
+  resolveMiddleware,
+  checkOutComeAfterResolve
+);
 
 /**
  * @swagger
@@ -275,7 +286,6 @@ router.post('/user/:userId/addTerm/:term', addTerm);
  * /course/user/{userId}/removeTerm/{term}:
  */
 router.post('/user/:userId/removeTerm/:term', removeTerm);
-
 
 /**
  * @swagger
