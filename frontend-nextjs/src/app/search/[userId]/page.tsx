@@ -14,7 +14,7 @@ const allLevels: Array<Level> = Object.values(Level);
 const allStudyPeriod: Array<StudyPeriod> = Object.values(StudyPeriod);
 const allStudyAreas: Array<string> = [];
 
-export default function SearchPage() {
+export default function SearchPage({ params }: { params: { userId: string } }) {
   /* Input query */
   const [input, setInput] = useState<string>('');
   const [result, setResult] = useState([]);
@@ -97,7 +97,11 @@ export default function SearchPage() {
         input={input}
       />
       <div className="grid grid-cols-[5fr_1fr] gap-8 pl-8 pr-6 my-6 overflow-hidden h-full">
-        <SearchResults className="h-3/4" subjects={result} />
+        <SearchResults
+          className="h-3/4"
+          subjects={result}
+          userId={params.userId}
+        />
         <SearchFilters
           className="overflow-y-scroll mb-48"
           allStudyAreas={allStudyAreas}

@@ -1,10 +1,15 @@
 const mongoClient = require('../config/mongoClient');
 const { v4: uuidv4 } = require('uuid');
 const ApiError = require('../utils/ApiError');
-const { COURSE_COLLECTION, MAJOR_COLLECTION } = require('../lib/dbConstants');
+const {
+  COURSE_COLLECTION,
+  MAJOR_COLLECTION,
+  PLANNER_COLLECTION
+} = require('../lib/dbConstants');
 const { scienceProgressions } = require('./progressionService');
 
 const axios = require('axios');
+
 const PRESMALLER = -1;
 const semesterOrder = {
   s1: 1,
@@ -13,34 +18,42 @@ const semesterOrder = {
   wi: 4
 };
 
-const userInfo = {
-  degree: '',
-  major: ''
-};
-const compulsory = [];
-const majorCore = [];
+// const plannersCache = {}; // storeds { userId: planner object }
 
-const progressionStats = {
-  overall1: 0,
-  overall2: 0,
-  overall3: 0,
-  discipline1: 0,
-  discipline2: 0,
-  discipline3: 0,
-  breadth1: 0,
-  breadth2: 0,
-  breadth3: 0
-};
-
-const setInitialInfo = async (req, res, next) => {
-  const userId = uuidv4(); // 生成唯一的 userId
+const setBasicInfo = async (req, res, next) => {
   const { degree, major } = req.query;
   console.log(`get degree and major, degree = ${degree}, major = ${major}`);
 
+  // create user planner object
+  const userPlanner = {
+    userId: uuidv4(),
+    degree: degree,
+    major: major,
+    compulsory: [],
+    majorCore: [],
+    planner: {
+      y1s1: { p1: {}, p2: {}, p3: {}, p4: {} },
+      y1s2: { p1: {}, p2: {}, p3: {}, p4: {} },
+      y2s1: { p1: {}, p2: {}, p3: {}, p4: {} },
+      y2s2: { p1: {}, p2: {}, p3: {}, p4: {} },
+      y3s1: { p1: {}, p2: {}, p3: {}, p4: {} },
+      y3s2: { p1: {}, p2: {}, p3: {}, p4: {} }
+    },
+    progressionStats: {
+      overall1: 0,
+      overall2: 0,
+      overall3: 0,
+      discipline1: 0,
+      discipline2: 0,
+      discipline3: 0,
+      breadth1: 0,
+      breadth2: 0,
+      breadth3: 0
+    }
+  };
+
   /* Set degree info */
   if (degree) {
-    userInfo.degree = degree;
-
     try {
       const degreeCollection =
         await mongoClient.getCollection(COURSE_COLLECTION);
@@ -51,8 +64,8 @@ const setInitialInfo = async (req, res, next) => {
         return next(new ApiError(404, 'Degree not found.'));
       }
       const { compulsorySubject } = degreeInfo;
-      compulsory.length = 0;
-      compulsory.push(...compulsorySubject);
+      userPlanner.compulsory.length = 0;
+      userPlanner.compulsory.push(...compulsorySubject);
     } catch (err) {
       return next(new ApiError(500, `Server error ${err}`));
     }
@@ -60,8 +73,6 @@ const setInitialInfo = async (req, res, next) => {
 
   /* Set major info */
   if (major) {
-    userInfo.major = major;
-
     try {
       // Fetch core subjects based on the major
       const majorCollection = await mongoClient.getCollection(MAJOR_COLLECTION);
@@ -72,83 +83,42 @@ const setInitialInfo = async (req, res, next) => {
         return next(new ApiError(404, 'Major not found.'));
       }
       const { coreSubjects } = majorInfo;
-      majorCore.length = 0;
-      majorCore.push(...coreSubjects);
+      userPlanner.majorCore.length = 0;
+      userPlanner.majorCore.push(...coreSubjects);
     } catch (err) {
       return next(new ApiError(500, `Server error ${err}`));
     }
   }
-  const planner = {
-    y1s1: {
-      p1: {},
-      p2: {},
-      p3: {},
-      p4: {}
-    },
-    y1s2: {
-      p1: {},
-      p2: {},
-      p3: {},
-      p4: {}
-    },
-    y2s1: {
-      p1: {},
-      p2: {},
-      p3: {},
-      p4: {}
-    },
-    y2s2: {
-      p1: {},
-      p2: {},
-      p3: {},
-      p4: {}
-    },
-    y3s1: {
-      p1: {},
-      p2: {},
-      p3: {},
-      p4: {}
-    },
-    y3s2: {
-      p1: {},
-      p2: {},
-      p3: {},
-      p4: {}
-    }
-  };
-  // create user planner object
-  const userPlanner = {
-    userId: userId,
-    degree: degree,
-    major: major,
-    compulsory: compulsory,
-    majorCore: majorCore,
-    planner: planner
-  };
 
   try {
     const plannerCollection =
-      await mongoClient.getCollection('PlannerCollection');
+      await mongoClient.getCollection(PLANNER_COLLECTION);
     await plannerCollection.insertOne(userPlanner); // insert user planner data to database
     res.status(200).send({
       degree,
       major,
-      userId: userId,
-      compulsory,
-      majorCore
+      userId: userPlanner.userId,
+      compulsory: userPlanner.compulsory,
+      majorCore: userPlanner.majorCore
     });
   } catch (err) {
     return next(new ApiError(500, `Server error ${err}`));
   }
 };
 
-const getInitialInfo = async (req, res, next) => {
+const getBasicInfo = async (req, res, next) => {
+  const { userId } = req.params;
   try {
+    const plannerCollection =
+      await mongoClient.getCollection(PLANNER_COLLECTION);
+    const userPlanner = plannerCollection.findOne({ userId: userId });
+    const { degree, major, compulsory, majorCore } = userPlanner;
+
     res.json({
-      message: 'Core subjects and compulsory courses retrieved successfully',
-      userInfo,
-      coreSubjects: majorCore,
-      compulsorySubject: compulsory
+      degree,
+      major,
+      compulsory,
+      majorCore
     });
   } catch (err) {
     console.error('Error:', err);
@@ -165,7 +135,7 @@ const getPlanner = async (req, res, next) => {
 
   try {
     const plannerCollection =
-      await mongoClient.getCollection('PlannerCollection');
+      await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
     if (!userPlanner) {
@@ -187,8 +157,7 @@ const getPlanner = async (req, res, next) => {
 
 const addTerm = async (req, res) => {
   const { term, userId } = req.params; // e.g., term = 'y1su' or 'y1wi'
-  const plannerCollection =
-    await mongoClient.getCollection('PlannerCollection');
+  const plannerCollection = await mongoClient.getCollection(PLANNER_COLLECTION);
   const userPlanner = await plannerCollection.findOne({ userId: userId });
   const planner = userPlanner.planner;
 
@@ -216,20 +185,20 @@ const addTerm = async (req, res) => {
 const removeTerm = async (req, res) => {
   const { term, userId } = req.params; // e.g., term = 'y1su' or 'y1wi'
 
-  const plannerCollection =
-    await mongoClient.getCollection('PlannerCollection');
+  const plannerCollection = await mongoClient.getCollection(PLANNER_COLLECTION);
   const userPlanner = await plannerCollection.findOne({ userId: userId });
   const planner = userPlanner.planner;
+  const progressionStats = userPlanner.progressionStats;
 
   if (!userPlanner) {
     return res.status(404).json({ message: 'Planner not found.' });
   }
 
   if (planner[term].p1) {
-    updateProgressions(planner[term].p1, -1);
+    updateProgressions(progressionStats, planner[term].p1, -1);
   }
   if (planner[term].p2) {
-    updateProgressions(planner[term].p2, -1);
+    updateProgressions(progressionStats, planner[term].p2, -1);
   }
   delete planner[term];
   res.status(200).send({ planner });
@@ -243,21 +212,18 @@ const loadUserPlanner = async (req, res, next) => {
 
   try {
     const plannerCollection =
-      await mongoClient.getCollection('PlannerCollection');
+      await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
+    console.log(
+      `loadUserPlanner() userPlanner: ${JSON.stringify(userPlanner)}`
+    );
 
     if (!userPlanner) {
       return res.status(404).json({ message: 'Planner not found.' });
     }
 
     // put planner and userInfo into the request object
-    req.planner = userPlanner.planner;
-    req.userInfo = {
-      degree: userPlanner.degree,
-      major: userPlanner.major,
-      compulsory: userPlanner.compulsory,
-      majorCore: userPlanner.majorCore
-    };
+    req.userPlanner = userPlanner;
 
     next();
   } catch (err) {
@@ -268,66 +234,62 @@ const loadUserPlanner = async (req, res, next) => {
 
 const addSubject = async (req, res, next) => {
   try {
-    const planner = req.planner;
-
+    const planner = req.userPlanner.planner;
     const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
-    console.log(
-      `subject data passed into addSubject: ${JSON.stringify(subjectData)}`
-    );
+
     if (!subjectData) {
-      return res.status(400).json({ error: 'No query body.' });
+      return res
+        .status(400)
+        .json({ error: 'No subject info for adding new subject' });
     }
-    console.log(
-      `subject data passed into addSubject: ${Object.keys(subjectData)}`
-    );
-    if (Object.keys(subjectData).length === 0) {
-      return res.status(400).json({ error: 'No subject provided.' });
-    }
+
     const slot = Object.keys(subjectData)[0]; // e.g.'y1s2p1'
-    const subject = subjectData[slot]; // get the Subject object
     const term = slot.substring(0, 4); // 'y1s2'
     const position = slot.substring(4, 6); // 'p1'
 
+    const subject = subjectData[slot]; // get the Subject object
+
     // Check if the slot exists
     if (!planner[term] || !planner[term][position]) {
-      return res.status(400).json({ error: 'Invalid time or position.' });
+      console.error(`invalid time or slot`);
+      return res.status(400).json({ error: 'Invalid time or position' });
     }
+
     // check if the Subjects already exists
     if (Object.keys(planner[term][position]).length !== 0) {
-      console.debug(
-        'Subject already exists in this slot' + planner[term][position]
-      );
       return res.status(400).json({
-        message: 'Subject already exist in the slot'
+        message: `Subject already exist in the slot: ${term}${position}}`,
+        existingSubject: JSON.stringify(planner[term][position])
       });
     }
 
     const { subjectCode } = subject;
     if (!subjectCode) {
-      return res.status(400).json({ message: 'Missing subject code' });
+      return res.status(400).json({ error: 'Missing subject code' });
     }
 
     /* Add subject to planner */
     planner[term][position] = subject;
 
-    req.planner = planner;
+    req.userPlanner.planner = planner;
     console.log(
-      `my planner after adding subject ${subjectCode}: ${JSON.stringify(planner)}`
+      `\nmy planner after adding subject ${subjectCode}: \n${JSON.stringify(planner)}`
     );
 
     next();
   } catch (err) {
-    console.error('Error:', err);
     return next(new ApiError(500, 'Server error'));
   }
 };
 
 const isValidAdd = async (req, res, next) => {
-  const planner = req.planner;
+  const planner = req.userPlanner.planner;
   const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
+
   if (!subjectData || Object.keys(subjectData).length === 0) {
     return res.status(400).json({ message: 'No Subjects data provided.' });
   }
+
   const slot = Object.keys(subjectData)[0]; // e.g.'y1s2p1'
   const subject = subjectData[slot]; // get the Subject object
   const subjectSemesterInPlanner = slot.substring(3, 4); // '2'
@@ -354,17 +316,20 @@ const isValidAdd = async (req, res, next) => {
 };
 
 const giveTypeOfSubject = async (req, res, next) => {
+  const userPlanner = req.userPlanner;
   const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
+
   if (!subjectData || Object.keys(subjectData).length === 0) {
     return res.status(400).json({ message: 'No Subjects data provided.' });
   }
+
   const slot = Object.keys(subjectData)[0]; // e.g.'y1s2p1'
   const subject = subjectData[slot]; // get the Subject object
   const { subjectCode } = subject;
 
-  if (compulsory.includes(subjectCode)) {
+  if (userPlanner.compulsory.includes(subjectCode)) {
     subject.header = 'COMPULSORY';
-  } else if (majorCore.includes(subjectCode)) {
+  } else if (userPlanner.majorCore.includes(subjectCode)) {
     subject.header = 'MAJOR CORE';
   } else {
     // get the first 4 characters of the Subjects code
@@ -377,7 +342,7 @@ const giveTypeOfSubject = async (req, res, next) => {
         const degreeName = studyAreaDoc[studyAreaCode]; // get the degree name for the prefix(e.g. MAST)
         // check if the Subjects is discipline or breadth
 
-        if (degreeName === userInfo.degree) {
+        if (degreeName === userPlanner.degree) {
           subject.header = 'DISCIPLINE';
         } else {
           subject.header = 'BREADTH';
@@ -387,7 +352,7 @@ const giveTypeOfSubject = async (req, res, next) => {
           message: 'Error: subject area not correctly stored in the database'
         });
       }
-      updateProgressions(subject);
+      updateProgressions(userPlanner.progressionStats, subject);
       next();
     } catch (err) {
       console.error('error:', err);
@@ -398,16 +363,20 @@ const giveTypeOfSubject = async (req, res, next) => {
 
 const savePlanner = async (req, res, next) => {
   const { userId } = req.params;
+  const planner = req.userPlanner.planner;
+  const progressionStats = req.userPlanner.progressionStats;
+
   try {
     const plannerCollection =
-      await mongoClient.getCollection('PlannerCollection');
+      await mongoClient.getCollection(PLANNER_COLLECTION);
     await plannerCollection.updateOne(
       { userId: userId },
-      { $set: { planner: req.planner } }
+      { $set: { planner: planner, progressionStats: progressionStats } }
     );
-    res
-      .status(200)
-      .json({ message: 'Operation successful.', planner: req.planner });
+
+    console.log(`my planner for update: ${planner}`);
+
+    res.status(200).json({ planner });
   } catch (err) {
     console.error('Error:', err);
     return next(new ApiError(500, 'Server error'));
@@ -419,16 +388,16 @@ const removeSubject = async (req, res, next) => {
   if (!userId || !slot) {
     return res.status(400).json({ message: 'No userId or slot provided.' });
   }
-  console.log(`Enter removeSubject()`);
+
   try {
     // get the planner from the database
     const plannerCollection =
-      await mongoClient.getCollection('PlannerCollection');
+      await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
-
     if (!userPlanner) {
       return res.status(404).json({ message: 'Planner not found.' });
     }
+
     const planner = userPlanner.planner;
 
     const { slot } = req.params;
@@ -448,7 +417,15 @@ const removeSubject = async (req, res, next) => {
       return res.status(404).json({ message: 'No Subjects found!' });
     }
 
-    updateProgressions(planner[studyPeriod][position], -1);
+    const progressionStats = userPlanner.progressionStats;
+    console.log(
+      `\n--- progression stats before removing subejct: \n${JSON.stringify(progressionStats)}`
+    );
+    updateProgressions(progressionStats, planner[studyPeriod][position], -1);
+
+    console.log(
+      `\n--- progression stats after removing subejct: \n${JSON.stringify(progressionStats)}`
+    );
 
     // delete planner[semesterKey][position];
     // Reset the slot to an empty object
@@ -461,8 +438,9 @@ const removeSubject = async (req, res, next) => {
 
     await plannerCollection.updateOne(
       { userId: userId },
-      { $set: { planner: planner } }
+      { $set: { planner: planner, progressionStats: progressionStats } }
     );
+
     res.status(200).json({ planner });
   } catch (err) {
     console.error('Error:', err);
@@ -673,21 +651,27 @@ function compareSemesters(semesterA, semesterB) {
   }
 }
 
-async function getProgressions() {
+async function getProgressions(userId) {
   const progressions = {};
+
   try {
+    /* Get the user planner stats */
+    const plannerCollection =
+      await mongoClient.getCollection(PLANNER_COLLECTION);
+    const userPlanner = await plannerCollection.findOne({ userId: userId });
+    console.log(`INFO current userInfo.degree=${userPlanner.degree}`);
+
+    /* Find the course info to check progression requirement */
     const courseCollection = await mongoClient.getCollection(COURSE_COLLECTION);
     const course = await courseCollection.findOne({
-      courseName: userInfo.degree ? userInfo.degree : 'Science' // TODO: change this to only userInfo.degree
+      courseName: userPlanner.degree ? userPlanner.degree : 'Science' // TODO: change this to only userInfo.degree
     });
 
-    console.log(`INFO current userInfo.degree=${userInfo.degree}`);
-
-    switch (userInfo.degree) {
+    switch (userPlanner.degree) {
       case 'Science':
         Object.assign(
           progressions,
-          scienceProgressions(course, progressionStats)
+          scienceProgressions(course, userPlanner.progressionStats)
         );
         break;
       case 'Commerce':
@@ -695,7 +679,7 @@ async function getProgressions() {
       default: // TODO: this default case should be removed since `userInfo.degree` should be one of the above cases
         Object.assign(
           progressions,
-          scienceProgressions(course, progressionStats)
+          scienceProgressions(course, userPlanner.progressionStats)
         );
     }
   } catch (err) {
@@ -705,8 +689,9 @@ async function getProgressions() {
   return progressions;
 }
 
-function updateProgressions(subject, side = 1) {
+function updateProgressions(progressionStats, subject, side = 1) {
   /* Update the progression stats */
+
   const { level, points, header } = subject;
   const diffPoints = side * points;
   progressionStats[`overall${level}`] += diffPoints;
@@ -718,8 +703,8 @@ function updateProgressions(subject, side = 1) {
 }
 
 module.exports = {
-  setInitialInfo,
-  getInitialInfo,
+  setBasicInfo,
+  getBasicInfo,
   getPlanner,
   loadUserPlanner,
   addTerm,

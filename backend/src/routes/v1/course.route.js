@@ -3,8 +3,8 @@ const router = express.Router();
 const mongoClient = require('../../config/mongoClient');
 const ApiError = require('../../utils/ApiError');
 const {
-  setInitialInfo,
-  getInitialInfo,
+  setBasicInfo,
+  getBasicInfo,
   getPlanner,
   addTerm,
   removeTerm,
@@ -21,7 +21,7 @@ const {
 
 /**
  * @swagger
- * /course/main:
+ * /course/main/{userId}:
  *   get:
  *     summary: Get core subjects and compulsory courses
  *     description: Retrieve all core subjects based on the `majorName` and all compulsory courses based on the `degree`.
@@ -57,7 +57,7 @@ const {
  *       500:
  *         description: Server error.
  */
-router.get('/main', getInitialInfo);
+router.get('/main/user/:userId', getBasicInfo);
 
 /**
  * @swagger
@@ -107,7 +107,7 @@ router.get('/main', getInitialInfo);
  *         description: Server error.
  */
 
-router.post('/main', setInitialInfo);
+router.post('/main', setBasicInfo);
 
 /**
  * @swagger
@@ -315,7 +315,12 @@ router.get('/prerequisites/:subjectCode', async (req, res, next) => {
  *         description: Internal server error.
  */
 
-router.post( '/user/:userId/resolve',loadUserPlanner,resolveMiddleware,checkOutComeAfterResolve);
+router.post(
+  '/user/:userId/resolve',
+  loadUserPlanner,
+  resolveMiddleware,
+  checkOutComeAfterResolve
+);
 
 /**
  * @swagger
@@ -393,14 +398,15 @@ router.get('/cores/:major', async (req, res, next) => {
 
 /**
  * @swagger
- * /course/user/{userId}/progressions:
+ * /course/user/{userId}/pro`gressions:
  *   get:
  *     summary: get all the degree progression statistics
  */
 router.get('/user/:userId/progressions', async (req, res) => {
+  const { userId } = req.params;
   // try {
-  const progressions = await getProgressions();
-  res.status(200).send(progressions);
+  const progressions = await getProgressions(userId);
+  res.status(200).send({ progressions });
   // } catch (err) {
   //   // TODO: handle error
   // }
