@@ -121,6 +121,8 @@ router.get('/user/:userId/planner', getPlanner);
  *   delete:
  *     summary: Remove a subject from the planner
  *     description: Remove a subject from the planner for a user based on the provided `slot` and `userId`.
+ *     tags:
+ *       - Add/Remove
  *     parameters:
  *       - name: userId
  *         in: path
@@ -161,6 +163,8 @@ router.delete('/user/:userId/remove/:slot', removeSubject);
  *   post:
  *     summary: Add a subject to the planner
  *     description: Add one subject to a slot in the subject planner.
+ *     tags:
+ *       - Add/Remove
  *     request:
  *       required: true
  *       content:
@@ -267,13 +271,51 @@ router.get('/prerequisites/:subjectCode', async (req, res, next) => {
 /**
  * @swagger
  * /course/user/{userId}/resolve:
+ *   post:
+ *     summary: Resolve errors in the user's course planner
+ *     description: Resolves scheduling conflicts and prerequisite issues in the user's course planner by rearranging subjects to satisfy constraints.
+ *     tags:
+ *       - Resolve Planner
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: The unique identifier of the user
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: Optional list of slots with errors to be resolved
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               errorSlots:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: An array of slot identifiers that contain errors (e.g., ["y1s2p1", "y2s1p3"])
+ *     responses:
+ *       200:
+ *         description: Successfully resolved the planner
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 planner:
+ *                   type: object
+ *                   description: The updated course planner after resolving errors
+ *       400:
+ *         description: Bad request. Missing or invalid parameters.
+ *       404:
+ *         description: Planner not found for the given userId.
+ *       500:
+ *         description: Internal server error.
  */
-router.post(
-  '/user/:userId/resolve',
-  loadUserPlanner,
-  resolveMiddleware,
-  checkOutComeAfterResolve
-);
+
+router.post( '/user/:userId/resolve',loadUserPlanner,resolveMiddleware,checkOutComeAfterResolve);
 
 /**
  * @swagger
