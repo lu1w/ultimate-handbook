@@ -463,7 +463,7 @@ const removeSubject = async (req, res, next) => {
       { userId: userId },
       { $set: { planner: planner } }
     );
-    res.status(200).send(planner);
+    res.status(200).json({ planner });
   } catch (err) {
     console.error('Error:', err);
     return next(new ApiError(500, 'Server error'));

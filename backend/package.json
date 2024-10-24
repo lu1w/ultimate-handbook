@@ -17,7 +17,7 @@
     "commit": "cz",
     "check-eslint": "eslint --print-config file.js > eslint-config.json",
     "test": "cross-env NODE_ENV=test mocha --timeout 100000 --recursive test/**/*.test.mjs --exit",
-    "mocha": "NODE_ENV=development mocha ./test/*.test.mjs"
+    "mocha": "cross-env NODE_ENV=development mocha ./test/*.test.mjs"
   },
   "keywords": [
     "node",
