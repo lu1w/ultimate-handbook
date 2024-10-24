@@ -9,6 +9,12 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip"
 
 // Mapping subject types to colours
 const TYPE_COLOURS: Record<string, string> = {
@@ -75,28 +81,42 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
 
           <div className="w-2/7 flex justify-end items-center space-x-2">
             {prerequisiteError ? (
-              <Button
-                variant="prereqError"
-                size="icon"
-                className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-red-500 items-center justify-center"
-                onClick={() => {
-                  /* Your click handler here */
-                }}
-              >
-                <img src="/error_1.svg" className="h-5 w-5" />
-              </Button>
+              <TooltipProvider> 
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="prereqError"
+                      size="icon"
+                      className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-red-500 items-center justify-center"
+                      onClick={() => {}}
+                    >
+                      <img src="/error_1.svg" className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    Prerequisite error
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ) : null}
             {semesterError ? (
-              <Button
-                variant="semesterError"
-                size="icon"
-                className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-orange-400 items-center justify-center"
-                onClick={() => {
-                  /* Your click handler here */
-                }}
-              >
-                <img src="/error_1.svg" className="h-5 w-5" />
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="semesterError"
+                      size="icon"
+                      className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-orange-400 items-center justify-center"
+                      onClick={() => {}}
+                    >
+                      <img src="/error_1.svg" className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    Semester error
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ) : null}
           </div>
         </div>
