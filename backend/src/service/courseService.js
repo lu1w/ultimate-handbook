@@ -13,7 +13,6 @@ const semesterOrder = {
   wi: 4
 };
 
-
 const userInfo = {
   degree: '',
   major: ''
@@ -116,7 +115,6 @@ const setInitialInfo = async (req, res, next) => {
       p3: {},
       p4: {}
     }
-  
   };
   // create user planner object
   const userPlanner = {
@@ -129,10 +127,12 @@ const setInitialInfo = async (req, res, next) => {
   };
 
   try {
-    const plannerCollection = await mongoClient.getCollection('PlannerCollection');
+    const plannerCollection =
+      await mongoClient.getCollection('PlannerCollection');
     await plannerCollection.insertOne(userPlanner); // insert user planner data to database
     res.status(200).send({
-      message: `User Info Successfully Initialized: degree = ${degree}, major = ${major}`,
+      degree,
+      major,
       userId: userId,
       compulsory,
       majorCore
@@ -140,7 +140,6 @@ const setInitialInfo = async (req, res, next) => {
   } catch (err) {
     return next(new ApiError(500, `Server error ${err}`));
   }
-
 };
 
 const getInitialInfo = async (req, res, next) => {
@@ -165,7 +164,8 @@ const getPlanner = async (req, res, next) => {
   }
 
   try {
-    const plannerCollection = await mongoClient.getCollection('PlannerCollection');
+    const plannerCollection =
+      await mongoClient.getCollection('PlannerCollection');
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
     if (!userPlanner) {
@@ -185,13 +185,13 @@ const getPlanner = async (req, res, next) => {
   }
 };
 
-
-const addTerm = async(req, res) => {
+const addTerm = async (req, res) => {
   const { term, userId } = req.params; // e.g., term = 'y1su' or 'y1wi'
-  const plannerCollection = await mongoClient.getCollection('PlannerCollection');
+  const plannerCollection =
+    await mongoClient.getCollection('PlannerCollection');
   const userPlanner = await plannerCollection.findOne({ userId: userId });
   const planner = userPlanner.planner;
-  
+
   if (!userPlanner) {
     return res.status(404).json({ message: 'Planner not found.' });
   }
@@ -213,13 +213,14 @@ const addTerm = async(req, res) => {
   res.status(200).send({ message: 'Term added successfully.', planner });
 };
 
-const removeTerm = async(req, res) => {
+const removeTerm = async (req, res) => {
   const { term, userId } = req.params; // e.g., term = 'y1su' or 'y1wi'
 
-  const plannerCollection = await mongoClient.getCollection('PlannerCollection');
+  const plannerCollection =
+    await mongoClient.getCollection('PlannerCollection');
   const userPlanner = await plannerCollection.findOne({ userId: userId });
   const planner = userPlanner.planner;
-    
+
   if (!userPlanner) {
     return res.status(404).json({ message: 'Planner not found.' });
   }
@@ -235,13 +236,14 @@ const removeTerm = async(req, res) => {
 };
 
 const loadUserPlanner = async (req, res, next) => {
-  const { userId } = req.params; 
+  const { userId } = req.params;
   if (!userId) {
     return res.status(400).json({ message: 'No userId provided.' });
   }
 
   try {
-    const plannerCollection = await mongoClient.getCollection('PlannerCollection');
+    const plannerCollection =
+      await mongoClient.getCollection('PlannerCollection');
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
     if (!userPlanner) {
@@ -257,7 +259,7 @@ const loadUserPlanner = async (req, res, next) => {
       majorCore: userPlanner.majorCore
     };
 
-    next(); 
+    next();
   } catch (err) {
     console.error('Error:', err);
     return next(new ApiError(500, 'Server error'));
@@ -307,7 +309,7 @@ const addSubject = async (req, res, next) => {
 
     /* Add subject to planner */
     planner[term][position] = subject;
-    
+
     req.planner = planner;
     console.log(
       `my planner after adding subject ${subjectCode}: ${JSON.stringify(planner)}`
@@ -321,7 +323,6 @@ const addSubject = async (req, res, next) => {
 };
 
 const isValidAdd = async (req, res, next) => {
-
   const planner = req.planner;
   const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
   if (!subjectData || Object.keys(subjectData).length === 0) {
@@ -332,7 +333,7 @@ const isValidAdd = async (req, res, next) => {
   const subjectSemesterInPlanner = slot.substring(3, 4); // '2'
   const subjectsCodeInPlanner = getAllSubjectCodes(planner);
 
-  checkAllSubjectPrequisites(subjectsCodeInPlanner,planner); // we will check all subjects prerequisites in planner after adding the subject
+  checkAllSubjectPrequisites(subjectsCodeInPlanner, planner); // we will check all subjects prerequisites in planner after adding the subject
 
   // check if the Subjects is in the right semester
   const { studyPeriod } = subject;
@@ -398,19 +399,22 @@ const giveTypeOfSubject = async (req, res, next) => {
 const savePlanner = async (req, res, next) => {
   const { userId } = req.params;
   try {
-    const plannerCollection = await mongoClient.getCollection('PlannerCollection');
+    const plannerCollection =
+      await mongoClient.getCollection('PlannerCollection');
     await plannerCollection.updateOne(
       { userId: userId },
       { $set: { planner: req.planner } }
     );
-    res.status(200).json({ message: 'Operation successful.', planner: req.planner });
+    res
+      .status(200)
+      .json({ message: 'Operation successful.', planner: req.planner });
   } catch (err) {
     console.error('Error:', err);
     return next(new ApiError(500, 'Server error'));
   }
 };
 
-const removeSubject = async(req, res, next) => {
+const removeSubject = async (req, res, next) => {
   const { userId, slot } = req.params; // get the userId and slot from the request
   if (!userId || !slot) {
     return res.status(400).json({ message: 'No userId or slot provided.' });
@@ -418,7 +422,8 @@ const removeSubject = async(req, res, next) => {
   console.log(`Enter removeSubject()`);
   try {
     // get the planner from the database
-    const plannerCollection = await mongoClient.getCollection('PlannerCollection');
+    const plannerCollection =
+      await mongoClient.getCollection('PlannerCollection');
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
     if (!userPlanner) {
@@ -449,11 +454,10 @@ const removeSubject = async(req, res, next) => {
     // Reset the slot to an empty object
     planner[studyPeriod][position] = {};
 
-    
     // get all codes of subjects in the planner (after removing the subject)
     const subjectsCodeInPlanner = getAllSubjectCodes(planner);
 
-    checkAllSubjectPrequisites(subjectsCodeInPlanner,planner);
+    checkAllSubjectPrequisites(subjectsCodeInPlanner, planner);
 
     await plannerCollection.updateOne(
       { userId: userId },
