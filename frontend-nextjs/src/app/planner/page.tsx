@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 
 import { Button } from '@/components/ui/button';
+
 import SubjectCard from '@/components/common/subjectCard';
 import EmptySubjectCard from '@/components/planner/emptySubjectCard';
 import Rules from '@/components/planner/rules';
@@ -330,7 +331,7 @@ const PlannerPage: React.FC = () => {
             <Button
               variant={'resolve'}
               className="my-3 font-semibold text-lg"
-              onClick={() => callResolve()} // Replace with your button logic
+              onClick={() => callResolve()}
             >
               Resolve
             </Button>
@@ -339,20 +340,6 @@ const PlannerPage: React.FC = () => {
           <Rules progressions={progressions} ruleType="overall" />
           <Rules progressions={progressions} ruleType="discipline" />
           <Rules progressions={progressions} ruleType="breadth" />
-          {/* <ul className="space-y-2">
-            <li className="flex items-center">
-              <input type="checkbox" className="mr-2" />
-              <span>Complete core subjects</span>
-            </li>
-            <li className="flex items-center">
-              <input type="checkbox" className="mr-2" />
-              <span>Select major</span>
-            </li>
-            <li className="flex items-center">
-              <input type="checkbox" className="mr-2" />
-              <span>Add electives</span>
-            </li>
-          </ul> */}
         </div>
       </div>
 
