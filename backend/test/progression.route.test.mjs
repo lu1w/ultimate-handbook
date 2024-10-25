@@ -4,9 +4,11 @@ import { expect } from 'chai';
 
 describe('Progression rule: Bachelor of Science', () => {
   it('display correct progression check for empty planner', (done) => {
+    const testId = 'testing-progression';
+
     request(app)
       .post('/v1/course/main')
-      .query({ degree: 'Science', major: 'Data Science' })
+      .query({ degree: 'Science', major: 'Data Science', userId: testId })
       // .expect(200)
       .end((err, res) => {
         if (err) return done(err);
@@ -14,15 +16,16 @@ describe('Progression rule: Bachelor of Science', () => {
         expect(res.status).to.equal(200);
 
         request(app)
-          .get('/v1/course/user/:userId/progressions')
+          .get(`/v1/course/user/${testId}/progressions`)
           .expect(200)
           .end((err, res) => {
             if (err) return done(err);
 
-            const responseData = res.body;
+            const responseBody = res.body;
+            console.log('respond data == ' + JSON.stringify(responseBody));
 
-            expect(responseData).to.be.an('object');
-            expect(responseData).to.include.all.keys(
+            expect(responseBody).to.be.an('object');
+            expect(responseBody.progressions).to.include.all.keys(
               'overall',
               'discipline',
               'breadth',
@@ -31,15 +34,17 @@ describe('Progression rule: Bachelor of Science', () => {
 
             /* check the filds within each requirements */
             ['overall', 'discipline', 'breadth'].forEach((category) => {
-              Object.keys(responseData[category]).forEach((level) => {
-                /* number of credit points should be 0 */
-                // expect(responseData[category][level].stats.charAt(0)).equal(
-                //   '0'
-                // );
-                expect(responseData[category][level].fulfilled).to.be.a(
-                  'boolean'
-                );
-              });
+              Object.keys(responseBody.progressions[category]).forEach(
+                (level) => {
+                  /* number of credit points should be 0 */
+                  // expect(responseData[category][level].stats.charAt(0)).equal(
+                  //   '0'
+                  // );
+                  expect(
+                    responseBody.progressions[category][level].fulfilled
+                  ).to.be.a('boolean');
+                }
+              );
             });
 
             done();

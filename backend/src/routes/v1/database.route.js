@@ -13,8 +13,13 @@ router.delete('/all', async (req, res) => {
     const plannerCollection =
       await mongoClient.getCollection(PLANNER_COLLECTION);
     console.log(`getting the planner`);
-    // plannerCollection.deleteMany({});
-    planners = plannerCollection.find({}).toArray();
+    plannerCollection.deleteMany({
+      $and: [
+        { userId: { $not: { $eq: 'yilu' } } },
+        { userId: { $not: { $eq: 'testing' } } }
+      ]
+    });
+    planners = await plannerCollection.find({}).toArray();
     console.log(`--- removing`);
   } catch (err) {
     // handle error

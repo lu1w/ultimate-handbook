@@ -4,6 +4,7 @@ const ApiError = require('../utils/ApiError');
 const {
   COURSE_COLLECTION,
   MAJOR_COLLECTION,
+  STUDY_AREA_COLLECTION,
   PLANNER_COLLECTION
 } = require('../lib/dbConstants');
 const { scienceProgressions } = require('./progressionService');
@@ -21,12 +22,14 @@ const semesterOrder = {
 // const plannersCache = {}; // storeds { userId: planner object }
 
 const setBasicInfo = async (req, res, next) => {
-  const { degree, major } = req.query;
-  console.log(`get degree and major, degree = ${degree}, major = ${major}`);
+  const { degree, major, userId } = req.query;
+  console.log(
+    `get degree and major, degree = ${degree}, major = ${major}, userId (self-defined): ${userId}`
+  );
 
   // create user planner object
   const userPlanner = {
-    userId: uuidv4(),
+    userId: userId ? userId : uuidv4(),
     degree: degree,
     major: major,
     compulsory: [],
@@ -93,7 +96,24 @@ const setBasicInfo = async (req, res, next) => {
   try {
     const plannerCollection =
       await mongoClient.getCollection(PLANNER_COLLECTION);
+
+    if (userId) {
+      /* Running a test */
+      plannerCollection.deleteMany({ userId: userId });
+      console.log(`remove userId ${userId}`);
+    } else {
+      /* Check if the userId is already in use, if so, get a new userId */
+      let sameId = await plannerCollection.find({ userId: userId }).toArray();
+      while (sameId.length !== 0) {
+        userPlanner.userId = uuidv4();
+        sameId = (
+          await plannerCollection.find({ userId: userPlanner.userId })
+        ).toArray();
+      }
+    }
+
     await plannerCollection.insertOne(userPlanner); // insert user planner data to database
+
     res.status(200).send({
       degree,
       major,
@@ -111,7 +131,7 @@ const getBasicInfo = async (req, res, next) => {
   try {
     const plannerCollection =
       await mongoClient.getCollection(PLANNER_COLLECTION);
-    const userPlanner = plannerCollection.findOne({ userId: userId });
+    const userPlanner = await plannerCollection.findOne({ userId: userId });
     const { degree, major, compulsory, majorCore } = userPlanner;
 
     res.json({
@@ -214,6 +234,7 @@ const loadUserPlanner = async (req, res, next) => {
     const plannerCollection =
       await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
+
     console.log(
       `loadUserPlanner() userPlanner: ${JSON.stringify(userPlanner)}`
     );
@@ -335,7 +356,7 @@ const giveTypeOfSubject = async (req, res, next) => {
     // get the first 4 characters of the Subjects code
     const studyAreaCode = subjectCode.substring(0, 4).toUpperCase();
     try {
-      const collection = await mongoClient.getCollection('StudyAreaToCourse');
+      const collection = await mongoClient.getCollection(STUDY_AREA_COLLECTION);
       const studyAreaDoc = await collection.findOne({});
 
       if (studyAreaDoc && studyAreaDoc[studyAreaCode]) {
@@ -654,11 +675,15 @@ function compareSemesters(semesterA, semesterB) {
 async function getProgressions(userId) {
   const progressions = {};
 
+  console.log(`---ENTER getProgressions(${userId})`);
+
   try {
     /* Get the user planner stats */
     const plannerCollection =
       await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
+
+    console.log(`\n---userPlanner = ${JSON.stringify(userPlanner)}`);
     console.log(`INFO current userInfo.degree=${userPlanner.degree}`);
 
     /* Find the course info to check progression requirement */
