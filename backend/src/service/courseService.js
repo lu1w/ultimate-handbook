@@ -99,16 +99,18 @@ const setBasicInfo = async (req, res, next) => {
 
     if (userId) {
       /* Running a test */
-      plannerCollection.deleteMany({ userId: userId });
-      console.log(`remove userId ${userId}`);
+      await plannerCollection.deleteMany({ userId: userId });
     } else {
       /* Check if the userId is already in use, if so, get a new userId */
-      let sameId = await plannerCollection.find({ userId: userId }).toArray();
-      while (sameId.length !== 0) {
-        userPlanner.userId = uuidv4();
-        sameId = (
+      let duplicateId;
+      for (let i = 0; i < 5; i++) {
+        duplicateId = (
           await plannerCollection.find({ userId: userPlanner.userId })
         ).toArray();
+        if (duplicateId.length === 0) {
+          break;
+        }
+        userPlanner.userId = uuidv4();
       }
     }
 
@@ -272,7 +274,6 @@ const addSubject = async (req, res, next) => {
 
     // Check if the slot exists
     if (!planner[term] || !planner[term][position]) {
-      console.error(`invalid time or slot`);
       return res.status(400).json({ error: 'Invalid time or position' });
     }
 
@@ -376,7 +377,6 @@ const giveTypeOfSubject = async (req, res, next) => {
       updateProgressions(userPlanner.progressionStats, subject);
       next();
     } catch (err) {
-      console.error('error:', err);
       return next(new ApiError(500, 'server error'));
     }
   }
@@ -395,11 +395,8 @@ const savePlanner = async (req, res, next) => {
       { $set: { planner: planner, progressionStats: progressionStats } }
     );
 
-    console.log(`my planner for update: ${planner}`);
-
     res.status(200).json({ planner });
   } catch (err) {
-    console.error('Error:', err);
     return next(new ApiError(500, 'Server error'));
   }
 };
@@ -464,7 +461,6 @@ const removeSubject = async (req, res, next) => {
 
     res.status(200).json({ planner });
   } catch (err) {
-    console.error('Error:', err);
     return next(new ApiError(500, 'Server error'));
   }
 };
