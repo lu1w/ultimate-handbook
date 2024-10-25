@@ -59,7 +59,7 @@ export default function InfoForm() {
       );
 
       /* Selected degree and major, go to planner with unique user ID */
-      router.replace(`/planner/?userId=${res.data.userId}`);
+      router.push(`/planner/${res.data.userId}`);
     } catch (err) {
       // TODO: handle error
       console.log(err);

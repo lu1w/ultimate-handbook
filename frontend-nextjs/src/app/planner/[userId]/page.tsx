@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import axios from 'axios';
 
@@ -28,10 +28,13 @@ enum StudyPeriodType {
 type StudyPeriod = keyof typeof StudyPeriodType;
 type Year = 'y1' | 'y2' | 'y3';
 
-const PlannerPage: React.FC = () => {
+export default function PlannerPage({
+  params,
+}: {
+  params: { userId: string };
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const userId = searchParams.get('userId');
+  const userId = params.userId;
 
   const [planner, setPlanner] = useState({});
   const [progressions, setProgressions] = useState<Progressions>({
@@ -77,8 +80,8 @@ const PlannerPage: React.FC = () => {
         const res = await axios.get(
           `${SERVER_URL}/v1/course/user/${userId}/planner`,
         );
-        setPlanner(res.data);
-        console.log(`my planner is: ${JSON.stringify(res.data)}`);
+        setPlanner(res.data.planner);
+        console.log(`my planner is: ${JSON.stringify(res.data.planner)}`);
       } catch (err) {
         // TODO: handle error
         console.error('Cannot fetch planner from backend');
@@ -95,7 +98,7 @@ const PlannerPage: React.FC = () => {
         const res = await axios.get(
           `${SERVER_URL}/v1/course/user/${userId}/progressions`,
         );
-        setProgressions(res.data);
+        setProgressions(res.data.progressions);
         console.log(`my progressions are: ${JSON.stringify(res.data)}`);
       } catch (err) {
         // TODO: handle error
@@ -110,9 +113,7 @@ const PlannerPage: React.FC = () => {
     studyPeriod: StudyPeriod,
     position: string,
   ) => {
-    router.push(
-      `/search/?userId=${userId}&slot=${year}${studyPeriod}${position}`,
-    );
+    router.push(`/search/${userId}/?slot=${year}${studyPeriod}${position}`);
   };
 
   const removeSubject = async (
@@ -124,12 +125,12 @@ const PlannerPage: React.FC = () => {
       const resPlanner = await axios.delete(
         `${SERVER_URL}/v1/course/user/${userId}/remove/${year}${studyPeriod}${position}`,
       );
-      setPlanner(resPlanner.data);
+      setPlanner(resPlanner.data.planner);
 
       const resProgressions = await axios.get(
         `${SERVER_URL}/v1/course/user/${userId}/progressions`,
       );
-      setProgressions(resProgressions.data);
+      setProgressions(resProgressions.data.progressions);
 
       console.log(
         `my planner after removing ${year}${studyPeriod}${position} is ${JSON.stringify(planner)}`,
@@ -348,6 +349,4 @@ const PlannerPage: React.FC = () => {
       </footer>
     </div>
   );
-};
-
-export default PlannerPage;
+}

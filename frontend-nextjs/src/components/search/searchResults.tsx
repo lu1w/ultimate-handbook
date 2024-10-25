@@ -1,7 +1,7 @@
 // import '@styles/SearchResults.css';
 
 import React from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import axios from 'axios';
 
@@ -12,11 +12,13 @@ import { SERVER_URL } from '@/lib/utils';
 interface SearchResultsProps {
   className?: string | undefined;
   subjects: Array<Subject>;
+  userId: string;
 }
 
 export default function SearchResults({
   className,
   subjects,
+  userId,
 }: SearchResultsProps) {
   // let subject = searchResults[0];
   console.log(
@@ -24,9 +26,12 @@ export default function SearchResults({
   );
 
   const router = useRouter();
+  const pathname = usePathname();
+  console.log(pathname);
   const searchParams = useSearchParams();
+  // const userId = pathname;
   const slot: string = searchParams.get('slot')!;
-  const userId = searchParams.get('userId');
+  // const userIds = searchParams.get('userId');
 
   async function handleAdd(subject: Subject) {
     try {
@@ -36,7 +41,7 @@ export default function SearchResults({
         `${SERVER_URL}/v1/course/user/${userId}/add`,
         newSubjectInfo,
       );
-      router.push('/planner');
+      router.push(`/planner/${userId}`);
     } catch (err) {
       // TODO: handle error
     }

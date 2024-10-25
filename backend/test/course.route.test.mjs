@@ -3,14 +3,14 @@ import { expect } from 'chai';
 import app from '../src/app.js';
 
 describe('Course Info API', () => {
-  let userId;
+  const testId = 'testing-course-info';
 
   it('should initialize the user info, including degree and major', (done) => {
     const degree = 'Science';
     const major = 'Data Science';
     request(app)
       .post('/v1/course/main')
-      .query({ degree: degree, major: major })
+      .query({ degree: degree, major: major, userId: testId })
       .end((err, res) => {
         if (err) return done(err);
 
@@ -25,7 +25,7 @@ describe('Course Info API', () => {
         ]);
 
         // Retrieve userId
-        userId = responseData.userId;
+        const userId = responseData.userId;
         expect(userId).to.be.a('string');
 
         done();
@@ -34,7 +34,7 @@ describe('Course Info API', () => {
 });
 
 describe('Course Planner API', () => {
-  let userId;
+  const testId = 'test-course-planner';
 
   // Before all tests, create a user and get userId
   before((done) => {
@@ -42,14 +42,14 @@ describe('Course Planner API', () => {
     const major = 'Data Science';
     request(app)
       .post('/v1/course/main')
-      .query({ degree: degree, major: major })
+      .query({ degree: degree, major: major, userId: testId })
       .end((err, res) => {
         if (err) return done(err);
 
         expect(res.status).to.equal(200);
 
         const responseData = res.body;
-        userId = responseData.userId;
+        const userId = responseData.userId;
         expect(userId).to.be.a('string');
         done();
       });
@@ -71,7 +71,7 @@ describe('Course Planner API', () => {
     };
 
     request(app)
-      .post(`/v1/course/user/${userId}/add`)
+      .post(`/v1/course/user/${testId}/add`)
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
@@ -108,7 +108,7 @@ describe('Course Planner API', () => {
     };
 
     request(app)
-      .post(`/v1/course/user/${userId}/add`)
+      .post(`/v1/course/user/${testId}/add`)
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
@@ -144,7 +144,7 @@ describe('Course Planner API', () => {
     };
 
     request(app)
-      .post(`/v1/course/user/${userId}/add`)
+      .post(`/v1/course/user/${testId}/add`)
       .send(subjectData)
       .end((err, res) => {
         if (err) return done(err);
@@ -184,20 +184,20 @@ describe('Course Planner API', () => {
 
     // Add the subject
     request(app)
-      .post(`/v1/course/user/${userId}/add`)
+      .post(`/v1/course/user/${testId}/add`)
       .send(subjectData)
       .end((err) => {
         if (err) return done(err);
 
         // Now remove the subject
         request(app)
-          .delete(`/v1/course/user/${userId}/remove/${term}${position}`)
+          .delete(`/v1/course/user/${testId}/remove/${term}${position}`)
           .end((err, res) => {
             if (err) return done(err);
 
             expect(res.status).to.equal(200);
             expect(res.body).to.be.an('object');
-            
+
             // Since the API now returns { planner }
             expect(res.body).to.have.property('planner');
             const planner = res.body.planner;
