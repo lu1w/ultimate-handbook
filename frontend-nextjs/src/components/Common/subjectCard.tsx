@@ -9,12 +9,8 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "@/components/ui/tooltip"
+import ErrorButton from '../planner/errorButton';
+import PrereqDisplay from '../planner/prereqDisplay';
 
 // Mapping subject types to colours
 const TYPE_COLOURS: Record<string, string> = {
@@ -78,46 +74,9 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
           <CardTitle className="w-4/7 pr-2 mt-1 text-base font-bold font-serif pb-2">
             {subjectName}
           </CardTitle>
-
           <div className="w-2/7 flex justify-end items-center space-x-2">
-            {prerequisiteError ? (
-              <TooltipProvider> 
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="prereqError"
-                      size="icon"
-                      className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-red-500 items-center justify-center"
-                      onClick={() => {}}
-                    >
-                      <img src="/error_1.svg" className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    Prerequisite error
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : null}
-            {semesterError ? (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="semesterError"
-                      size="icon"
-                      className="rounded-full flex-none h-[1.5rem] w-[1.5rem] bg-orange-400 items-center justify-center"
-                      onClick={() => {}}
-                    >
-                      <img src="/error_1.svg" className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    Semester error
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : null}
+            {prerequisiteError ? <PrereqDisplay subjectCode= {subjectCode} /> : null}
+            {semesterError ? <ErrorButton errorType="semesterError" /> : null}
           </div>
         </div>
       </CardContent>
