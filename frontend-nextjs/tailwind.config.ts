@@ -77,6 +77,7 @@ const config: Config = {
         },
         planner: {
           header: 'var(--col-heritage-100)',
+          sheet: 'var(--col-heritage-25)',
         },
       },
       borderRadius: {
