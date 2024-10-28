@@ -2,14 +2,10 @@ import React from 'react';
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { SelectProps } from '@radix-ui/react-select';
-import { setEngine } from 'crypto';
 
 interface SelectPanelProps {
   placeholder: string;

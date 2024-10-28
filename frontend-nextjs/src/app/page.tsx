@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import InfoForm from '@/components/home/infoForm';
 
 export default function Home() {

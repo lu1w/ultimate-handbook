@@ -1,8 +1,6 @@
 import React from 'react';
 import {
   Progressions,
-  ProgressionGroup,
-  ProgressionItem,
 } from '@/lib/objectSchema';
 
 interface RulesProps {

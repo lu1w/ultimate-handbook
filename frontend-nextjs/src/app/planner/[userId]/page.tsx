@@ -233,7 +233,7 @@ export default function PlannerPage({
             </div>
             <div className="grid grid-cols-4 gap-4 min-h-[15rem]">
               {/* Render Subject Cards or Empty Subject Cards based on subject existence */}
-              {['p1', 'p2'].map((position, index) => {
+              {['p1', 'p2'].map((position) => {
                 const subject = getSubject(year, studyPeriod, position); // Get the subject for the current position
                 return subject ? (
                   <SubjectCard
@@ -257,16 +257,12 @@ export default function PlannerPage({
       }
     } else if (['s1', 's2'].includes(studyPeriod)) {
       if (['s1', 's2'].includes(studyPeriod)) {
-        const subject1 = getSubject(year, studyPeriod, 'p1');
-        const subject2 = getSubject(year, studyPeriod, 'p2');
-        const subject3 = getSubject(year, studyPeriod, 'p3');
-        const subject4 = getSubject(year, studyPeriod, 'p4');
         return (
           <div>
             {title}
             <div className="grid grid-cols-4 gap-4 pb-2 min-h-[15rem]">
               {/* Render Subject Cards or Empty Subject Cards based on subject existence */}
-              {['p1', 'p2', 'p3', 'p4'].map((position, index) => {
+              {['p1', 'p2', 'p3', 'p4'].map((position) => {
                 const subject = getSubject(year, studyPeriod, position); // Get the subject for the current position
                 return subject ? (
                   <SubjectCard
