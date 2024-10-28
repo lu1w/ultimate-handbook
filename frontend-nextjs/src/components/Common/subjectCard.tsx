@@ -32,7 +32,7 @@ interface SubjectCardProps {
   level: string;
   points: string;
   studyPeriod?: string[];
-  coordinator?: Coordinator;
+  coordinator?: Coordinator | object;
   prerequisiteError?: boolean;
   semesterError?: boolean;
   handleClick?: () => void;
@@ -96,9 +96,9 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
             >
               <span>{t}</span>
               {/* Render optional coordinator name if available */}
-              {coordinator && coordinator[t]?.length > 0 && (
+              {coordinator && (coordinator as Coordinator)[t]?.length > 0 && (
                 <span className="text-gray-500 pl-1">
-                  - {coordinator[t]
+                  - {(coordinator as Coordinator)[t]
                       .map((coord) => coord[0])
                       .filter((name) => name)
                       .join(', ')}
