@@ -26,16 +26,20 @@ const buttonVariants = cva(
         helper: 'text-search-muted hover:text-search-header hover:underline',
 
         /** Add or delete summer winter terms */
-        planner: 'border-2 border-black border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        planner:
+          'border-2 border-black border-input bg-background hover:bg-accent hover:text-accent-foreground',
 
         /** Button for resolve */
-        resolve: 'text-white bg-planner-header hover:bg-white-op/90 hover:text-search-header',
+        resolve:
+          'text-white bg-planner-header hover:bg-white-op/90 hover:text-search-header',
 
         /** Button for semester errors */
-        semesterError: 'border-[0.25rem] border-white shadow-sm hover:border-gray-300',
+        semesterError:
+          'border-[0.25rem] border-white shadow-sm hover:border-gray-300',
 
         /** Button for prerequisite errors */
-        prereqError: 'border-[0.25rem] border-white shadow-sm hover:border-gray-300',
+        prereqError:
+          'border-[0.25rem] border-white shadow-sm hover:border-gray-300',
       },
       size: {
         default: 'h-9 px-4 py-2',
@@ -61,7 +65,7 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, ...props }, ref) => {
     return (
       <button
         className={cn(buttonVariants({ variant, size, className }))}

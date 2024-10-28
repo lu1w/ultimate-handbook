@@ -48,19 +48,6 @@ export default function PlannerPage({
   const intakeYear = 2024;
   const studyPeriods: StudyPeriod[] = ['su', 's1', 'wi', 's2'];
 
-  const getStudyPeriodName = (period: StudyPeriod) => {
-    switch (period) {
-      case 's1':
-        return 'Semester 1';
-      case 's2':
-        return 'Semester 2';
-      case 'su':
-        return 'Summer Term';
-      case 'wi':
-        return 'Winter Term';
-    }
-  };
-
   const getYearName = (year: Year) => {
     switch (year) {
       case 'y1':
@@ -83,7 +70,7 @@ export default function PlannerPage({
         setPlanner(res.data.planner);
         console.log(`my planner is: ${JSON.stringify(res.data.planner)}`);
       } catch (err) {
-        // TODO: handle error
+        console.error(err);
         console.error('Cannot fetch planner from backend');
       }
     };
@@ -101,7 +88,7 @@ export default function PlannerPage({
         setProgressions(res.data.progressions);
         console.log(`my progressions are: ${JSON.stringify(res.data)}`);
       } catch (err) {
-        // TODO: handle error
+        console.error(err);
         console.error('Cannot fetch progressions from backend');
       }
     };
@@ -146,6 +133,7 @@ export default function PlannerPage({
       const res = await axios.post(url);
       setPlanner(res.data.planner);
     } catch (err) {
+      console.error(err);
       console.error(`Failed in handling POST ${url}`);
     }
   };
@@ -161,6 +149,7 @@ export default function PlannerPage({
       );
       setProgressions(resProgressions.data);
     } catch (err) {
+      console.error(err);
       console.error(`Failed in handling POST ${url}`);
     }
   };
@@ -196,7 +185,7 @@ export default function PlannerPage({
 
   const getSemesterRow = (year: Year, studyPeriod: StudyPeriod) => {
     const title = (
-      <h2 className="text-xl font-semibold mb-2">{`${getYearName(year)} ${getStudyPeriodName(studyPeriod)}`}</h2>
+      <h2 className="text-xl font-semibold mb-2">{`${getYearName(year)} ${StudyPeriodType[studyPeriod]}`}</h2>
     );
     // Handle normal and two-slot positions
     if (['su', 'wi'].includes(studyPeriod)) {

@@ -35,7 +35,7 @@ export default function SearchResults({
 
   async function handleAdd(subject: Subject) {
     try {
-      const newSubjectInfo: any = {};
+      const newSubjectInfo: { [slot: string]: Subject } = {};
       newSubjectInfo[slot] = subject;
       await axios.post(
         `${SERVER_URL}/v1/course/user/${userId}/add`,
@@ -43,7 +43,7 @@ export default function SearchResults({
       );
       router.push(`/planner/${userId}`);
     } catch (err) {
-      // TODO: handle error
+      console.error(err);
     }
     return;
   }
