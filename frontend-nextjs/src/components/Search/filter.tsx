@@ -1,5 +1,4 @@
 import React from 'react';
-import { Checkbox } from '../ui/checkbox';
 
 interface FilterProps {
   checked: boolean | null;
