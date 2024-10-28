@@ -30,7 +30,7 @@ export default function InfoForm() {
           allDegrees.sort();
         }
       } catch (err) {
-        // TODO: handle error
+        console.error(err);
       }
     };
     fetchCourses();
@@ -62,7 +62,7 @@ export default function InfoForm() {
       router.push(`/planner/${res.data.userId}`);
     } catch (err) {
       // TODO: handle error
-      console.log(err);
+      console.error(err);
     }
   }
 
