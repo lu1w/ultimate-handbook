@@ -20,6 +20,10 @@ const TYPE_COLOURS: Record<string, string> = {
   'BREADTH': 'bg-subject-breadth',
 };
 
+interface Coordinator {
+  [semester: string]: [string, string][];
+}
+
 interface SubjectCardProps {
   className?: string;
   header: string;
@@ -27,8 +31,8 @@ interface SubjectCardProps {
   subjectName: string;
   level: string;
   points: string;
-  studyPeriod: string[];
-  coordinatorName?: string; // TODO: put the coordinator in semester bubble
+  studyPeriod?: string[];
+  coordinator?: Coordinator;
   prerequisiteError?: boolean;
   semesterError?: boolean;
   handleClick?: () => void;
@@ -43,7 +47,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   level,
   points,
   studyPeriod,
-  coordinatorName,
+  coordinator,
   prerequisiteError,
   semesterError,
   handleClick,
@@ -81,23 +85,29 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
         </div>
       </CardContent>
       <CardFooter className="p-3 pt-0 space-x-1">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2">
           {studyPeriod?.map((t) => (
             <Button
               key={t}
               variant="secondary"
               size="sm"
-              className="rounded-full text-xs px-2 py-0.5 h-auto w-fit"
+              className="rounded-full text-xs px-2 py-0.5 h-auto w-fit overflow-hidden"
+              style={{ display: 'inline-block', maxWidth: '100%' }}
             >
-              {t}
+              <span>{t}</span>
+              {/* Render optional coordinator name if available */}
+              {coordinator && coordinator[t]?.length > 0 && (
+                <span className="text-gray-500 pl-1">
+                  - {coordinator[t]
+                      .map((coord) => coord[0])
+                      .filter((name) => name)
+                      .join(', ')}
+                </span>
+              )}
             </Button>
           ))}
         </div>
       </CardFooter>
-      <div className="pt-0 pb-2 px-3">
-        {/* <span className="font-bold text-xs">Subject Coordinator:</span>
-        <span className="text-xs"> {coordinatorName} </span> */}
-      </div>
     </Card>
   );
 };
