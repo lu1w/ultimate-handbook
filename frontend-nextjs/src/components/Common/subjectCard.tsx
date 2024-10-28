@@ -91,7 +91,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
               key={t}
               variant="secondary"
               size="sm"
-              className="rounded-full text-xs px-2 py-0.5 h-auto w-fit overflow-hidden"
+              className="rounded-full text-xs px-2 py-0.5 h-auto w-fit overflow-hidden overflow-ellipsis"
               style={{ display: 'inline-block', maxWidth: '100%' }}
             >
               <span>{t}</span>
