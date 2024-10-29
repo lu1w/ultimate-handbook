@@ -8,7 +8,7 @@ import axios from 'axios';
 
 import { Button } from '@/components/ui/button';
 
-import SubjectCard from '@/components/common2/subjectCard';
+import SubjectCard from '@/components/common/subjectCard';
 import EmptySubjectCard from '@/components/planner/emptySubjectCard';
 import Rules from '@/components/planner/rules';
 // import subjectPlanner from '@/mock-data/courseData';

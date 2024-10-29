@@ -6,9 +6,9 @@ import axios from 'axios';
 import { SERVER_URL } from '@/lib/utils';
 import { Level, StudyPeriod } from '@/lib/constants';
 
-import SearchBar from '@/components/search2/searchBar';
-import SearchFilters from '@/components/search2/searchFilters';
-import SearchResults from '@/components/search2/searchResults';
+import SearchBar from '@/components/search/searchBar';
+import SearchFilters from '@/components/search/searchFilters';
+import SearchResults from '@/components/search/searchResults';
 
 const allLevels: Array<Level> = Object.values(Level);
 const allStudyPeriod: Array<StudyPeriod> = Object.values(StudyPeriod);

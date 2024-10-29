@@ -5,7 +5,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import axios from 'axios';
 
-import SubjectCard from '@/components/common2/subjectCard';
+import SubjectCard from '@/components/common/subjectCard';
 import { Subject } from '@/lib/objectSchema';
 import { SERVER_URL } from '@/lib/utils';
 
