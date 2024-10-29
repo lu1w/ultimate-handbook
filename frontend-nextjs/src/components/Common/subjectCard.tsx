@@ -79,7 +79,9 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
             {subjectName}
           </CardTitle>
           <div className="w-2/7 flex justify-end items-center space-x-2">
-            {prerequisiteError ? <PrereqDisplay subjectCode= {subjectCode} /> : null}
+            {prerequisiteError ? (
+              <PrereqDisplay subjectCode={subjectCode} />
+            ) : null}
             {semesterError ? <ErrorButton errorType="semesterError" /> : null}
           </div>
         </div>
@@ -98,10 +100,11 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
               {/* Render optional coordinator name if available */}
               {coordinator && (coordinator as Coordinator)[t]?.length > 0 && (
                 <span className="text-gray-500 pl-1">
-                  - {(coordinator as Coordinator)[t]
-                      .map((coord) => coord[0])
-                      .filter((name) => name)
-                      .join(', ')}
+                  -{' '}
+                  {(coordinator as Coordinator)[t]
+                    .map((coord) => coord[0])
+                    .filter((name) => name)
+                    .join(', ')}
                 </span>
               )}
             </Button>
