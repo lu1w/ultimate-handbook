@@ -1,9 +1,9 @@
 {
-  "name": "huddle-api",
+  "name": "coursePlanner-api",
   "version": "1.0.0",
-  "description": "Back-end for Huddle",
+  "description": "Back-end for coursePlanner",
   "main": "src/index.js",
-  "repository": "https://github.com/cissa-unimelb/huddle-api",
+  "repository": "https://github.com/cissa-unimelb/coursePlanner-api",
   "engines": {
     "node": ">=12.0.0"
   },
@@ -17,7 +17,8 @@
     "commit": "cz",
     "check-eslint": "eslint --print-config file.js > eslint-config.json",
     "test": "cross-env NODE_ENV=test mocha --timeout 10000 --recursive backend/test/**/*.test.mjs --exit",
-    "postdeploy": "cd backend && npm install && npm run start"
+    "heroku-postbuild": "npm install --prefix backend"
+
   },
   "keywords": [
     "node",
