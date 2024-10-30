@@ -5,11 +5,13 @@ const {
   COURSE_COLLECTION,
   MAJOR_COLLECTION,
   STUDY_AREA_COLLECTION,
-  PLANNER_COLLECTION
+  PLANNER_COLLECTION,
+  SUBJECT_COLLECTION
 } = require('../lib/dbConstants');
 const { scienceProgressions } = require('./progressionService');
 
 const axios = require('axios');
+const { all } = require('../routes/v1/course.route');
 
 const PRESMALLER = -1;
 const semesterOrder = {
@@ -389,7 +391,7 @@ const savePlanner = async (req, res, next) => {
 
   try {
     const plannerCollection =
-      await mongoClient.getCollection(PLANNER_COLLECTION);
+    await mongoClient.getCollection(PLANNER_COLLECTION);
     await plannerCollection.updateOne(
       { userId: userId },
       { $set: { planner: planner, progressionStats: progressionStats } }
@@ -515,7 +517,7 @@ const autoAssignSubject = async (req, res, next) => {
     }
 
     // Get the subject from the database
-    const collection = await mongoClient.getCollection('Subject');
+    const collection = await mongoClient.getCollection(SUBJECT_COLLECTION);
     const subject = await collection.findOne({ subjectCode: subjectCode });
 
     if (!subject) {
@@ -536,14 +538,19 @@ const autoAssignSubject = async (req, res, next) => {
       'Summer Term': 'su',
       'Winter Term': 'wi'
     };
-    
+    const allSemesters = ['s1', 's2', 'su', 'wi'];
     const availableSemesters = studyPeriods.map(period => semesterMap[period]);
 
+    const invalidSemesters = allSemesters.filter(
+      (sem) => !availableSemesters.includes(sem)
+    );
+
+    const combinedSemesters = [...allSemesters, ...invalidSemesters];
     // Loop over available semesters and years to find the earliest available slot
     const years = ['y1', 'y2', 'y3'];
     let assigned = false;
 
-    for (const sem of availableSemesters) {
+    for (const sem of combinedSemesters) {
       for (const year of years) {
         const term = `${year}${sem}`; // e.g., 'y1s1'
         if (planner[term]) {
@@ -565,6 +572,7 @@ const autoAssignSubject = async (req, res, next) => {
     if (!assigned) {
       return res.status(400).json({ error: 'No available slot found for this subject' });
     }
+
 
     next();
   } catch (err) {
