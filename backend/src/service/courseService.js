@@ -11,6 +11,7 @@ const {
 const { scienceProgressions } = require('./progressionService');
 
 const axios = require('axios');
+const { all } = require('../routes/v1/course.route');
 
 const PRESMALLER = -1;
 const semesterOrder = {
