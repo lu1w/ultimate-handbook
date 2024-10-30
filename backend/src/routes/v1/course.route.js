@@ -16,7 +16,8 @@ const {
   resolveMiddleware,
   checkOutComeAfterResolve,
   loadUserPlanner,
-  savePlanner
+  savePlanner,
+  autoAssignSubject
 } = require('../../service/courseService');
 
 /**
@@ -203,8 +204,7 @@ router.delete('/user/:userId/remove/:slot', removeSubject);
  *       500:
  *         description: Server error.
  */
-router.post(
-  '/user/:userId/add',
+router.post('/user/:userId/add',
   loadUserPlanner,
   addSubject,
   isValidAdd,
@@ -248,7 +248,7 @@ router.post(
  *       500:
  *         description: Server error.
  */
-router.get('/prerequisites/:subjectCode', async (req, res, next) => {
+router.get('/user/:userId/prerequisites/:subjectCode', async (req, res, next) => {
   const { subjectCode } = req.params;
   if (subjectCode) {
     try {
@@ -267,6 +267,48 @@ router.get('/prerequisites/:subjectCode', async (req, res, next) => {
     );
   }
 });
+
+/**
+ * @swagger
+ * /prerequisites/{userId}/{subjectCode}/autoassign:
+ *   get:
+ *     summary: Auto-assign a subject to the earliest available slot
+ *     description: Automatically assign a subject to the earliest available slot in the user's planner based on the subject's study periods.
+ *     tags:
+ *       - Planner
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: The ID of the user whose planner will be updated.
+ *         schema:
+ *           type: string
+ *       - name: subjectCode
+ *         in: path
+ *         required: true
+ *         description: The code of the subject to be auto-assigned (e.g., COMP10002).
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully assigned the subject to the planner.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 planner:
+ *                   type: object
+ *                   description: The updated planner after assigning the subject.
+ *       400:
+ *         description: No userId or subjectCode provided, or no available slot found.
+ *       404:
+ *         description: Subject not found, or planner not found for the given user.
+ *       500:
+ *         description: Server error.
+ */
+router.get('/user/:userId/prerequisites/:subjectCode/autoassign', loadUserPlanner, autoAssignSubject, savePlanner);
+
 
 /**
  * @swagger
@@ -315,12 +357,7 @@ router.get('/prerequisites/:subjectCode', async (req, res, next) => {
  *         description: Internal server error.
  */
 
-router.post(
-  '/user/:userId/resolve',
-  loadUserPlanner,
-  resolveMiddleware,
-  checkOutComeAfterResolve
-);
+router.post('/user/:userId/resolve',loadUserPlanner,resolveMiddleware,checkOutComeAfterResolve);
 
 /**
  * @swagger
