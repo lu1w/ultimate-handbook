@@ -16,7 +16,8 @@
     "prepare": "husky install",
     "commit": "cz",
     "check-eslint": "eslint --print-config file.js > eslint-config.json",
-    "test": "cross-env NODE_ENV=test mocha --timeout 10000 --recursive backend/test/**/*.test.mjs --exit"
+    "test": "cross-env NODE_ENV=test mocha --timeout 10000 --recursive backend/test/**/*.test.mjs --exit",
+    "postdeploy": "cd backend && npm install && npm run start"
   },
   "keywords": [
     "node",
