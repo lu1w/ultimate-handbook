@@ -248,7 +248,7 @@ router.post('/user/:userId/add',
  *       500:
  *         description: Server error.
  */
-router.get('/user/:userId/prerequisites/:subjectCode', async (req, res, next) => {
+router.get('/prerequisites/:subjectCode', async (req, res, next) => {
   const { subjectCode } = req.params;
   if (subjectCode) {
     try {
