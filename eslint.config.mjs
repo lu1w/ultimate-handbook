@@ -5,11 +5,10 @@ import pluginReact from 'eslint-plugin-react';
 export default [
   { ignores: ['node_module/', 'bin', '.next'] },
 
-  // 基本推荐配置
+  // Recommended basic configuration
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
 
-  // 通用规则配置，适用于所有 JavaScript 文件
   {
     files: ['**/*.{js,mjs,cjs,jsx}'],
     rules: {
@@ -23,36 +22,36 @@ export default [
     },
   },
 
-  // 为后端代码指定 CommonJS，并允许使用 Node.js 的全局变量
+  // Specify CommonJS for backend, and allow Node.js to use global variable
   {
     files: ['backend/**/*.js'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: {
-        ...globals.node, // 包含所有 Node.js 全局变量
+        ...globals.node, // Include all global variable from Node.JS
         process: true,
         __dirname: true,
       },
     },
   },
 
-  // 为前端的 JSX 文件指定 ES Modules
+  // Specify ES Modules for frontend TSX files
   {
-    files: ['frontend/**/*.jsx'],
+    files: ['frontend/**/*.tsx'],
     languageOptions: {
       sourceType: 'module',
     },
   },
 
-  // 为测试文件指定 Mocha 的全局变量
+  // Allow testing files to use Mocha global variables
   {
-    files: ['backend/test/**/*.js', 'backend/test/**/*.mjs'], // 添加 .mjs 文件支持
+    files: ['backend/test/**/*.js', 'backend/test/**/*.mjs'],
     languageOptions: {
-      globals: globals.mocha, // 启用 Mocha 全局变量，如 describe 和 it
+      globals: globals.mocha, // global variable in Mocha: e.g. describe, it
     },
   },
 
-  // 为浏览器环境指定全局变量
+  // Allow browsers to user global variable
   {
     languageOptions: {
       globals: globals.browser,

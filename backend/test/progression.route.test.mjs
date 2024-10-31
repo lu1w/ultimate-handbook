@@ -26,25 +26,29 @@ describe('Progression rule: Bachelor of Science', () => {
 
             expect(responseBody).to.be.an('object');
             expect(responseBody.progressions).to.include.all.keys(
+              'general',
+              'levelsRules'
+            );
+            expect(responseBody.progressions.levelsRules).to.include.all.keys(
               'overall',
               'discipline',
               'breadth',
-              'degreeProgression'
+              'degreeProgression',
+              'distinctStudyArea'
             );
 
             /* check the filds within each requirements */
             ['overall', 'discipline', 'breadth'].forEach((category) => {
-              Object.keys(responseBody.progressions[category]).forEach(
-                (level) => {
-                  /* number of credit points should be 0 */
-                  // expect(responseData[category][level].stats.charAt(0)).equal(
-                  //   '0'
-                  // );
-                  expect(
-                    responseBody.progressions[category][level].fulfilled
-                  ).to.be.a('boolean');
-                }
-              );
+              const categoryInfo =
+                responseBody.progressions.levelsRules[category];
+
+              Object.keys(categoryInfo).forEach((level) => {
+                /* number of credit points should be 0 */
+                // expect(responseData[category][level].stats.charAt(0)).equal(
+                //   '0'
+                // );
+                expect(categoryInfo[level].fulfilled).to.be.a('boolean');
+              });
             });
 
             done();

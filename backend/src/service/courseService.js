@@ -679,9 +679,6 @@ async function getProgressions(userId) {
       await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
-    console.log(`\n---userPlanner = ${JSON.stringify(userPlanner)}`);
-    console.log(`INFO current userInfo.degree=${userPlanner.degree}`);
-
     /* Find the course info to check progression requirement */
     const courseCollection = await mongoClient.getCollection(COURSE_COLLECTION);
     const course = await courseCollection.findOne({
@@ -692,7 +689,11 @@ async function getProgressions(userId) {
       case 'Science':
         Object.assign(
           progressions,
-          scienceProgressions(course, userPlanner.progressionStats)
+          scienceProgressions(
+            course,
+            userPlanner.planner,
+            userPlanner.progressionStats
+          )
         );
         break;
       case 'Commerce':
