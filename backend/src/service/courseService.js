@@ -375,12 +375,12 @@ const giveTypeOfSubject = async (req, res, next) => {
           message: 'Error: subject area not correctly stored in the database'
         });
       }
-      updateProgressions(userPlanner.progressionStats, subject);
-      next();
+      //updateProgressions(userPlanner.progressionStats, subject);
     } catch (err) {
       return next(new ApiError(500, 'server error'));
     }
   }
+  next();
 };
 
 const savePlanner = async (req, res, next) => {

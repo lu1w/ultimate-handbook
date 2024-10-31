@@ -39,7 +39,6 @@ This project aims to modernize and enhance the University of Melbourne course pl
 - Component library: shadcn
 
 **Backend**
-
 - Node.js
 - PyGad
 
