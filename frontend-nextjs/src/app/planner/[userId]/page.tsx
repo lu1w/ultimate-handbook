@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 
 import SubjectCard from '@/components/common/subjectCard';
 import EmptySubjectCard from '@/components/planner/emptySubjectCard';
+import RulesGeneral from '@/components/planner/rulesGeneral';
 import RulesLevels from '@/components/planner/rulesLevels';
 // import subjectPlanner from '@/mock-data/courseData';
 
@@ -330,6 +331,7 @@ export default function PlannerPage({
           <h2 className="text-xl font-bold text-center">
             - Degree Checklist -
           </h2>
+          <RulesGeneral progressions={progressions} />
           <RulesLevels progressions={progressions} ruleType="overall" />
           <RulesLevels progressions={progressions} ruleType="discipline" />
           <RulesLevels progressions={progressions} ruleType="breadth" />

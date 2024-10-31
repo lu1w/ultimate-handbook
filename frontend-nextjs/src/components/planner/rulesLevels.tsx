@@ -1,14 +1,19 @@
 import React from 'react';
 import { Progressions } from '@/lib/objectSchema';
 
-interface RulesProps {
+interface RulesLevelsProps {
   progressions: Progressions;
   ruleType: keyof Progressions['levelsRules'];
+  className?: string;
 }
 
-const itemClass = 'flex items-center mb-4';
+export const itemClass = 'flex items-center mb-4';
 
-export default function RulesLevels({ progressions, ruleType }: RulesProps) {
+export default function RulesLevels({
+  progressions,
+  ruleType,
+  className,
+}: RulesLevelsProps) {
   /* Map rule type to something we display on the webpage */
   let ruleTypeDisplay: string = ruleType;
   switch (ruleType) {
@@ -26,7 +31,7 @@ export default function RulesLevels({ progressions, ruleType }: RulesProps) {
   }
 
   return (
-    <div>
+    <div className={className}>
       <h1 className="font-bold mt-6 mb-2">{ruleTypeDisplay}</h1>
       <ul>
         {/* {Object.entries(progressions[ruleType] as ProgressionGroup).map(
