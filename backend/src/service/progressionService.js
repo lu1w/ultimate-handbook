@@ -46,28 +46,46 @@ function progressionDisplay(range) {
     return `${range[0]}(min) Credit Points`; // display   12.5 / 50(min) Credit Points
   }
 
-  return `${range[0]}(min) & ${range[1]}(max) Credit Points`; // display   12.5 / 50(min) & 75.5(max) Credit Points
+  return `${range[0]}(min) to ${range[1]}(max) Credit Points`; // display   12.5 / 50(min) & 75.5(max) Credit Points
 }
 
 /* Get all the subjects available in the planner */
-function getAllSubjectsByLevel(planner) {
-  const subjects = {
+function getAllSubjectsInfo(planner) {
+  const subjectsByLevel = {
     level1: [],
     level2: [],
     level3: [],
     level4: []
   };
 
+  const creditPointsByType = {
+    DISCIPLINE: 0,
+    BREADTH: 0,
+    'MAJOR CORE': 0,
+    COMPULSORY: 0
+  };
+
+  const plannedCompulsory = [];
+
   Object.keys(planner).forEach((studyPeriod) => {
     Object.keys(planner[studyPeriod]).forEach((slot) => {
       if (Object.keys(planner[studyPeriod][slot]).length !== 0) {
-        subjects[
-          `level${planner[studyPeriod][slot]['subjectCode'].charAt(4)}`
-        ].push(planner[studyPeriod][slot]);
+        const subject = planner[studyPeriod][slot];
+
+        subjectsByLevel[`level${subject.subjectCode.charAt(4)}`].push(
+          planner[studyPeriod][slot]
+        );
+
+        creditPointsByType[subject.header]
+          ? (creditPointsByType[subject.header] += subject.points)
+          : (creditPointsByType[subject.header] = subject.points);
+
+        if (subject.header === 'COMPULSORY')
+          plannedCompulsory.push(subject.subjectCode);
       }
     });
   });
-  return subjects;
+  return { subjectsByLevel, creditPointsByType, plannedCompulsory };
 }
 
 /* This is the current progression of the user.
@@ -143,7 +161,27 @@ function scienceProgressions(courseInfo, planner, progressionStats) {
     }
   };
 
-  /** Handle the general progression rules */
+  const { subjectsByLevel, creditPointsByType, plannedCompulsory } =
+    getAllSubjectsInfo(planner);
+
+  /** Check the compulsory subject */
+  const missingCompulsory = [];
+  courseInfo.compulsorySubject.forEach((compulsory) => {
+    if (!plannedCompulsory.includes(compulsory))
+      missingCompulsory.push(compulsory);
+  });
+  progressions.general.compulsory = {
+    stats: `Compulsory subject: ${courseInfo.compulsorySubject.toString()}; missing: ${missingCompulsory.toString()}`,
+    fulfilled: missingCompulsory.length === 0
+  };
+
+  /** Handle the number of credit points for breadth subjects */
+  const [min, max] = courseInfo.breadthCreditPoints;
+  progressions.general.breadth = {
+    stats: `${creditPointsByType.BREADTH} / ${progressionDisplay(courseInfo.breadthCreditPoints)} of Breadth Subject`,
+    fulfilled:
+      min <= creditPointsByType.BREADTH && creditPointsByType.BREADTH <= max
+  };
 
   /** Fill in the progression status for the number of credit points for
    * each level of overall, discipline, and breadth subject
@@ -229,8 +267,6 @@ function scienceProgressions(courseInfo, planner, progressionStats) {
   });
 
   /** Fill in the constrains on the number of credit point within each distrinct study area */
-  const subjectsByLevel = getAllSubjectsByLevel(planner);
-
   ['distinctStudyArea1'].forEach((field) => {
     const lv = field.charAt(field.length - 1); // e.g. '1'
     const subjectsOfLevel = subjectsByLevel[`level${lv}`];
