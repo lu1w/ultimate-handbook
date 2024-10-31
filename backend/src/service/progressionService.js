@@ -70,68 +70,68 @@ function getAllSubjectsByLevel(planner) {
   return subjects;
 }
 
+/* This is the current progression of the user.
+ * When it returns, the object will look something like this:
+ *
+ * progressions = {
+ *   general: {
+ *     compulsory: { stats: 'Compulsory Subject: SCIE10005', fulfilled: true },
+ *     breadth: {
+ *       stats: '0 / 50(min) to 62.5(max) Credit Points of Breadth Subject',
+ *       fulfilled: false
+ *     },
+ *   },
+ *   levelsRules: {
+ *     overall: {
+ *       level1: {
+ *         stats: '12.5 / 125(max) Credit Points of Level 1 Subjects'
+ *         fulfilled: true
+ *       },
+ *     },
+ *     discipline: {
+ *       level1: {
+ *         stats: '12.5 / 62.5(min) Credit Points of Level 1 Discipline Subjects'
+ *         fulfilled: false
+ *       },
+ *       level2: {
+ *         stats: '25 / 62.5(min) Credit Points of Level 2 Discipline Subjects'
+ *         fulfilled: false
+ *       },
+ *       level3: {
+ *         stats: '0 / 75(min) Credit Points of Level 3 Discipline Subjects'
+ *         fulfilled: false
+ *       },
+ *     },
+ *     breadth: {
+ *       total: {
+ *         stats: '0 / 50(min) to 62.5(max) Credit Points of Breadth Subjects'
+ *         fulfilled: false
+ *       }
+ *       level1: {
+ *         stats: '0 / 25(max) Credit Points of Level 1 Breadth Subjects'
+ *         fulfilled: true
+ *       },
+ *     },
+ *     degreeProgression: {
+ *       level1: {
+ *         stats: '12.5 / 50 Credit Points of Level 1 subjects before studying Level 2 subjects'
+ *         fulfilled: false
+ *       },
+ *       level2: {
+ *         stats: '12.5 / 50 Credit Points of Level 2 subjects before studying Level 3 subjects'
+ *         fulfilled: false
+ *       },
+ *     },
+ *     distinctStudyArea: {
+ *       level1: {
+ *         stats: 'No more than 37.5 Credit Points of Level 1 subjects from the same study area: MAST'
+ *         fulfilled: false
+ *       }
+ *     }
+ *   }
+ * }
+ */
 function scienceProgressions(courseInfo, planner, progressionStats) {
-  /* This is the current progression of the user.
-   * When it returns, the object will look something like this:
-   *
-   * progressions = {
-   *   general: {
-   *     compulsory: { stats: 'Compulsory Subject: SCIE10005', fulfilled: true },
-   *     breadth: {
-   *       stats: '0 / 50(min) to 62.5(max) Credit Points of Breadth Subject',
-   *       fulfilled: false
-   *     },
-   *   },
-   *   levelsRules: {
-   *     overall: {
-   *       level1: {
-   *         stats: '12.5 / 125(max) Credit Points of Level 1 Subjects'
-   *         fulfilled: true
-   *       },
-   *     },
-   *     discipline: {
-   *       level1: {
-   *         stats: '12.5 / 62.5(min) Credit Points of Level 1 Discipline Subjects'
-   *         fulfilled: false
-   *       },
-   *       level2: {
-   *         stats: '25 / 62.5(min) Credit Points of Level 2 Discipline Subjects'
-   *         fulfilled: false
-   *       },
-   *       level3: {
-   *         stats: '0 / 75(min) Credit Points of Level 3 Discipline Subjects'
-   *         fulfilled: false
-   *       },
-   *     },
-   *     breadth: {
-   *       total: {
-   *         stats: '0 / 50(min) to 62.5(max) Credit Points of Breadth Subjects'
-   *         fulfilled: false
-   *       }
-   *       level1: {
-   *         stats: '0 / 25(max) Credit Points of Level 1 Breadth Subjects'
-   *         fulfilled: true
-   *       },
-   *     },
-   *     degreeProgression: {
-   *       level1: {
-   *         stats: '12.5 / 50 Credit Points of Level 1 subjects before studying Level 2 subjects'
-   *         fulfilled: false
-   *       },
-   *       level2: {
-   *         stats: '12.5 / 50 Credit Points of Level 2 subjects before studying Level 3 subjects'
-   *         fulfilled: false
-   *       },
-   *     },
-   *     distinctStudyArea: {
-   *       level1: {
-   *         stats: 'No more than 37.5 Credit Points of Level 1 subjects from the same study area: MAST'
-   *         fulfilled: false
-   *       }
-   *     }
-   *   }
-   * }
-   */
   const progressions = {
     general: {},
     levelsRules: {
