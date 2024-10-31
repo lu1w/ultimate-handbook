@@ -19,4 +19,4 @@ This is the backend for Unimelb Course Planner web app.
 
 - Currently there are only progression calculations for Bachelor of Science.
 - The rules are communicated in a generalized way, but there might be other types of progression rule in other degrees which are not considered in the current codebase.
-- Add customised computation logic for other degrees in `src/service/progressionService.js`
+- The customised computation logic for each degree is currently in: `src/service/progressionService.js`

@@ -143,6 +143,8 @@ function scienceProgressions(courseInfo, planner, progressionStats) {
     }
   };
 
+  /** Handle the general progression rules */
+
   /** Fill in the progression status for the number of credit points for
    * each level of overall, discipline, and breadth subject
    */
@@ -175,7 +177,7 @@ function scienceProgressions(courseInfo, planner, progressionStats) {
     }
   });
 
-  /* Fill in the level progression rule, e.g. certain amount of level1 need to be studies before level2 */
+  /** Fill in the level progression rule, e.g. certain amount of level1 need to be studies before level2 */
   ['progression1', 'progression2'].forEach((field) => {
     const lv = parseInt(field.charAt(field.length - 1)); // e.g. '1'
     const floor = courseInfo[field]; // the minimum number of level x subject before studying level x+1 subject
@@ -226,7 +228,7 @@ function scienceProgressions(courseInfo, planner, progressionStats) {
     };
   });
 
-  /* Fill in the constrains on the number of credit point within each distrinct study area */
+  /** Fill in the constrains on the number of credit point within each distrinct study area */
   const subjectsByLevel = getAllSubjectsByLevel(planner);
 
   ['distinctStudyArea1'].forEach((field) => {
