@@ -68,7 +68,7 @@ export default function InfoForm() {
 
   return (
     <form
-      className="bg-home-background w-1/3 px-10 rounded-lg flex flex-col"
+      className="bg-home-background w-full px-10 rounded-lg flex flex-col"
       onSubmit={handleSubmit}
     >
       {/* Degree Selection */}
@@ -90,7 +90,7 @@ export default function InfoForm() {
       />
 
       {/* Submit button */}
-      <Button variant="search" className="w-full my-20 font-bold" type="submit">
+      <Button variant="search" className="w-full my-10 font-bold" type="submit">
         Start Planning
       </Button>
     </form>

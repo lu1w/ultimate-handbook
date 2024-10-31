@@ -5,7 +5,8 @@ const {
   COURSE_COLLECTION,
   MAJOR_COLLECTION,
   STUDY_AREA_COLLECTION,
-  PLANNER_COLLECTION
+  PLANNER_COLLECTION,
+  SUBJECT_COLLECTION
 } = require('../lib/dbConstants');
 const { scienceProgressions } = require('./progressionService');
 
@@ -234,7 +235,7 @@ const loadUserPlanner = async (req, res, next) => {
 
   try {
     const plannerCollection =
-      await mongoClient.getCollection(PLANNER_COLLECTION);
+    await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
     console.log(
@@ -389,7 +390,7 @@ const savePlanner = async (req, res, next) => {
 
   try {
     const plannerCollection =
-      await mongoClient.getCollection(PLANNER_COLLECTION);
+    await mongoClient.getCollection(PLANNER_COLLECTION);
     await plannerCollection.updateOne(
       { userId: userId },
       { $set: { planner: planner, progressionStats: progressionStats } }
@@ -498,6 +499,83 @@ const checkOutComeAfterResolve = async (req, res, next) => {
     } else {
       next(new ApiError(500, 'Error communicating with Python API'));
     }
+  }
+};
+
+
+// In your courseService.js file
+
+const autoAssignSubject = async (req, res, next) => {
+  try {
+    const userPlanner = req.userPlanner;
+    const planner = userPlanner.planner;
+    const subjectCode = req.params.subjectCode;
+
+    if (!subjectCode) {
+      return res.status(400).json({ error: 'No subject code provided' });
+    }
+
+    // Get the subject from the database
+    const collection = await mongoClient.getCollection(SUBJECT_COLLECTION);
+    const subject = await collection.findOne({ subjectCode: subjectCode });
+
+    if (!subject) {
+      return res.status(404).json({ error: 'Subject not found' });
+    }
+
+    // Get the study periods when the subject is available (e.g., ['Semester 1', 'Semester 2'])
+    const studyPeriods = subject.studyPeriod; // e.g., ['Semester 1', 'Semester 2']
+
+    if (!studyPeriods || studyPeriods.length === 0) {
+      return res.status(400).json({ error: 'No available study periods for this subject' });
+    }
+
+    // Map study periods to planner keys ('Semester 1' -> 's1', etc.)
+    const semesterMap = {
+      'Semester 1': 's1',
+      'Semester 2': 's2',
+      'Summer Term': 'su',
+      'Winter Term': 'wi'
+    };
+    const allSemesters = ['s1', 's2', 'su', 'wi'];
+    const availableSemesters = studyPeriods.map(period => semesterMap[period]);
+
+    const invalidSemesters = allSemesters.filter(
+      (sem) => !availableSemesters.includes(sem)
+    );
+
+    const combinedSemesters = [...allSemesters, ...invalidSemesters];
+    // Loop over available semesters and years to find the earliest available slot
+    const years = ['y1', 'y2', 'y3'];
+    let assigned = false;
+
+    for (const sem of combinedSemesters) {
+      for (const year of years) {
+        const term = `${year}${sem}`; // e.g., 'y1s1'
+        if (planner[term]) {
+          const positions = ['p1', 'p2', 'p3', 'p4'];
+          for (const pos of positions) {
+            if (!planner[term][pos] || Object.keys(planner[term][pos]).length === 0) {
+              // Assign the subject to this slot
+              planner[term][pos] = subject;
+              assigned = true;
+              break;
+            }
+          }
+        }
+        if (assigned) break;
+      }
+      if (assigned) break;
+    }
+
+    if (!assigned) {
+      return res.status(400).json({ error: 'No available slot found for this subject' });
+    }
+
+
+    next();
+  } catch (err) {
+    return next(new ApiError(500, `Server error: ${err.message}`));
   }
 };
 
@@ -723,6 +801,7 @@ function updateProgressions(progressionStats, subject, side = 1) {
   }
 }
 
+
 module.exports = {
   setBasicInfo,
   getBasicInfo,
@@ -737,5 +816,6 @@ module.exports = {
   removeSubject,
   getProgressions,
   resolveMiddleware,
-  checkOutComeAfterResolve
+  checkOutComeAfterResolve,
+  autoAssignSubject
 };
