@@ -34,3 +34,31 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Overview of the Project
+
+There are 3 pages in this project, as listed and explained below.
+
+### Home Page: `/`
+
+User choose a degree and major on this page.
+
+- The degree choices are dynamically generated based on the data in the database. Currently the database is not complete, thus the user cannot choose all available degree that the University of Melbourne offers.
+- The major choices are based on course information in the database, so only the major under the degree selected can be choosed.
+- The user have to choose a degree before entering the planner page, but the user can enter without choosing a major. An alert will be generated if the user does not choose a major.
+
+Future development:
+
+- Allow users to choose a major after the alert.
+
+### Planner Page: `/planner/{userId}`
+
+The main planning page with subject put in different semester slot.
+
+Future development:
+
+- Display degree and major on the planner page, and allow user to change the degree and/or major on the planner page.
+
+### Search Page: `/search/{userId}`
+
+Subject searching page when the user wants to add new subject.
