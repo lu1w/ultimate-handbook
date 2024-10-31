@@ -31,7 +31,7 @@ export default function RulesLevels({
   }
 
   return (
-    <div className={className}>
+    <div className={className ? className : ''}>
       <h1 className="font-bold mt-6 mb-2">{ruleTypeDisplay}</h1>
       <ul>
         {/* {Object.entries(progressions[ruleType] as ProgressionGroup).map(

@@ -201,6 +201,13 @@ const addTerm = async (req, res) => {
     positions = { p1: {}, p2: {}, p3: {}, p4: {} };
   }
   planner[term] = positions;
+
+  /* Update the database */
+  await plannerCollection.updateOne(
+    { userId: userId },
+    { $set: { planner: planner } }
+  );
+
   res.status(200).send({ message: 'Term added successfully.', planner });
 };
 
@@ -209,12 +216,12 @@ const removeTerm = async (req, res) => {
 
   const plannerCollection = await mongoClient.getCollection(PLANNER_COLLECTION);
   const userPlanner = await plannerCollection.findOne({ userId: userId });
-  const planner = userPlanner.planner;
-  const progressionStats = userPlanner.progressionStats;
-
   if (!userPlanner) {
     return res.status(404).json({ message: 'Planner not found.' });
   }
+
+  const planner = userPlanner.planner;
+  const progressionStats = userPlanner.progressionStats;
 
   if (planner[term].p1) {
     updateProgressions(progressionStats, planner[term].p1, -1);
@@ -223,6 +230,14 @@ const removeTerm = async (req, res) => {
     updateProgressions(progressionStats, planner[term].p2, -1);
   }
   delete planner[term];
+  console.log(`------- my planner after removal of term: ---- \n${planner}`);
+
+  /* Update the database */
+  await plannerCollection.updateOne(
+    { userId: userId },
+    { $set: { planner: planner, progressionStats: progressionStats } }
+  );
+
   res.status(200).send({ planner });
 };
 

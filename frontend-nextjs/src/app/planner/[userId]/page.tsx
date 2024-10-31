@@ -152,7 +152,7 @@ export default function PlannerPage({
       const resProgressions = await axios.get(
         `${SERVER_URL}/v1/course/user/${userId}/progressions`,
       );
-      setProgressions(resProgressions.data);
+      setProgressions(resProgressions.data.progressions);
     } catch (err) {
       console.error(err);
       console.error(`Failed in handling POST ${url}`);

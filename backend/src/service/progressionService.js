@@ -252,6 +252,8 @@ function scienceProgressions(courseInfo, planner, progressionStats) {
     };
   });
 
+  console.log(`---progressions is ${JSON.stringify(progressions)}`);
+
   return progressions;
 }
 
