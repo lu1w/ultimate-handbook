@@ -16,10 +16,23 @@ const SubjectFetcher: React.FC<SubjectFetcherProps> = ({ subjectCode, userId}) =
   const handleClick = async () => {
     try {
       const url = `${SERVER_URL}/v1/course/user/${userId}/prerequisites/${subjectCode}/autoassign`;
-      await axios.get(url);
+      const res = await axios.get(url);
+      
+      console.log("autoassign response:", res);
+      const [slot] = Object.keys(res.data);
+      const subjectData = res.data[slot];
+  
+      const newSubjectInfo = { [slot]: subjectData };
+      await axios.post(
+        `${SERVER_URL}/v1/course/user/${userId}/add`,
+        newSubjectInfo,
+      );
+  
+      console.log("Subject added successfully");
       location.reload();
+  
     } catch (error) {
-      console.error('Error during auto-assign:', error);
+      console.error("Error during auto-assign and add:", error);
     }
   };
 
