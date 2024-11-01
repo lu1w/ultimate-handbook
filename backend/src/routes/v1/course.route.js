@@ -18,6 +18,8 @@ const {
   loadUserPlanner,
   savePlanner,
   autoAssignSubject
+  savePlanner,
+  autoAssignSubject
 } = require('../../service/courseService');
 
 /**
@@ -205,6 +207,7 @@ router.delete('/user/:userId/remove/:slot', removeSubject);
  *         description: Server error.
  */
 router.post('/user/:userId/add',
+router.post('/user/:userId/add',
   loadUserPlanner,
   addSubject,
   isValidAdd,
@@ -358,6 +361,7 @@ router.get('/user/:userId/prerequisites/:subjectCode/autoassign', loadUserPlanne
  */
 
 router.post('/user/:userId/resolve',loadUserPlanner,resolveMiddleware,checkOutComeAfterResolve);
+router.post('/user/:userId/resolve',loadUserPlanner,resolveMiddleware,checkOutComeAfterResolve);
 
 /**
  * @swagger
@@ -435,19 +439,78 @@ router.get('/cores/:major', async (req, res, next) => {
 
 /**
  * @swagger
- * /course/user/{userId}/pro`gressions:
+ * /course/user/{userId}/progressions:
  *   get:
  *     summary: get all the degree progression statistics
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: user ID
+ *     responses:
+ *       200:
+ *         description: Successfully retrieve the progression status.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 progressions:
+ *                   type: object
+ *                   example:
+ *                     {
+ *                       general: {
+ *                         compulsory: { stats: 'Compulsory Subject: SCIE10005', fulfilled: true },
+ *                         breadth: {
+ *                           stats: '0 / 50(min) to 62.5(max) Credit Points of Breadth Subject',
+ *                           fulfilled: false,
+ *                         },
+ *                       },
+ *                       levelsRules: {
+ *                         overall: {
+ *                           level1: {
+ *                             stats: '0 / 125(max) Credit Points of Level 1 Subject',
+ *                             fulfilled: true,
+ *                           },
+ *                         },
+ *                         discipline: {
+ *                           level1: {
+ *                             stats: '0 / 62.5(min) Credit Points of Level 1 Discipline Subject',
+ *                             fulfilled: false,
+ *                           },
+ *                           level2: {
+ *                             stats: '0 / 62.5(min) Credit Points of Level 2 Discipline Subject',
+ *                             fulfilled: false,
+ *                           },
+ *                           level3: {
+ *                             stats: '0 / 75(min) Credit Points of Level 3 Discipline Subject',
+ *                             fulfilled: false,
+ *                           },
+ *                         },
+ *                         breadth: {
+ *                           level1: {
+ *                             stats: '0 / 25(max) Credit Points of Level 1 Breadth Subject',
+ *                             fulfilled: true,
+ *                           },
+ *                         },
+ *                         degreeProgression: {},
+ *                         distinctStudyArea: {},
+ *                       },
+ *                     };
+ *       500:
+ *         description: Server failure.
  */
 router.get('/user/:userId/progressions', async (req, res) => {
   const { userId } = req.params;
-  // try {
-  const progressions = await getProgressions(userId);
-  res.status(200).send({ progressions });
-  // } catch (err) {
-  //   // TODO: handle error
-  // }
+  try {
+    const progressions = await getProgressions(userId);
+    res.status(200).send({ progressions });
+  } catch (err) {
+    res.status(500).send({ message: `Server error: ${err}` });
+  }
 });
+
+
 
 
 

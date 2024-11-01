@@ -6,7 +6,7 @@ This is the backend for Unimelb Course Planner web app.
 
 1. Make sure you are in the directory `ultimate-handbook/backend`
 2. Install all the dependencies using `npm install`
-3. Run the server `npm run dev`
+3. Run the server locally `npm run dev`
 
 ## API Documentation
 

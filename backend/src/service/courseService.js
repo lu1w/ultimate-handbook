@@ -7,6 +7,8 @@ const {
   STUDY_AREA_COLLECTION,
   PLANNER_COLLECTION,
   SUBJECT_COLLECTION
+  PLANNER_COLLECTION,
+  SUBJECT_COLLECTION
 } = require('../lib/dbConstants');
 const { scienceProgressions } = require('./progressionService');
 
@@ -202,6 +204,13 @@ const addTerm = async (req, res) => {
     positions = { p1: {}, p2: {}, p3: {}, p4: {} };
   }
   planner[term] = positions;
+
+  /* Update the database */
+  await plannerCollection.updateOne(
+    { userId: userId },
+    { $set: { planner: planner } }
+  );
+
   res.status(200).send({ message: 'Term added successfully.', planner });
 };
 
@@ -210,12 +219,12 @@ const removeTerm = async (req, res) => {
 
   const plannerCollection = await mongoClient.getCollection(PLANNER_COLLECTION);
   const userPlanner = await plannerCollection.findOne({ userId: userId });
-  const planner = userPlanner.planner;
-  const progressionStats = userPlanner.progressionStats;
-
   if (!userPlanner) {
     return res.status(404).json({ message: 'Planner not found.' });
   }
+
+  const planner = userPlanner.planner;
+  const progressionStats = userPlanner.progressionStats;
 
   if (planner[term].p1) {
     updateProgressions(progressionStats, planner[term].p1, -1);
@@ -224,6 +233,14 @@ const removeTerm = async (req, res) => {
     updateProgressions(progressionStats, planner[term].p2, -1);
   }
   delete planner[term];
+  console.log(`------- my planner after removal of term: ---- \n${planner}`);
+
+  /* Update the database */
+  await plannerCollection.updateOne(
+    { userId: userId },
+    { $set: { planner: planner, progressionStats: progressionStats } }
+  );
+
   res.status(200).send({ planner });
 };
 
@@ -380,6 +397,7 @@ const giveTypeOfSubject = async (req, res, next) => {
       return next(new ApiError(500, 'server error'));
     }
   }
+  next();
   next();
 };
 
@@ -762,9 +780,6 @@ async function getProgressions(userId) {
       await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
-    console.log(`\n---userPlanner = ${JSON.stringify(userPlanner)}`);
-    console.log(`INFO current userInfo.degree=${userPlanner.degree}`);
-
     /* Find the course info to check progression requirement */
     const courseCollection = await mongoClient.getCollection(COURSE_COLLECTION);
     const course = await courseCollection.findOne({
@@ -775,7 +790,11 @@ async function getProgressions(userId) {
       case 'Science':
         Object.assign(
           progressions,
-          scienceProgressions(course, userPlanner.progressionStats)
+          scienceProgressions(
+            course,
+            userPlanner.planner,
+            userPlanner.progressionStats
+          )
         );
         break;
       case 'Commerce':
@@ -821,6 +840,8 @@ module.exports = {
   removeSubject,
   getProgressions,
   resolveMiddleware,
+  checkOutComeAfterResolve,
+  autoAssignSubject
   checkOutComeAfterResolve,
   autoAssignSubject
 };

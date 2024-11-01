@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button';
 
 import SubjectCard from '@/components/common/subjectCard';
 import EmptySubjectCard from '@/components/planner/emptySubjectCard';
-import Rules from '@/components/planner/rules';
+import RulesGeneral from '@/components/planner/rulesGeneral';
+import RulesLevels from '@/components/planner/rulesLevels';
 // import subjectPlanner from '@/mock-data/courseData';
 
 import { Progressions } from '@/lib/objectSchema';
@@ -38,10 +39,14 @@ export default function PlannerPage({
 
   const [planner, setPlanner] = useState({});
   const [progressions, setProgressions] = useState<Progressions>({
-    overall: {},
-    discipline: {},
-    breadth: {},
-    degreeProgression: {},
+    general: {},
+    levelsRules: {
+      overall: {},
+      discipline: {},
+      breadth: {},
+      degreeProgression: {},
+      distinctStudyArea: {},
+    },
   });
 
   const years: Year[] = ['y1', 'y2', 'y3'];
@@ -147,7 +152,7 @@ export default function PlannerPage({
       const resProgressions = await axios.get(
         `${SERVER_URL}/v1/course/user/${userId}/progressions`,
       );
-      setProgressions(resProgressions.data);
+      setProgressions(resProgressions.data.progressions);
     } catch (err) {
       console.error(err);
       console.error(`Failed in handling POST ${url}`);
@@ -316,16 +321,28 @@ export default function PlannerPage({
           <div className="flex justify-center mb-3">
             <Button
               variant={'resolve'}
-              className="my-3 font-semibold text-lg"
+              className="my-6 font-semibold text-lg"
               onClick={() => callResolve()}
             >
-              Resolve
+              RESOLVE
             </Button>
           </div>
-          <h2 className="text-lg font-bold mb-4">Degree Checklist</h2>
-          <Rules progressions={progressions} ruleType="overall" />
-          <Rules progressions={progressions} ruleType="discipline" />
-          <Rules progressions={progressions} ruleType="breadth" />
+
+          <h2 className="text-xl font-bold text-center">
+            - Degree Checklist -
+          </h2>
+          <RulesGeneral progressions={progressions} />
+          <RulesLevels progressions={progressions} ruleType="overall" />
+          <RulesLevels progressions={progressions} ruleType="discipline" />
+          <RulesLevels progressions={progressions} ruleType="breadth" />
+          <RulesLevels
+            progressions={progressions}
+            ruleType="degreeProgression"
+          />
+          <RulesLevels
+            progressions={progressions}
+            ruleType="distinctStudyArea"
+          />
         </div>
       </div>
 

@@ -9,6 +9,9 @@ interface ErrorButtonProps {
 
 const ErrorButton: React.FC<ErrorButtonProps> = ({ errorType, onClick }) => {
   const isPrerequisiteError = errorType === "prerequisiteError";
+  const buttonImage = isPrerequisiteError ? "/error_1.svg" : "/clock.svg";
+  const buttonColor = isPrerequisiteError ? "bg-red-500" : "bg-orange-400";
+  const tooltipText = isPrerequisiteError ? "Prerequisite error" : "Semester error";
 
   return (
     <TooltipProvider>
@@ -18,15 +21,13 @@ const ErrorButton: React.FC<ErrorButtonProps> = ({ errorType, onClick }) => {
             onClick={onClick} 
             variant={isPrerequisiteError ? "prereqError" : "semesterError"}
             size="icon"
-            className={`rounded-full flex-none h-[1.5rem] w-[1.5rem] items-center justify-center ${
-              isPrerequisiteError ? "bg-red-500" : "bg-orange-400"
-            }`}
+            className={`rounded-full flex-none h-[1.7rem] w-[1.7rem] items-center justify-center ${buttonColor}`}
           >
-            <img src="/error_1.svg" className="h-5 w-5" alt="error icon" />
+            <img src={buttonImage} className="h-6 w-6" alt="error icon" />
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom">
-          {isPrerequisiteError ? "Prerequisite error" : "Semester error"}
+          {tooltipText}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

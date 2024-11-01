@@ -22,37 +22,59 @@ export interface ProgressionGroup {
   level3?: ProgressionItem;
 }
 
-export interface Progressions {
-  overall: ProgressionGroup;
-  discipline: ProgressionGroup;
-  breadth: ProgressionGroup;
-  degreeProgression: ProgressionGroup;
-  // {
-  //   "overall": {
-  //       "level1": {
-  //           "stats": "0 / 125(max) Credit Points of Level 1 Subject",
-  //           "fulfilled": true
-  //       }
-  //   },
-  //   "discipline": {
-  //       "level1": {
-  //           "stats": "0 / 62.5(min) Credit Points of Level 1 Discipline Subject",
-  //           "fulfilled": false
-  //       },
-  //       "level2": {
-  //           "stats": "0 / 62.5(min) Credit Points of Level 2 Discipline Subject",
-  //           "fulfilled": false
-  //       },
-  //       "level3": {
-  //           "stats": "0 / 75(min) Credit Points of Level 3 Discipline Subject",
-  //           "fulfilled": false
-  //       }
-  //   },
-  //   "breadth": {
-  //       "level1": {
-  //           "stats": "0 / 25(max) Credit Points of Level 1 Breadth Subject",
-  //           "fulfilled": true
-  //       }
-  //   },
-  //   "degreeProgression": {}
+interface GeneralProgression {
+  compulsory?: ProgressionItem;
+  breadth?: ProgressionItem;
 }
+
+export interface Progressions {
+  general: GeneralProgression;
+  levelsRules: {
+    overall: ProgressionGroup;
+    discipline: ProgressionGroup;
+    breadth: ProgressionGroup;
+    degreeProgression: ProgressionGroup;
+    distinctStudyArea: ProgressionGroup;
+  };
+}
+
+/* This is simply an example of the progression object for future developers */
+// const _exampleProgressions: Progressions = {
+//   general: {
+//     compulsory: { stats: 'Compulsory Subject: SCIE10005', fulfilled: true },
+//     breadth: {
+//       stats: '0 / 50(min) to 62.5(max) Credit Points of Breadth Subject',
+//       fulfilled: false,
+//     },
+//   },
+//   levelsRules: {
+//     overall: {
+//       level1: {
+//         stats: '0 / 125(max) Credit Points of Level 1 Subject',
+//         fulfilled: true,
+//       },
+//     },
+//     discipline: {
+//       level1: {
+//         stats: '0 / 62.5(min) Credit Points of Level 1 Discipline Subject',
+//         fulfilled: false,
+//       },
+//       level2: {
+//         stats: '0 / 62.5(min) Credit Points of Level 2 Discipline Subject',
+//         fulfilled: false,
+//       },
+//       level3: {
+//         stats: '0 / 75(min) Credit Points of Level 3 Discipline Subject',
+//         fulfilled: false,
+//       },
+//     },
+//     breadth: {
+//       level1: {
+//         stats: '0 / 25(max) Credit Points of Level 1 Breadth Subject',
+//         fulfilled: true,
+//       },
+//     },
+//     degreeProgression: {},
+//     distinctStudyArea: {},
+//   },
+// };
