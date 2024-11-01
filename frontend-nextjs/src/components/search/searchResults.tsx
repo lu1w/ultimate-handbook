@@ -37,10 +37,6 @@ export default function SearchResults({
     try {
       const newSubjectInfo: { [slot: string]: Subject } = {};
       newSubjectInfo[slot] = subject;
-      await axios.post(
-        `${SERVER_URL}/v1/course/user/${userId}/add`,
-        newSubjectInfo,
-      );
       router.push(`/planner/${userId}`);
     } catch (err) {
       console.error(err);

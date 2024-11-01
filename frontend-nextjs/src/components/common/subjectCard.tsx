@@ -37,6 +37,7 @@ interface SubjectCardProps {
   semesterError?: boolean;
   handleClick?: () => void;
   button?: string;
+  userId?: string;
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({
@@ -52,6 +53,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
   semesterError,
   handleClick,
   button,
+  userId,
 }) => {
   const typeColor = TYPE_COLOURS[header] || 'bg-subject';
 
@@ -80,7 +82,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
           </CardTitle>
           <div className="w-2/7 flex justify-end items-center space-x-2">
             {prerequisiteError ? (
-              <PrereqDisplay subjectCode={subjectCode} />
+              <PrereqDisplay subjectCode={subjectCode} userId = {userId} />
             ) : null}
             {semesterError ? <ErrorButton errorType="semesterError" /> : null}
           </div>
