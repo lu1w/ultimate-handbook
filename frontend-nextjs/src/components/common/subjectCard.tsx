@@ -57,7 +57,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
 
   return (
     <Card className={`w-full h-full min-w-40 ${className}`}>
-      <CardHeader className={cn('relative', typeColor, 'p-3', 'rounded-t-lg')}>
+      <CardHeader className={cn('relative', typeColor, 'py-2 px-3 m-0', 'rounded-t-lg')}>
         <div className="flex justify-between items-center">
           <span className="text-xs font-semibold">{header}</span>
           {handleClick ? (
@@ -65,7 +65,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
               variant="ghost"
               size="sm"
               onClick={handleClick}
-              className="absolute text-base font-bold right-2 top-2 h-6 w-6"
+              className="text-base font-bold h-6 w-6 flex items-center justify-center"
             >
               {button}
             </Button>
@@ -116,3 +116,4 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
 };
 
 export default SubjectCard;
+export type { SubjectCardProps };
