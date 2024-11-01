@@ -143,7 +143,6 @@ The Custom Planner module allows users to manage their course plans by adding or
   4. **giveTypeOfSubject**: Determines the type of the subject (e.g., compulsory, elective, breadth, or discipline) by comparing it with the user's profile, which includes the major and faculty information saved during the planner's initialization.
   5. **savePlanner**: Saves the updated planner back to the MongoDB database.
 
-
 ### Key Algorithms and Logic
 
 - **Subject Type Determination**
@@ -151,6 +150,7 @@ The Custom Planner module allows users to manage their course plans by adding or
   The `giveTypeOfSubject` middleware plays a vital role in categorizing subjects. By comparing the subject being added with the user's degree and major information, it assigns the appropriate type. This is essential for validating the planner against degree requirements.
 
 - **Conflict Detection**
+
 
   The `isValidAdd` middleware checks for scheduling conflicts, prerequisite issues, and ensures that give the error type to frontend 
 
@@ -197,6 +197,7 @@ The Search module allows users to retrieve subjects from the database based on v
     // Fetches all subjects from the database
   });
   ```
+
 - **Search Subjects with Conditions**
 
   ```javascript
@@ -265,7 +266,9 @@ The Display module provides endpoints for retrieving and displaying various data
   });
   ```
 
+
   Provides detailed progression statistics for a user, helping them understand their degree completion st   atus.
+
 
 - **Get Core Subjects for a Major**
 
