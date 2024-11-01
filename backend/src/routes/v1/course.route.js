@@ -18,8 +18,6 @@ const {
   loadUserPlanner,
   savePlanner,
   autoAssignSubject
-  savePlanner,
-  autoAssignSubject
 } = require('../../service/courseService');
 
 /**
@@ -206,7 +204,7 @@ router.delete('/user/:userId/remove/:slot', removeSubject);
  *       500:
  *         description: Server error.
  */
-router.post('/user/:userId/add',
+
 router.post('/user/:userId/add',
   loadUserPlanner,
   addSubject,

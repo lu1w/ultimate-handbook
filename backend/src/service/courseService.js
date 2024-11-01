@@ -7,8 +7,6 @@ const {
   STUDY_AREA_COLLECTION,
   PLANNER_COLLECTION,
   SUBJECT_COLLECTION
-  PLANNER_COLLECTION,
-  SUBJECT_COLLECTION
 } = require('../lib/dbConstants');
 const { scienceProgressions } = require('./progressionService');
 
@@ -840,8 +838,6 @@ module.exports = {
   removeSubject,
   getProgressions,
   resolveMiddleware,
-  checkOutComeAfterResolve,
-  autoAssignSubject
   checkOutComeAfterResolve,
   autoAssignSubject
 };
