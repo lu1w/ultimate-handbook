@@ -3,7 +3,6 @@ import axios from 'axios';
 import type { SubjectCardProps } from '../common/subjectCard';
 import SubjectCard from '../common/subjectCard';
 import { SERVER_URL } from '@/lib/utils';
-import { useRouter} from 'next/navigation';
 
 
 interface SubjectFetcherProps {
@@ -12,7 +11,6 @@ interface SubjectFetcherProps {
 }
 
 const SubjectFetcher: React.FC<SubjectFetcherProps> = ({ subjectCode, userId}) => {
-  const router = useRouter();
   const [subjectData, setSubjectData] = useState<SubjectCardProps | null>(null);
 
   const handleClick = async () => {
