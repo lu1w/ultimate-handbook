@@ -171,7 +171,7 @@ function scienceProgressions(courseInfo, planner, progressionStats) {
       missingCompulsory.push(compulsory);
   });
   progressions.general.compulsory = {
-    stats: `Compulsory subject: ${courseInfo.compulsorySubject.toString()}; missing: ${missingCompulsory.toString()}`,
+    stats: `Compulsory subject: ${courseInfo.compulsorySubject.toString()}; ${missingCompulsory.length !== 0 ? `missing: ${missingCompulsory.toString()}` : ''}`,
     fulfilled: missingCompulsory.length === 0
   };
 

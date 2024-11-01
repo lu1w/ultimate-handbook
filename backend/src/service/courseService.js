@@ -250,7 +250,7 @@ const loadUserPlanner = async (req, res, next) => {
 
   try {
     const plannerCollection =
-    await mongoClient.getCollection(PLANNER_COLLECTION);
+      await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
     console.log(
@@ -391,11 +391,11 @@ const giveTypeOfSubject = async (req, res, next) => {
         });
       }
       updateProgressions(userPlanner.progressionStats, subject);
-      next();
     } catch (err) {
       return next(new ApiError(500, 'server error'));
     }
   }
+  next();
 };
 
 const savePlanner = async (req, res, next) => {
@@ -405,7 +405,7 @@ const savePlanner = async (req, res, next) => {
 
   try {
     const plannerCollection =
-    await mongoClient.getCollection(PLANNER_COLLECTION);
+      await mongoClient.getCollection(PLANNER_COLLECTION);
     await plannerCollection.updateOne(
       { userId: userId },
       { $set: { planner: planner, progressionStats: progressionStats } }
@@ -517,7 +517,6 @@ const checkOutComeAfterResolve = async (req, res, next) => {
   }
 };
 
-
 // In your courseService.js file
 
 const autoAssignSubject = async (req, res, next) => {
@@ -542,7 +541,9 @@ const autoAssignSubject = async (req, res, next) => {
     const studyPeriods = subject.studyPeriod; // e.g., ['Semester 1', 'Semester 2']
 
     if (!studyPeriods || studyPeriods.length === 0) {
-      return res.status(400).json({ error: 'No available study periods for this subject' });
+      return res
+        .status(400)
+        .json({ error: 'No available study periods for this subject' });
     }
 
     // Map study periods to planner keys ('Semester 1' -> 's1', etc.)
@@ -553,7 +554,9 @@ const autoAssignSubject = async (req, res, next) => {
       'Winter Term': 'wi'
     };
     const allSemesters = ['s1', 's2', 'su', 'wi'];
-    const availableSemesters = studyPeriods.map(period => semesterMap[period]);
+    const availableSemesters = studyPeriods.map(
+      (period) => semesterMap[period]
+    );
 
     const invalidSemesters = allSemesters.filter(
       (sem) => !availableSemesters.includes(sem)
@@ -570,7 +573,10 @@ const autoAssignSubject = async (req, res, next) => {
         if (planner[term]) {
           const positions = ['p1', 'p2', 'p3', 'p4'];
           for (const pos of positions) {
-            if (!planner[term][pos] || Object.keys(planner[term][pos]).length === 0) {
+            if (
+              !planner[term][pos] ||
+              Object.keys(planner[term][pos]).length === 0
+            ) {
               // Assign the subject to this slot
               planner[term][pos] = subject;
               assigned = true;
@@ -584,9 +590,10 @@ const autoAssignSubject = async (req, res, next) => {
     }
 
     if (!assigned) {
-      return res.status(400).json({ error: 'No available slot found for this subject' });
+      return res
+        .status(400)
+        .json({ error: 'No available slot found for this subject' });
     }
-
 
     next();
   } catch (err) {
@@ -816,7 +823,6 @@ function updateProgressions(progressionStats, subject, side = 1) {
     progressionStats[`breadth${level}`] += diffPoints;
   }
 }
-
 
 module.exports = {
   setBasicInfo,

@@ -233,6 +233,7 @@ export default function PlannerPage({
                   <SubjectCard
                     key={position}
                     {...subject}
+                    userId={userId}
                     handleClick={() =>
                       removeSubject(year, studyPeriod, position)
                     }
@@ -262,6 +263,7 @@ export default function PlannerPage({
                   <SubjectCard
                     key={position}
                     {...subject}
+                    userId={userId}
                     handleClick={() =>
                       removeSubject(year, studyPeriod, position)
                     }
