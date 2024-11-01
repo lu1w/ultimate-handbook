@@ -554,27 +554,25 @@ const autoAssignSubject = async (req, res, next) => {
     };
     const allSemesters = ['s1', 's2', 'su', 'wi'];
     const availableSemesters = studyPeriods.map(period => semesterMap[period]);
-
-    const invalidSemesters = allSemesters.filter(
-      (sem) => !availableSemesters.includes(sem)
-    );
-
-    const combinedSemesters = [...allSemesters, ...invalidSemesters];
-    // Loop over available semesters and years to find the earliest available slot
     const years = ['y1', 'y2', 'y3'];
+    const positions = ['p1', 'p2', 'p3', 'p4'];
+
     let assigned = false;
     let theTerm = '';
-    for (const sem of combinedSemesters) {
-      for (const year of years) {
+    // First, try to assign the subject in its valid semesters
+    for (const year of years) {
+      for (const sem of availableSemesters) {
         const term = `${year}${sem}`; // e.g., 'y1s1'
         if (planner[term]) {
-          const positions = ['p1', 'p2', 'p3', 'p4'];
           for (const pos of positions) {
-            if (!planner[term][pos] || Object.keys(planner[term][pos]).length === 0) {
+            if (
+              !planner[term][pos] ||
+              Object.keys(planner[term][pos]).length === 0
+            ) {
               // Assign the subject to this slot
               //planner[term][pos] = subject;
-              assigned = true;
               theTerm = `${year}${sem}${pos}`;
+              assigned = true;
               break;
             }
           }
@@ -584,9 +582,77 @@ const autoAssignSubject = async (req, res, next) => {
       if (assigned) break;
     }
 
+    // If not assigned in valid semesters, try to assign in invalid semesters
     if (!assigned) {
-      return res.status(400).json({ error: 'No available slot found for this subject' });
+      // Find semesters not in availableSemesters
+      const invalidSemesters = allSemesters.filter(
+        (sem) => !availableSemesters.includes(sem)
+      );
+
+      // Collect candidate slots in invalid semesters
+      const candidateSlots = [];
+
+      for (const year of years) {
+        for (const sem of invalidSemesters) {
+          const term = `${year}${sem}`;
+          if (planner[term]) {
+            for (const pos of positions) {
+              if (
+                !planner[term][pos] ||
+                Object.keys(planner[term][pos]).length === 0
+              ) {
+                // Add this slot as a candidate
+                candidateSlots.push({ term, pos, year });
+                break; // Only need one slot per semester
+              }
+            }
+          }
+        }
+      }
+
+      if (candidateSlots.length > 0) {
+        // Choose the earliest candidate slot
+        const { term, pos,year } = candidateSlots[0];
+        //planner[term][pos] = subject;
+        theTerm = `${year}${term}${pos}`;
+        assigned = true;
+      }
     }
+
+    if (!assigned) {
+      return res
+        .status(400)
+        .json({ error: 'No available slot found for this subject' });
+    }
+
+    // const combinedSemesters = [...allSemesters, ...invalidSemesters];
+    // // Loop over available semesters and years to find the earliest available slot
+    // const years = ['y1', 'y2', 'y3'];
+    // let assigned = false;
+    // let theTerm = '';
+    // for (const year of years) {
+    //   for (const sem of combinedSemesters) {
+    //     const term = `${year}${sem}`; // e.g., 'y1s1'
+    //     if (planner[term]) {
+    //       const positions = ['p1', 'p2', 'p3', 'p4'];
+    //       for (const pos of positions) {
+    //         if (!planner[term][pos] || Object.keys(planner[term][pos]).length === 0) {
+    //           // Assign the subject to this slot
+    //           //planner[term][pos] = subject;
+    //           assigned = true;
+    //           theTerm = `${year}${sem}${pos}`;
+    //           break;
+    //         }
+    //       }
+    //     }
+    //     if (assigned) break;
+    //   }
+    //   if (assigned) break;
+    // }
+
+    // if (!assigned) {
+    //   return res.status(400).json({ error: 'No available slot found for this subject' });
+    // }
     const subjectsWithPosition = {[theTerm]: subject};//e.g {y1s1p1: {subject}}
     try {
       res.status(200).send(subjectsWithPosition);
