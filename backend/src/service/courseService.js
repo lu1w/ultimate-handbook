@@ -245,7 +245,7 @@ const loadUserPlanner = async (req, res, next) => {
     if (!userPlanner) {
       return res.status(404).json({ message: 'Planner not found.' });
     }
-
+    req.userId = userId;
     // put planner and userInfo into the request object
     req.userPlanner = userPlanner;
 
@@ -510,7 +510,6 @@ const autoAssignSubject = async (req, res, next) => {
     const userPlanner = req.userPlanner;
     const planner = userPlanner.planner;
     const subjectCode = req.params.subjectCode;
-
     if (!subjectCode) {
       return res.status(400).json({ error: 'No subject code provided' });
     }
@@ -548,7 +547,7 @@ const autoAssignSubject = async (req, res, next) => {
     // Loop over available semesters and years to find the earliest available slot
     const years = ['y1', 'y2', 'y3'];
     let assigned = false;
-
+    let theTerm = '';
     for (const sem of combinedSemesters) {
       for (const year of years) {
         const term = `${year}${sem}`; // e.g., 'y1s1'
@@ -557,8 +556,9 @@ const autoAssignSubject = async (req, res, next) => {
           for (const pos of positions) {
             if (!planner[term][pos] || Object.keys(planner[term][pos]).length === 0) {
               // Assign the subject to this slot
-              planner[term][pos] = subject;
+              //planner[term][pos] = subject;
               assigned = true;
+              theTerm = `${year}${sem}${pos}`;
               break;
             }
           }
@@ -571,10 +571,15 @@ const autoAssignSubject = async (req, res, next) => {
     if (!assigned) {
       return res.status(400).json({ error: 'No available slot found for this subject' });
     }
-
-
-    next();
-  } catch (err) {
+    const subjectsWithPosition = {[theTerm]: subject};//e.g {y1s1p1: {subject}}
+    try {
+      res.status(200).send(subjectsWithPosition);
+    } 
+    catch (err) {
+      return next(new ApiError(500, `Server error: ${err.message}`));
+    }
+  } 
+  catch (err) {
     return next(new ApiError(500, `Server error: ${err.message}`));
   }
 };

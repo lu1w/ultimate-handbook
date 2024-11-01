@@ -307,7 +307,7 @@ router.get('/prerequisites/:subjectCode', async (req, res, next) => {
  *       500:
  *         description: Server error.
  */
-router.get('/user/:userId/prerequisites/:subjectCode/autoassign', loadUserPlanner, autoAssignSubject, savePlanner);
+router.get('/user/:userId/prerequisites/:subjectCode/autoassign', loadUserPlanner, autoAssignSubject);
 
 
 /**
