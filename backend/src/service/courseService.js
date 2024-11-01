@@ -250,7 +250,7 @@ const loadUserPlanner = async (req, res, next) => {
 
   try {
     const plannerCollection =
-    await mongoClient.getCollection(PLANNER_COLLECTION);
+      await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
     console.log(
@@ -390,13 +390,15 @@ const giveTypeOfSubject = async (req, res, next) => {
           message: 'Error: subject area not correctly stored in the database'
         });
       }
-      //updateProgressions(userPlanner.progressionStats, subject);
+
+      updateProgressions(userPlanner.progressionStats, subject);
+
     } catch (err) {
       return next(new ApiError(500, 'server error'));
     }
   }
   next();
-  next();
+
 };
 
 const savePlanner = async (req, res, next) => {
@@ -406,7 +408,7 @@ const savePlanner = async (req, res, next) => {
 
   try {
     const plannerCollection =
-    await mongoClient.getCollection(PLANNER_COLLECTION);
+      await mongoClient.getCollection(PLANNER_COLLECTION);
     await plannerCollection.updateOne(
       { userId: userId },
       { $set: { planner: planner, progressionStats: progressionStats } }
@@ -518,7 +520,6 @@ const checkOutComeAfterResolve = async (req, res, next) => {
   }
 };
 
-
 // In your courseService.js file
 
 const autoAssignSubject = async (req, res, next) => {
@@ -542,7 +543,9 @@ const autoAssignSubject = async (req, res, next) => {
     const studyPeriods = subject.studyPeriod; // e.g., ['Semester 1', 'Semester 2']
 
     if (!studyPeriods || studyPeriods.length === 0) {
-      return res.status(400).json({ error: 'No available study periods for this subject' });
+      return res
+        .status(400)
+        .json({ error: 'No available study periods for this subject' });
     }
 
     // Map study periods to planner keys ('Semester 1' -> 's1', etc.)
@@ -554,6 +557,7 @@ const autoAssignSubject = async (req, res, next) => {
     };
     const allSemesters = ['s1', 's2', 'su', 'wi'];
     const availableSemesters = studyPeriods.map(period => semesterMap[period]);
+
     const years = ['y1', 'y2', 'y3'];
     const positions = ['p1', 'p2', 'p3', 'p4'];
 
@@ -662,6 +666,7 @@ const autoAssignSubject = async (req, res, next) => {
     }
   } 
   catch (err) {
+
     return next(new ApiError(500, `Server error: ${err.message}`));
   }
 };
@@ -888,7 +893,6 @@ function updateProgressions(progressionStats, subject, side = 1) {
     progressionStats[`breadth${level}`] += diffPoints;
   }
 }
-
 
 module.exports = {
   setBasicInfo,
