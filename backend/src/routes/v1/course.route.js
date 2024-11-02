@@ -204,7 +204,8 @@ router.delete('/user/:userId/remove/:slot', removeSubject);
  *       500:
  *         description: Server error.
  */
-router.post('/user/:userId/add',
+router.post(
+  '/user/:userId/add',
   loadUserPlanner,
   addSubject,
   isValidAdd,
@@ -307,8 +308,12 @@ router.get('/prerequisites/:subjectCode', async (req, res, next) => {
  *       500:
  *         description: Server error.
  */
-router.get('/user/:userId/prerequisites/:subjectCode/autoassign', loadUserPlanner, autoAssignSubject, savePlanner);
-
+router.get(
+  '/user/:userId/prerequisites/:subjectCode/autoassign',
+  loadUserPlanner,
+  autoAssignSubject,
+  savePlanner
+);
 
 /**
  * @swagger
@@ -357,7 +362,12 @@ router.get('/user/:userId/prerequisites/:subjectCode/autoassign', loadUserPlanne
  *         description: Internal server error.
  */
 
-router.post('/user/:userId/resolve',loadUserPlanner,resolveMiddleware,checkOutComeAfterResolve);
+router.post(
+  '/user/:userId/resolve',
+  loadUserPlanner,
+  resolveMiddleware,
+  checkOutComeAfterResolve
+);
 
 /**
  * @swagger
@@ -505,7 +515,5 @@ router.get('/user/:userId/progressions', async (req, res) => {
     res.status(500).send({ message: `Server error: ${err}` });
   }
 });
-
-
 
 module.exports = router;
