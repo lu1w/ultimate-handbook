@@ -489,7 +489,7 @@ const resolveMiddleware = async (req, res, next) => {
       courseName: userInfo.degree,
       coursePlanner: planner
     });
-    
+
     Object.assign(planner, response.data);
     console.log('Updated planner:', planner);
     req.userPlanner.planner = planner;
