@@ -244,6 +244,7 @@ const removeTerm = async (req, res) => {
 
 const loadUserPlanner = async (req, res, next) => {
   const { userId } = req.params;
+
   if (!userId) {
     return res.status(400).json({ message: 'No userId provided.' });
   }
@@ -263,6 +264,10 @@ const loadUserPlanner = async (req, res, next) => {
     req.userId = userId;
     // put planner and userInfo into the request object
     req.userPlanner = userPlanner;
+
+    req.userInfo = {
+      degree: userPlanner.degree
+    };
 
     next();
   } catch (err) {
@@ -483,16 +488,17 @@ const removeSubject = async (req, res, next) => {
 };
 
 const resolveMiddleware = async (req, res, next) => {
-  const planner = req.planner;
+  const planner = req.userPlanner.planner;
   const userInfo = req.userInfo;
+  console.log('User Info:', userInfo);
+  console.log('Planner:', planner);
   try {
-    const response = await axios.post('http://localhost:5001/resolve', {
+    const response = await axios.post('http://127.0.0.1:5001/resolve', {
       courseName: userInfo.degree,
       coursePlanner: planner
     });
 
     Object.assign(planner, response.data);
-
     console.log('Updated planner:', planner);
     next();
   } catch (error) {
