@@ -11,7 +11,7 @@ export default function RulesGeneral({ progressions }: RulesGeneralProps) {
     <div>
       <h1 className="font-bold mt-8 mb-4">General Rules</h1>
       <ul>
-        {progressions.general.compulsory ? (
+        {progressions?.general?.compulsory ? (
           <li className={itemClass}>
             {progressions.general.compulsory?.fulfilled ? (
               <span className="text-green-500 mr-4">✔</span>
@@ -22,7 +22,7 @@ export default function RulesGeneral({ progressions }: RulesGeneralProps) {
           </li>
         ) : null}
 
-        {progressions.general.breadth ? (
+        {progressions?.general?.breadth ? (
           <li className={itemClass}>
             {progressions.general.breadth?.fulfilled ? (
               <span className="text-green-500 mr-4">✔</span>
