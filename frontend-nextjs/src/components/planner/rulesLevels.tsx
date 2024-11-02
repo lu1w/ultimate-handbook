@@ -47,7 +47,7 @@ export default function RulesLevels({
           ),
         )} */}
 
-        {progressions.levelsRules[ruleType].level1 ? (
+        {progressions?.levelsRules?.[ruleType]?.level1 ? (
           <li className={itemClass}>
             {progressions.levelsRules[ruleType].level1?.fulfilled ? (
               <span className="text-green-500 mr-4">✔</span>
@@ -58,7 +58,7 @@ export default function RulesLevels({
           </li>
         ) : null}
 
-        {progressions.levelsRules[ruleType].level2 ? (
+        {progressions?.levelsRules?.[ruleType]?.level2 ? (
           <li className={itemClass}>
             {progressions.levelsRules[ruleType].level2?.fulfilled ? (
               <span className="text-green-500 mr-4">✔</span>
@@ -69,7 +69,7 @@ export default function RulesLevels({
           </li>
         ) : null}
 
-        {progressions.levelsRules[ruleType].level3 ? (
+        {progressions?.levelsRules?.[ruleType]?.level3 ? (
           <li className={itemClass}>
             {progressions.levelsRules[ruleType].level3?.fulfilled ? (
               <span className="text-green-500 mr-4">✔</span>
