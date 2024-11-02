@@ -5,6 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+
 export const SERVER_URL = 'https://unimelb-course-planner-57f483cf5eff.herokuapp.com';
 
 // export const SERVER_URL = 'http://localhost:4000';
