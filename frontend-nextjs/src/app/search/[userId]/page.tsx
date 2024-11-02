@@ -28,6 +28,11 @@ export default function SearchPage({ params }: { params: { userId: string } }) {
   // const studyPeriods = new Set<StudyPeriod>(allStudyPeriod);
   const [studyAreas, setStudyAreas] = useState<Set<string>>(new Set<string>());
 
+  useEffect(() => {
+    setLevels(new Set(levels));
+    setStudyPeriods(new Set(studyPeriods));
+  }, []);
+
   /* Fetch subject data when the component mounts */
   useEffect(() => {
     const fetchSubjects = async () => {
