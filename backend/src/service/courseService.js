@@ -254,9 +254,9 @@ const loadUserPlanner = async (req, res, next) => {
       await mongoClient.getCollection(PLANNER_COLLECTION);
     const userPlanner = await plannerCollection.findOne({ userId: userId });
 
-    console.log(
-      `loadUserPlanner() userPlanner: ${JSON.stringify(userPlanner)}`
-    );
+    // console.log(
+    //   `loadUserPlanner() userPlanner: ${JSON.stringify(userPlanner)}`
+    // );
 
     if (!userPlanner) {
       return res.status(404).json({ message: 'Planner not found.' });
@@ -311,6 +311,13 @@ const addSubject = async (req, res, next) => {
       return res.status(400).json({ error: 'Missing subject code' });
     }
 
+    // **Check if the subject already exists in the planner**
+    if (subjectExistsInPlanner(planner, subjectCode)) {
+      return res.status(400).json({
+        error: `Subject ${subjectCode} already exists in the planner`
+      });
+    }
+
     /* Add subject to planner */
     planner[term][position] = subject;
 
@@ -339,22 +346,7 @@ const isValidAdd = async (req, res, next) => {
   const subjectsCodeInPlanner = getAllSubjectCodes(planner);
 
   checkAllSubjectPrequisites(subjectsCodeInPlanner, planner); // we will check all subjects prerequisites in planner after adding the subject
-
-  // check if the Subjects is in the right semester
-  const { studyPeriod } = subject;
-  // Check if studyPeriod array contains any items
-  if (studyPeriod && studyPeriod.length > 0) {
-    // Loop through each study period to check against the subjectSemesterInPlanner
-    const match = studyPeriod.some((period) => {
-      const studyRequireSemester = period.substring(9); // Extract subjectSemesterInPlanner number
-      return studyRequireSemester === subjectSemesterInPlanner;
-    });
-    if (!match) {
-      subject.semesterError = true;
-    } else {
-      delete subject.semesterError;
-    }
-  }
+  checkSubjectSemester(subject, subjectSemesterInPlanner);
   next();
 };
 
@@ -490,8 +482,8 @@ const removeSubject = async (req, res, next) => {
 const resolveMiddleware = async (req, res, next) => {
   const planner = req.userPlanner.planner;
   const userInfo = req.userInfo;
-  console.log('User Info:', userInfo);
-  console.log('Planner:', planner);
+  // console.log('User Info:', userInfo);
+  // console.log('Planner:', planner);
   try {
     const response = await axios.post('http://127.0.0.1:5001/resolve', {
       courseName: userInfo.degree,
@@ -500,6 +492,7 @@ const resolveMiddleware = async (req, res, next) => {
 
     Object.assign(planner, response.data);
     console.log('Updated planner:', planner);
+    req.userPlanner.planner = planner;
     next();
   } catch (error) {
     if (error.response) {
@@ -510,11 +503,14 @@ const resolveMiddleware = async (req, res, next) => {
   }
 };
 const checkOutComeAfterResolve = async (req, res, next) => {
-  const planner = req.planner;
+  const planner = req.userPlanner.planner;
+
   try {
     const subjectsCodeInPlanner = getAllSubjectCodes(planner);
     checkAllSubjectPrequisites(subjectsCodeInPlanner, planner);
-    res.status(200).send(planner); // but we should make a loop if errors exist!
+    checkPlannerSemesters(planner);
+    next();
+    //res.status(200).send(planner); // but we should make a loop if errors exist!
   } catch (error) {
     if (error.response) {
       next(new ApiError(error.response.status, error.response.data));
@@ -523,6 +519,48 @@ const checkOutComeAfterResolve = async (req, res, next) => {
     }
   }
 };
+
+function subjectExistsInPlanner(planner, subjectCode) {
+  for (const termKey in planner) {
+    if (Object.prototype.hasOwnProperty.call(planner, termKey)) {
+      const term = planner[termKey];
+      for (const positionKey in term) {
+        if (Object.prototype.hasOwnProperty.call(term, positionKey)) {
+          const subject = term[positionKey];
+          if (
+            subject &&
+            Object.keys(subject).length > 0 &&
+            subject.subjectCode &&
+            subject.subjectCode.toUpperCase() === subjectCode.toUpperCase()
+          ) {
+            return true; // Subject already exists in the planner
+          }
+        }
+      }
+    }
+  }
+  return false; // Subject does not exist in the planner
+}
+
+function checkPlannerSemesters(planner) {
+  // loop through each term in the planner(y1s1, y1s2, y2s1, y2s2, y3s1, y3s2)
+  for (const termKey in planner) {
+    if (Object.prototype.hasOwnProperty.call(planner, termKey)) {
+      const term = planner[termKey];
+      // "y1s1"、"y2s2"
+      const semesterInPlanner = termKey.substring(3); // sem1, sem2
+      // loop through each position in the term(p1, p2, p3, p4)
+      for (const positionKey in term) {
+        if (Object.prototype.hasOwnProperty.call(term, positionKey)) {
+          const subject = term[positionKey];
+          if (subject && Object.keys(subject).length > 0) {
+            checkSubjectSemester(subject, semesterInPlanner);
+          }
+        }
+      }
+    }
+  }
+}
 
 // In your courseService.js file
 
@@ -674,6 +712,23 @@ const autoAssignSubject = async (req, res, next) => {
     return next(new ApiError(500, `Server error: ${err.message}`));
   }
 };
+function checkSubjectSemester(subject, subjectSemesterInPlanner) {
+  // check if the Subjects is in the right semester
+  const { studyPeriod } = subject;
+  // Check if studyPeriod array contains any items
+  if (studyPeriod && studyPeriod.length > 0) {
+    // Loop through each study period to check against the subjectSemesterInPlanner
+    const match = studyPeriod.some((period) => {
+      const studyRequireSemester = period.substring(9); // Extract subjectSemesterInPlanner number
+      return studyRequireSemester === subjectSemesterInPlanner;
+    });
+    if (!match) {
+      subject.semesterError = true;
+    } else {
+      delete subject.semesterError;
+    }
+  }
+}
 
 // V1: this function will decide whether need to add error to the subject
 // function checkAllSubjectPrequisites(subjectsCodeInPlanner) {
@@ -714,8 +769,12 @@ function checkAllSubjectPrequisites(subjectsCodeInPlanner, planner) {
         if (!prerequisitesMet) {
           // Mark the subject with error
           subj.prerequisiteError = true;
+          // console.log('           Subject prerequisites are  not met.               ');
+          // console.log('           Subject prerequisites are  not met.               ');
         } else {
           delete subj.prerequisiteError;
+          // console.log('           Subject prerequisites are  met.               ');
+          // console.log('           Subject prerequisites are  met.               ');
         }
       }
     }

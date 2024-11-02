@@ -366,7 +366,8 @@ router.post(
   '/user/:userId/resolve',
   loadUserPlanner,
   resolveMiddleware,
-  checkOutComeAfterResolve
+  checkOutComeAfterResolve,
+  savePlanner
 );
 
 /**
