@@ -20,12 +20,12 @@ export default function SearchPage({ params }: { params: { userId: string } }) {
   const [result, setResult] = useState([]);
 
   /* Filter */
-  // const [levels, setLevels] = useState<Set<Level>>(new Set<Level>(allLevels));
-  // const [studyPeriods, setStudyPeriods] = useState<Set<StudyPeriod>>(
-  //   new Set<StudyPeriod>(allStudyPeriod),
-  // );
-  const levels = new Set<Level>(allLevels);
-  const studyPeriods = new Set<StudyPeriod>(allStudyPeriod);
+  const [levels, setLevels] = useState<Set<Level>>(new Set<Level>(allLevels));
+  const [studyPeriods, setStudyPeriods] = useState<Set<StudyPeriod>>(
+    new Set<StudyPeriod>(allStudyPeriod),
+  );
+  // const levels = new Set<Level>(allLevels);
+  // const studyPeriods = new Set<StudyPeriod>(allStudyPeriod);
   const [studyAreas, setStudyAreas] = useState<Set<string>>(new Set<string>());
 
   /* Fetch subject data when the component mounts */
