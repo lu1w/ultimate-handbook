@@ -3,6 +3,7 @@ import axios from 'axios';
 import type { SubjectCardProps } from '../common/subjectCard';
 import SubjectCard from '../common/subjectCard';
 import { SERVER_URL } from '@/lib/utils';
+import RepeatedSubjectAlert from '../common/repeatedSubjectAlert';
 
 
 interface SubjectFetcherProps {
@@ -12,27 +13,34 @@ interface SubjectFetcherProps {
 
 const SubjectFetcher: React.FC<SubjectFetcherProps> = ({ subjectCode, userId}) => {
   const [subjectData, setSubjectData] = useState<SubjectCardProps | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleClick = async () => {
     try {
       const url = `${SERVER_URL}/v1/course/user/${userId}/prerequisites/${subjectCode}/autoassign`;
       const res = await axios.get(url);
-      
-      console.log("autoassign response:", res);
       const [slot] = Object.keys(res.data);
       const subjectData = res.data[slot];
   
       const newSubjectInfo = { [slot]: subjectData };
-      await axios.post(
+      const nextRes = await axios.post(
         `${SERVER_URL}/v1/course/user/${userId}/add`,
         newSubjectInfo,
       );
-  
-      console.log("Subject added successfully");
-      location.reload();
-  
-    } catch (error) {
-      console.error("Error during auto-assign and add:", error);
+      
+      if (nextRes.status === 200) {
+        location.reload();
+      } else if (nextRes.status === 400) {
+        setErrorMessage(nextRes.data.error);
+        location.reload();
+      }  
+    } catch (err: any) {
+      if (err.response && err.response.status === 400) {
+        // Set the error message to display the dialog
+        setErrorMessage(err.response.data.error);
+      } else {
+        console.error(err); 
+      }
     }
   };
 
@@ -70,7 +78,17 @@ const SubjectFetcher: React.FC<SubjectFetcherProps> = ({ subjectCode, userId}) =
     fetchSubject();
   }, [subjectCode]);
 
-  return subjectData ? <SubjectCard {...subjectData} className='min-h-[12rem]' /> : null;
+  return (
+    <>
+      {subjectData && <SubjectCard {...subjectData} className="min-h-[12rem]" />}
+      {errorMessage && (
+        <RepeatedSubjectAlert
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)} // Reset error message on close
+        />
+      )}
+    </>
+  );
 };
 
 export default SubjectFetcher;

@@ -1,13 +1,11 @@
-// import '@styles/SearchResults.css';
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-
 import axios from 'axios';
 
 import SubjectCard from '@/components/common/subjectCard';
 import { Subject } from '@/lib/objectSchema';
 import { SERVER_URL } from '@/lib/utils';
+import RepeatedSubjectAlert from '../common/repeatedSubjectAlert';
 
 interface SearchResultsProps {
   className?: string | undefined;
@@ -20,68 +18,69 @@ export default function SearchResults({
   subjects,
   userId,
 }: SearchResultsProps) {
-  // let subject = searchResults[0];
-  console.log(
-    `INFO: searchResults passed into SearchResults<> is has length ${subjects.length} ${JSON.stringify(subjects)}`,
-  );
-
   const router = useRouter();
   const pathname = usePathname();
   console.log(pathname);
   const searchParams = useSearchParams();
-  // const userId = pathname;
-  const slot: string = searchParams.get('slot')!;
-  // const userIds = searchParams.get('userId');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  async function handleAdd(subject: Subject) {
+  const slot: string = searchParams.get('slot')!;
+
+  async function handleAdd(subject: Subject) {  
     try {
       const newSubjectInfo: { [slot: string]: Subject } = {};
       newSubjectInfo[slot] = subject;
-      await axios.post(
+      
+      const res = await axios.post(
         `${SERVER_URL}/v1/course/user/${userId}/add`,
         newSubjectInfo,
       );
-      router.push(`/planner/${userId}`);
-    } catch (err) {
-      console.error(err);
+
+      // Redirect if the addition was successful
+      if (res.status === 200) {
+        router.push(`/planner/${userId}`);
+      }
+    } catch (err: any) {
+      if (err.response && err.response.status === 400) {
+        // Set the error message to display the dialog
+        setErrorMessage(err.response.data.error);
+      } else {
+        console.error(err); 
+      }
     }
-    return;
   }
 
   return (
     <div className={className}>
+      {/* Render the alert dialog if there is an error message */}
+      {errorMessage && (
+        <RepeatedSubjectAlert
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}  // Reset error message on close
+        />
+      )}
+
       {/* Text message - number of results */}
       <p className="w-full text-center bg-search-muted text-white p-2 rounded-xl">
         {subjects.length} results found
-        {/* {query
-          ? `${subjects.length} results found`
-          : 'please enter your subject'} */}
       </p>
 
-      {/* Subject results  */}
+      {/* Subject results */}
       <div className="h-lvh overflow-y-scroll overflow-x-hidden px-4 pb-56">
         <div className="py-4 grid grid-cols-4 gap-4">
-          {/* <h1>Subjects:{JSON.stringify(subjects)}</h1> */}
           {subjects.map((subject) => (
             <SubjectCard
               key={subject._id}
-              // TODO-future: mapping code to study area
               header={subject.subjectCode.substring(0, 4)}
               subjectName={subject.subjectName}
               subjectCode={subject.subjectCode}
               level={subject.level}
               points={subject.points}
               studyPeriod={
-                subject.studyPeriod // TODO: ask Weihan why are some subject availability empty
+                subject.studyPeriod
                   ? subject.studyPeriod.map((sp) => sp.toString())
                   : []
               }
-              // TODO: the coordinator is going to be in the semester bubble, so we should be passing only coordinator name
-              // coordinatorName={
-              //   subject.coordinator
-              //     ? Object.values(subject.coordinator)[0]
-              //     : null
-              // }
               handleClick={() => handleAdd(subject)}
               button="+"
             />

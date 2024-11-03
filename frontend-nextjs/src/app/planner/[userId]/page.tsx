@@ -166,6 +166,7 @@ export default function PlannerPage({
     const planner = res.data;
     console.log(planner);
     setPlanner(planner);
+    location.reload();
   };
 
   const getSubject = (
