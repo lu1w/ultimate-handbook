@@ -107,30 +107,30 @@ See `frontend-nextjs/README.md` and `backend/README.md`
 
 - Design of the home page
 
-  1.3.0
+1.3.0
 
 - Home page functionality
 - Add and removing terms
 - Add degree progression checks
 - Integrate frontend, backend, and the resolve server
 
-  1.2.0
+1.2.0
 
 - Organize planner page layout with timeline
 - Adding and removing summer and winter terms
 - Resolver server implementation
 
-  1.1.1
+1.1.1
 
 - Adding and removing subjects
 
-  1.1.0
+1.1.0
 
 - Deployment of backend to Heroku
 - Organize search page layout
 - Change frontend from Javascript to Typescript
 
-  1.0.0
+1.0.0
 
 - Adding basic frontend components of the webpage (including SubjectCard and SearchBar)
 - Setting up the connection to the database
