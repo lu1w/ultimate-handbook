@@ -488,10 +488,13 @@ const resolveMiddleware = async (req, res, next) => {
   // console.log('User Info:', userInfo);
   // console.log('Planner:', planner);
   try {
-    const response = await axios.post('http://127.0.0.1:5001/resolve', {
-      courseName: userInfo.degree,
-      coursePlanner: planner
-    });
+    const response = await axios.post(
+      'https://ultimate-handbook-fe3e5ef9aac5.herokuapp.com/resolve',
+      {
+        courseName: userInfo.degree,
+        coursePlanner: planner
+      }
+    );
 
     Object.assign(planner, response.data);
     console.log('Updated planner:', planner);
