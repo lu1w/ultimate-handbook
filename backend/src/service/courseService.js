@@ -28,6 +28,10 @@ const setBasicInfo = async (req, res, next) => {
     `get degree and major, degree = ${degree}, major = ${major}, userId (self-defined): ${userId}`
   );
 
+  // Add validation for degree and major
+  if (!degree || !major) {
+    return res.status(400).json({ message: 'Degree and major are required.' });
+  }
   // create user planner object
   const userPlanner = {
     userId: userId ? userId : uuidv4(),
@@ -155,7 +159,6 @@ const getPlanner = async (req, res, next) => {
   if (!userId) {
     return res.status(400).json({ message: 'No userId provided.' });
   }
-
   try {
     const plannerCollection =
       await mongoClient.getCollection(PLANNER_COLLECTION);
@@ -281,7 +284,7 @@ const addSubject = async (req, res, next) => {
     const planner = req.userPlanner.planner;
     const subjectData = req.body; // e.g. { "y1s2p1": { Subject } }
 
-    if (!subjectData) {
+    if (!subjectData || Object.keys(subjectData).length === 0) {
       return res
         .status(400)
         .json({ error: 'No subject info for adding new subject' });
@@ -446,7 +449,7 @@ const removeSubject = async (req, res, next) => {
       !planner[studyPeriod][position] ||
       Object.keys(planner[studyPeriod][position]).length === 0
     ) {
-      return res.status(404).json({ message: 'No Subjects found!' });
+      return res.status(400).json({ message: 'Invalid slot provided.' });
     }
 
     const progressionStats = userPlanner.progressionStats;

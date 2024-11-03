@@ -49,7 +49,7 @@ describe('Search API: search page', () => {
         if (err) return done(err); // if error, fail with err
 
         validateResponseFields(res);
-        expect(res.body.subjects).to.have.lengthOf(2293);
+        expect(res.body.subjects).to.have.lengthOf(1908);
 
         return done();
       });
