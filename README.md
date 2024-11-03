@@ -30,7 +30,7 @@ This project aims to modernize and enhance the University of Melbourne course pl
 ### New Features
 
 - **New timeline UI**: Highlight the potential to add summer and winter term by making the buttons visible by default.
-- **New Progression Rules Display**: Group the progression rules, and provide statistics to count current and required credit points. Crosses or ticks for whether rule has been fulfilled, accounting for colourblind persons' needs.
+- **New Progression Rules Display**: Group the progression rules and provide statistics to count the current and required credit points. Include crosses or ticks to indicate whether each rule has been fulfilled, while also considering the needs of colorblind individuals.
 - **New Search Filters UI**: Filtering options are displayed flat on the page rather than hidden in dropdowns
 - **Different Error Iconss**: Different icons for prerequisite and semester errors, easier to distinguish and view error.
 - **Prerequisite Management**: New functionality allows users to quickly view and add prerequisite subjects to their course plan, without switching between pages
