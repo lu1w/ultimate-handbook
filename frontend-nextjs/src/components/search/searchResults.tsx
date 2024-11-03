@@ -40,12 +40,17 @@ export default function SearchResults({
       if (res.status === 200) {
         router.push(`/planner/${userId}`);
       }
-    } catch (err: any) {
-      if (err.response && err.response.status === 400) {
-        // Set the error message to display the dialog
-        setErrorMessage(err.response.data.error);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const errorResponse = err.response;
+        if (errorResponse && errorResponse.status === 400) {
+          // Set the error message to display the dialog
+          setErrorMessage(errorResponse.data.error);
+        } else {
+          console.error('Axios Error:', err); 
+        }
       } else {
-        console.error(err); 
+        console.error('Unexpected error:', err);
       }
     }
   }
