@@ -58,7 +58,7 @@ The planner page retains the core features of the existing University of Melbour
 - **Visible Add Semester Option**: o address feedback that adding summer or winter terms was unclear, these options are now prominently displayed on screen.
 - **Automated Resolve Functionality**: For any planner errors (e.g., arranging "Foundations of Algorithms" before "Foundations of Computing" or placing "IT Project" in semester 1), users can click "Resolve" to have these conflicts automatically corrected. Backend details on this functionality are available in backend documentation.
 - **Better Degree Checklist**: The Degree Checklist now organizes requirements by different rules and displays the current credit points against minimum and maximum requirements, offering clearer progress tracking. For accessibility, checkmarks and crosses are used alongside colors to support colorblind users.
-
+- **Resolve Functionality**: With just one click of the 'Resolve' button, our course planner magically rearranges your subjects to minimize rule violations. Select the courses you love and let us handle the complex rules—no more worries about compliance!
 ### Search Page
 
 The Search Page is designed to help users efficiently find and add subjects to their planner.
