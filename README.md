@@ -25,6 +25,8 @@ This project aims to modernize and enhance the University of Melbourne course pl
 2. Install the packages (skip this step if you have the packages already): `npm i`
 3. Start the react project: `npm run dev`
 
+To link to local backend server, go to `/frontend-nextjs/src/lib/utils.ts` and change the `SERVER_URL` to the localhost with corresponding port number.
+
 ## Test backend
 
 1. Go to the backend directory
@@ -39,6 +41,7 @@ This project aims to modernize and enhance the University of Melbourne course pl
 - Component library: shadcn
 
 **Backend**
+
 - Node.js
 - PyGad
 
