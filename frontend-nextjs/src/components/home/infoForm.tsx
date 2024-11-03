@@ -38,9 +38,6 @@ export default function InfoForm() {
 
   async function handleDegreeSelection(degree: string) {
     degreeRef.current = degree;
-    console.log(
-      `INFO handle degree change triggered with degree ${degreeRef.current}`,
-    );
     const res = await axios.get(
       `${SERVER_URL}/v1/home/majors?degree=${degreeRef.current}`,
     );
@@ -50,9 +47,16 @@ export default function InfoForm() {
   async function handleSubmit(event: React.ChangeEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (degreeRef.current === '' || majorRef.current === '') {
-      alert('Please select a degree and a major for your best experience'); // TODO-future: make this alert box better
+    if (degreeRef.current === '') {
+      alert('Please select a degree'); // TODO-future: make this alert box better
+      return;
+    } else if (majorRef.current === '') {
+      alert(
+        'Please select a major to make sure your major core is included in the plan',
+      ); // TODO-future: make this alert box better
+      return;
     }
+
     try {
       const res = await axios.post(
         `${SERVER_URL}/v1/course/main?degree=${degreeRef.current}&major=${majorRef.current}`,

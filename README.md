@@ -52,6 +52,8 @@ The Search Page is designed to help users efficiently find and add subjects to t
 - **Enhanced Filtering**: The filtering options are displayed flat on the page rather than hidden in dropdowns, allowing users to quickly scan and apply filters without extra clicks. By keeping all options visible, users can immediately see all available filtering choices and make adjustments on the fly, which enhances usability and speeds up the selection process.
 
 
+To link to local backend server, go to `/frontend-nextjs/src/lib/utils.ts` and change the `SERVER_URL` to the localhost with corresponding port number.
+
 ## Test backend
 
 1. Go to the backend directory
@@ -66,6 +68,7 @@ The Search Page is designed to help users efficiently find and add subjects to t
 - Component library: shadcn
 
 **Backend**
+
 - Node.js
 - PyGad
 
