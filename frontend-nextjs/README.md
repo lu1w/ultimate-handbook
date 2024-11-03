@@ -1,44 +1,6 @@
-# Overview of the Project
+# About The Project
 
-The frontend comprises of 3 pages, each implemented with new features and improved UI. Details of features and relevant code files are listed below.
-
-## Home Page: `/app/page.tsx`
-
-Home page is the entry point of the website. It prompts the user to select a degree and an optional major. All relevant component files can be found under **/components/home**.
-![image](https://github.com/user-attachments/assets/e0b1db81-6261-447f-bfb0-b90de0eeacf3)
-
-### Key Features
-
-- **Degree Selection**: Rather than using course templates written manually, an better alternative is to dynamically generate degree options from the database. This facilitates future expansion of courses of degrees. Currently, the database is incomplete, so users cannot choose all degrees offered by the University of Melbourne.
-- **Degree Based Major Selection**: Majors displayed are filtered based on the selected degree, ensuring only applicable majors are shown.
-- Users must select a degree before entering the planner page. Choosing a major is optional, but if the user skips the major selection, an alert will notify them before proceeding.
-
-
-## Planner Page: `/app/planner/{userId}/page.tsx`
-
-The planner page retains the core features of the existing University of Melbourne course planner, including subject addition and semester-based subject organization. However, several key improvements have been introduced:
-![image](https://github.com/user-attachments/assets/9bc816ee-4bbe-4bc6-a598-1ce014d858cf)
-
-
-### Key Features
-
-- **Detailed Subject Information**: Subject cards now display extra information, including coordinator names for each study period. The related component can be found at **/components/common/subjectCard.tsx**.
-- **Error Indicators**: Separate icons now distinguish between prerequisite and study period errors. Each icon is color-coded and shaped differently, with tooltips to identify them when hovered over. Access the component at **/components/planner/errorButton.tsx**.
-- **Quick Add from Prerequisites**: Users can add prerequisite subjects directly from the prerequisites icon, which displays a list of needed subjects with a plus button. This automatically assigns the subject to the earliest available slot in the planner, streamlining the process by skipping steps like searching and manual addition. Relevant components are **/components/planner/prereqDisplay.tsx** and **/components/planner/subjectFetcher.tsx**.
-![image](https://github.com/user-attachments/assets/500d9341-8471-4145-8b9f-fe6bc35cbf0f)
-- **Visible Add Semester Option**: o address feedback that adding summer or winter terms was unclear, these options are now prominently displayed on screen.
-- **Automated Resolve Functionality**: For any planner errors (e.g., arranging "Foundations of Algorithms" before "Foundations of Computing" or placing "IT Project" in semester 1), users can click "Resolve" to have these conflicts automatically corrected. Backend details on this functionality are available in backend documentation.
-- **Better Degree Checklist**: The Degree Checklist now organizes requirements by different rules and displays the current credit points against minimum and maximum requirements, offering clearer progress tracking. For accessibility, checkmarks and crosses are used alongside colors to support colorblind users.
-
-## Search Page: `/app/search/{userId}/page.tsx`
-
-The Search Page is designed to help users efficiently find and add subjects to their planner.
-![image](https://github.com/user-attachments/assets/4a5659d5-13ad-4cf5-b826-268f40189d57)
-
-### Key Features
-
-- **Enhanced Filtering**: The filtering options are displayed flat on the page rather than hidden in dropdowns, allowing users to quickly scan and apply filters without extra clicks. By keeping all options visible, users can immediately see all available filtering choices and make adjustments on the fly, which enhances usability and speeds up the selection process.
-
+This is the frontend for Unimelb Course Planner web app. The frontend comprises of 3 pages: Home page, Planner page and Search page
 
 # Run the Project
 
@@ -56,7 +18,89 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 This project is currently deployed on Vercel: [https://ultimate-handbook.vercel.app/](https://ultimate-handbook.vercel.app/)
 
-# Future Improvement Considerations
+# For Developers
+
+## Home Page
+- The home page acts as an entry point, and allows users to select their degree and an optional major.
+- Main display of the page is defined in `src/app/page.tsx`.
+- User cannot proceed without a degree. If the user skips the major selection, an alert will notify them before entering planner. 
+- This logic is defined in `src/components/home/infoForm.tsx`. This component communicates with backend to gather degree and major information, record selection, and render it with selectPanel component in `src/components/home/selectPanel.tsx`
+
+## Planner Page
+### 1. Subject Card
+**Purpose:** The **Subject Card** component is designed to display subject information in a card format, for use in various contexts such as planner subject slots, the search page, and prerequisite displays.
+- **Header**:  The header indicates the subject type, which can be one of four categories: **Compulsory, Major Core, Discipline, or Breadth**. This categorization is computed by comparing the subject's study area with the selected major. Each type is associated with a distinct color for immediate recognition.
+- **Header button**: In the search page and prerequisite display, a "+" button is rendered to signify the option to add the subject. Conversely, on the planner page, this changes to an "X" to indicate the functionality for removing the subject.
+- **Card Description**: Key information, including the subject code, level, and credit points
+- **Card Title**: Subject Name
+- **Error Icons**: When applicable, error icons are displayed inline and to the right of the card title. There are two types of errors: prerequisite errors and semester errors with different icons (`/src/components/planner/errorButton.tsx`).
+- **Card Footer**: The footer maps the available study periods alongside the corresponding subject coordinator names.
+- Component can be found at `src/components/common/subjectCard.tsx`
+
+### 2. Empty Subject Card
+**Purpose:** The **Empty Subject Card** component serves as a placeholder for adding new subjects within the planner or subject selection interface.
+- **Card Structure**:  The card is designed to be flexible and centered, taking up the full width and height of its container while maintaining a minimum width.
+- **Add Button**: A circled add button centered using plus icon, for triggering search page to add a subject.
+- Component can be found at `src/components/planner/emptySubjectCard.tsx`.
+
+### 3. Prerequisite Display
+**Purpose:** The **PrereqDisplay** component is designed to fetch and display the prerequisites for a specific subject, providing a way to quickly add prerequisite subjects.
+- **Trigger**: The prerequisites are shown in a scrollable sliding panel (the Sheet component) that can be triggered by an ErrorButton.
+- **Data Fetching**: Upon mounting, the component fetch prerequisites from the backend server. The fetched data is in array of arrays of subject codes for formatting.
+- **Prerequisite Formatting**: Function uses Subject Fetcher component (`src/components/planner/subjectFetcher.tsx`) to render subject card out of fetched subject codes. Structure of fetched data indicate "and" and "one of" relationships.
+- **Quick Add**: Click on the header button will autoassign this prerequisite subject into the planner. It will fall into the earliest avaiable study period in current planner. If available semesters are fully booked, it will be assigned to the earliest empty slot.
+- **Adding Existing Subjects**: If prerequisite subject already exists in planner, clicking add will trigger an alert dialog and forbid the addition. This is judged and rendered in `src/components/planner/subjectFetcher.tsx`.
+- Component can be found at `src/components/planner/prereqDisplay.tsx`.
+
+### 4. Progression Rules
+**Purpose:** The **RulesGeneral** and **RulesLevels** components are designed to display subject planning rules necessary for students to graduate.
+- **RulesGeneral**: The component checks whether breadth and compulsory rules have been met. Component can be found at`src/components/planner/rulesGeneral.tsx`.
+- **RulesLevels**: The component checks other rules that are specific to subject levels. Component can be found at `src/components/planner/rulesLevels.tsx`.
+- **Design**: For each rule, there is an indicator of whether the rule has been fulfilled (✔) or not (✘), accompanied by the respective statistics (e.g. 0/125 credit points fulfilled).
+
+### 5. Planner Page
+**Purpose:** The **Planner Page** brings all components together, allowing students to visualize their current subjects organized by semester.
+- **Header**: Displays University of Melbourne logo alongside title "My Course Planner"
+- **Main Content Area**: A responsive grid layout to organize subjects by year and study period. An alternative considered is using flexbox layout, but was rejected for alignment problems and the need for consistency across semesters.
+- **Semester Rows**: Each semester row is dynamically generated based on the user's current plan. The layout adapts based on whether the semester is a standard semester (with four slots) or a short-term (summer/winter) semester (with two slots).
+    - **Subject Cards**: Each subject is represented by a SubjectCard component. If no subject is assigned to a slot, an EmptySubjectCard is displayed, providing the option to add a new subject directly from the planner.
+    - **Add/Remove Term Buttons**: Users can dynamically manage their study periods by adding or removing sumemr and winter terms. This functionality is built into the interface, allowing for immediate interaction.
+- **Sidebar**: The sidebar provides additional functionalities, including a RESOLVE button which automatically resolves semester errors and certain prerequisite errors in planner (detailed algorithm in backend). Progression rules are displayed here to allow users to finalize their plans based on progression rules.
+- The code can be found at `src/app/planner/[userId]/page.tsx`
+
+## Search Page
+### 1. Search Bar and Search Filters
+**Purpose**: **Search Bar and Search Filters** components allows users to search for subjects, one featuring input field for specific search, one using filter fields to list all subjects meeting the requirements.
+- **Search Input**: Allows incomplete inputs, allows both subject name and subject code as input.
+- **Filters**: Three filters are available: **Level, Study Peirod and Study Area Filters**. Students can select as many or as few filters as desired.
+- The componetns can be found at `src/components/search/searchBar.tsx` and `src/components/search/searchFilters.tsx`
+
+### 2. Search Results
+**Purpose**: The **Search Results** component is designed to display a list of subjects based on user search criteria.
+- **Display Results**: The results are displayed in a responsive grid layout using subject cards.
+- **Adding Subjects**: Users can add a subject to their planner by clicking the corresponding "+" button on each SubjectCard. If successful, the user is redirected to their planner page.
+- **Error Handling**: If adding a subject fails (e.g., due to a duplicate entry), an error message is displayed using the RepeatedSubjectAlert component (`src/components/common/reapeatedSubjectAleart.tsx`). This alert provides immediate feedback, allowing users to understand what went wrong and take corrective action.
+
+### 3. Search Page
+**Purpose**: The **Search Page** combines all search components and display search screen fo students.
+- **Search Bar**: Located at the top, users can key inputs into here. When submit button is triggered, the component constructs a query string with the input and selected filters, then sends it to the backend
+- **Main Content Area**: The main content is organized into two primary sections:
+    - **Search Results**: This section displays the list of subjects returned from the search query. Users can interact with the results to add subjects to their planner directly.
+    - **Search Filters**: Located on the right side, this section includes filters for Levels, Study Periods, and Study Areas. Users can select or clear filters, allows for targeted search.
+- **Dynamic Loading of Data**: The component fetches a list of study areas from the backend on mount and updates the available Study Areas filter options accordingly. Allows for future extension of database.
+- The code can be found at `src/app/search/[userId]/page.tsx`.
+
+## Styling
+### tailwind.config.ts
+- This file is a centralized configuration file where custom styles, particularly colors, are defined to maintain visual consistency across the project. 
+- For example bg-search-header for the dark blue defined by the University of Melbourne styling guide.
+- This is to ensure consistency and to adhere to standards outlined by the University of Melbourne’s official styling guide.
+### constants and utils.ts
+- `src/lib/constants.ts` define enum values of levels and study periods
+- `src/lib/utils.ts` used to store backend link in one centralized place, so any changes to backend deployment only affects one file.
+
+
+## Future Improvement Considerations
 
 **Home page:**
 
@@ -66,7 +110,8 @@ This project is currently deployed on Vercel: [https://ultimate-handbook.vercel.
 **Planner page:**
 
 - Display the selected degree and major on the planner page for quick reference, with options to easily change the degree or major directly within the planner.
-- Introduce a feature to lock a semester or subject, so that resolve will not be adding or removing these subjects or semester. 
+- Introduce a feature to lock a semester or subject, so that resolve will not be adding or removing these subjects or semester.
+- Add overload possiblity, make semesters have 5 subject slots.
 
 **Search page:**
 
@@ -74,15 +119,3 @@ This project is currently deployed on Vercel: [https://ultimate-handbook.vercel.
 - Optimize search functionality to enhance speed and responsiveness, particularly for filtering.
 - Implement a “Recently Searched” or “Frequently Added Subjects” section to allow users quick access to commonly added subjects.
 
-## Learn More
-
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more deployment details.
