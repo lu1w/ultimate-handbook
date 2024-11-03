@@ -32,6 +32,7 @@
     - [1. Course Route Tests (`course.route.test.mjs`)](#1-course-route-tests-courseroutetestmjs)
     - [2. Progression Route Tests (`progression.route.test.mjs`)](#2-progression-route-tests-progressionroutetestmjs)
     - [3. Search Route Tests (`search.route.test.mjs`)](#3-search-route-tests-searchroutetestmjs)
+    - [4. Search Route Tests (`negative.route.test.mjs`)](#3-negative-route-tests-negativeroutetestmjs)
 
 ## Start Development
 
