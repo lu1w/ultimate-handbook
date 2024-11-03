@@ -491,3 +491,46 @@ Our backend application includes three main test suites, each designed to verify
 - **Combined Search and Filter Query:**
   - Confirms that the system handles combined input queries and filters properly, returning accurate and relevant results.
   - Verifies that the search results match both the input query and the applied filters.
+    
+#### 4. Negative Tests for Course Route (`negative.route.test.mjs`)
+
+**Purpose:** To ensure that the course-related API endpoints handle invalid inputs and errors correctly, maintaining the robustness of the application.
+
+**Key Negative Tests:**
+
+- **User Info Initialization with Missing Data:**
+  - Verifies that initializing user info without providing degree or major returns an appropriate error.
+- **Adding a Subject with Invalid Data:**
+  - Checks that attempting to add a subject without necessary fields (e.g., missing `subjectCode`) results in an error.
+- **Adding a Subject to an Invalid or Occupied Slot:**
+  - Ensures that the system prevents adding a subject to a non-existent or already occupied slot.
+- **Adding Duplicate Subjects:**
+  - Confirms that adding the same subject multiple times is not allowed and returns an error.
+- **Removing a Subject from an Empty or Invalid Slot:**
+  - Tests that trying to remove a subject from an empty slot or using an invalid slot identifier returns an appropriate error.
+
+#### 5. Negative Tests for Progression Route (`progression.route.test.mjs`)
+
+**Purpose:** To validate that progression calculations correctly identify unmet requirements and handle invalid data, providing accurate feedback to the user.
+
+**Key Negative Tests:**
+
+- **Progression Check with Missing Compulsory Subjects:**
+  - Ensures that missing compulsory subjects are flagged as unmet requirements in the progression status.
+- **Exceeding Level Credit Limits:**
+  - Verifies that exceeding the allowed credit points for a certain level is correctly identified and results in an error.
+- **Invalid Degree Progression:**
+  - Checks that performing a progression check for an unsupported or invalid degree returns an appropriate error message.
+
+#### 6. Negative Tests for Search Route (`search.route.test.mjs`)
+
+**Purpose:** To confirm that the search functionality handles invalid inputs gracefully and securely, ensuring accurate and secure search operations.
+
+**Key Negative Tests:**
+
+- **Search with Invalid Characters or Non-Existent Subjects:**
+  - Verifies that searching with invalid input or for subjects that do not exist returns empty results or appropriate error messages.
+- **Applying Invalid Filters:**
+  - Checks that using invalid level, study period, or study area filters results in an error, preventing incorrect searches.
+- **Missing Query Parameters:**
+  - Ensures that the system handles missing search criteria appropriately, either by returning all subjects or prompting for input.
