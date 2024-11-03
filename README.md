@@ -148,7 +148,7 @@ See `frontend-nextjs/README.md` and `backend/README.md`
 **Backend**
 
 - Node.js
-- PyGad
+- PyGAD
 
 **Database**
 
