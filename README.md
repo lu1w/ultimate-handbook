@@ -1,6 +1,6 @@
 # ultimate-handbook
 
-Unimelb COMP30020 IT Project, 2024 Semester 2
+A university handbook for students in The University of Melbourne.
 
 ### Table of Content:
 
